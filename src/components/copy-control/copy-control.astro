@@ -1,0 +1,90 @@
+---
+import { Check, Copy, TriangleAlert } from '@lucide/astro';
+
+interface Props {
+  label: string;
+  sourceId: string;
+}
+
+const { label, sourceId } = Astro.props;
+const statusId = `${sourceId}-copy-status`;
+---
+
+<div class="inline-flex items-center gap-3">
+  <button
+    type="button"
+    class="action-secondary"
+    data-copy-control
+    data-copy-source={sourceId}
+    aria-describedby={statusId}
+  >
+    <Copy
+      class="size-4 [[data-copy-state=success]_&]:hidden"
+      aria-hidden="true"
+    />
+    <Check
+      class="hidden size-4 [[data-copy-state=success]_&]:block"
+      aria-hidden="true"
+    />
+    <TriangleAlert
+      class="hidden size-4 [[data-copy-state=error]_&]:block"
+      aria-hidden="true"
+    />
+    <span data-copy-label>{label}</span>
+  </button>
+  <span
+    id={statusId}
+    class="sr-only"
+    data-copy-status
+    aria-live="polite"
+  ></span>
+</div>
+
+<script>
+  const RESET_DELAY_MS = 2_000;
+
+  const setupCopyControls = (): void => {
+    document.querySelectorAll<HTMLButtonElement>('[data-copy-control]').forEach((control) => {
+      if (control.dataset['initialized'] === 'true') {
+        return;
+      }
+
+      control.dataset['initialized'] = 'true';
+      const defaultLabel =
+        control.querySelector<HTMLElement>('[data-copy-label]')?.textContent ?? 'Copy';
+
+      control.addEventListener('click', async () => {
+        const sourceId = control.dataset['copySource'];
+        const source = sourceId ? document.getElementById(sourceId) : null;
+        const label = control.querySelector<HTMLElement>('[data-copy-label]');
+        const status = document.getElementById(`${sourceId ?? ''}-copy-status`);
+
+        try {
+          if (!source || !navigator.clipboard) {
+            throw new Error('Clipboard writing is unavailable.');
+          }
+
+          await navigator.clipboard.writeText(source.textContent ?? '');
+          control.dataset['copyState'] = 'success';
+
+          if (label) label.textContent = 'Copied';
+          if (status) status.textContent = 'Copied to clipboard.';
+        } catch {
+          control.dataset['copyState'] = 'error';
+
+          if (label) label.textContent = 'Copy failed';
+          if (status) status.textContent = 'Copy failed. Use the raw view instead.';
+        }
+
+        window.setTimeout(() => {
+          delete control.dataset['copyState'];
+
+          if (label) label.textContent = defaultLabel;
+          if (status) status.textContent = '';
+        }, RESET_DELAY_MS);
+      });
+    });
+  };
+
+  document.addEventListener('astro:page-load', setupCopyControls);
+</script>

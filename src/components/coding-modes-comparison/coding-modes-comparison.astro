@@ -1,0 +1,86 @@
+---
+const comparisonRows = [
+  {
+    category: 'Planning',
+    manual: 'Developer-led and developer-executed',
+    agentic: 'Developer and agent investigate together',
+    vibe: 'Often compressed into the initial request',
+  },
+  {
+    category: 'Architecture',
+    manual: 'Designed directly by the developer',
+    agentic: 'Proposed, challenged, and approved collaboratively',
+    vibe: 'Frequently delegated with the implementation',
+  },
+  {
+    category: 'Implementation',
+    manual: 'Mostly written by the developer',
+    agentic: 'Broadly delegable within approved boundaries',
+    vibe: 'Broadly delegated toward a visible result',
+  },
+  {
+    category: 'Context',
+    manual: 'Held and explored by the developer',
+    agentic: 'Inspected widely enough to understand the affected path',
+    vibe: 'Often limited to the prompt and immediate files',
+  },
+  {
+    category: 'Verification',
+    manual: 'Developer runs and interprets checks',
+    agentic: 'Agent verifies; developer evaluates the evidence',
+    vibe: 'Visible behavior may be the primary signal',
+  },
+  {
+    category: 'Review',
+    manual: 'Developer reviews their own or others’ work',
+    agentic: 'Agent and developer perform adversarial review',
+    vibe: 'May stop when the result appears to work',
+  },
+  {
+    category: 'Responsibility',
+    manual: 'Developer',
+    agentic: 'Developer',
+    vibe: 'Still the developer, even when inspection is light',
+  },
+  {
+    category: 'Primary goal',
+    manual: 'Direct control through direct execution',
+    agentic: 'More leverage without surrendering discipline',
+    vibe: 'Reach a result with minimal process overhead',
+  },
+] as const;
+---
+
+<div class="mt-12 overflow-hidden rounded-xl border border-border">
+  <div
+    class="hidden grid-cols-[10rem_repeat(3,minmax(0,1fr))] bg-primary text-sm font-bold text-primary-foreground md:grid"
+  >
+    <div class="p-4">Dimension</div>
+    <div class="border-l border-white/20 p-4">Manual coding</div>
+    <div class="border-l border-white/20 bg-accent p-4 text-accent-foreground">Agentic Coding</div>
+    <div class="border-l border-white/20 p-4">Vibe coding</div>
+  </div>
+  <ul class="divide-y divide-border">
+    {
+      comparisonRows.map(({ agentic, category, manual, vibe }) => (
+        <li class="grid bg-background md:grid-cols-[10rem_repeat(3,minmax(0,1fr))]">
+          <h3 class="bg-secondary p-4 text-sm font-bold md:bg-background">{category}</h3>
+          <dl class="contents">
+            <div class="grid grid-cols-[7rem_1fr] gap-3 border-t border-border p-4 text-sm md:block md:border-t-0 md:border-l">
+              <dt class="font-bold md:sr-only">Manual</dt>
+              <dd class="leading-6 text-muted">{manual}</dd>
+            </div>
+            <div class="grid grid-cols-[7rem_1fr] gap-3 border-t border-border bg-accent/8 p-4 text-sm md:block md:border-t-0 md:border-l">
+              <dt class="font-bold text-accent md:sr-only">Agentic</dt>
+              <dd class="leading-6 font-semibold">{agentic}</dd>
+            </div>
+            <div class="grid grid-cols-[7rem_1fr] gap-3 border-t border-border p-4 text-sm md:block md:border-t-0 md:border-l">
+              <dt class="font-bold md:sr-only">Vibe</dt>
+              <dd class="leading-6 text-muted">{vibe}</dd>
+            </div>
+          </dl>
+        </li>
+      ))
+    }
+  </ul>
+</div>

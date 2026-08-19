@@ -1,0 +1,68 @@
+---
+import { TriangleAlert } from '@lucide/astro';
+
+import CodingAgentStrip from '../components/coding-agent-strip/coding-agent-strip.astro';
+import ResourceDocument from '../components/resource-document/resource-document.astro';
+import ContentLayout from '../layouts/content-layout.astro';
+import { RESOURCE_CONFIG, RESOURCE_IDS } from '../site.config.ts';
+import { loadResource } from '../utilities/resource-text/index.ts';
+
+const resourceId = RESOURCE_IDS.RefinementPrompt;
+const { text } = await loadResource(resourceId);
+const resourceConfig = RESOURCE_CONFIG[resourceId];
+---
+
+<ContentLayout
+  canonicalPath="/refine/"
+  description="One canonical prompt for strengthening existing coding-agent instructions without erasing useful project guidance."
+  eyebrow="Refine existing instructions"
+  title="Preserve what the repository already knows."
+>
+  <div
+    slot="metadata"
+    class="mt-7 flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs font-bold text-muted"
+  >
+    <span>Version {resourceConfig.version}</span>
+    <span>Updated {resourceConfig.updatedAt}</span>
+  </div>
+
+  <section class="py-12 sm:py-16">
+    <div class="prose-shell">
+      <div class="mb-10 grid gap-5">
+        <p class="text-lg leading-8">
+          Paste this prompt into the coding agent already working inside your repository. The agent
+          inspects your instruction hierarchy, asks only material questions, and proposes a
+          preservation-first change set.
+        </p>
+        <p class="text-sm leading-6 text-muted">
+          This is one canonical prompt, not a builder. Your repository and your conversation supply
+          the context. Repositories without useful instructions should begin with the <a
+            class="font-bold underline underline-offset-4"
+            href="/start/"
+            >ready-to-use foundation</a
+          >.
+        </p>
+        <aside
+          class="flex gap-3 rounded-lg border border-warning/50 bg-warning/10 p-4 text-sm leading-6"
+        >
+          <TriangleAlert
+            class="mt-0.5 size-5 shrink-0 text-warning"
+            aria-hidden="true"
+          />
+          <p>
+            <strong>Keep the approval boundary.</strong> Review the proposed changes before authorizing
+            edits to repository instructions.
+          </p>
+        </aside>
+      </div>
+      <ResourceDocument
+        copyLabel="Copy refinement prompt"
+        fileName={resourceConfig.fileName}
+        rawPath={resourceConfig.rawPath}
+        sourceId="refinement-prompt-source"
+        text={text}
+      />
+    </div>
+  </section>
+  <CodingAgentStrip />
+</ContentLayout>

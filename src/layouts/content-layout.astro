@@ -1,0 +1,35 @@
+---
+import BaseLayout from './base-layout.astro';
+
+interface Props {
+  canonicalPath: string;
+  description: string;
+  eyebrow: string;
+  title: string;
+  updatedAt?: Date | undefined;
+}
+
+const { canonicalPath, description, eyebrow, title, updatedAt } = Astro.props;
+---
+
+<BaseLayout
+  canonicalPath={canonicalPath}
+  description={description}
+  title={`${title} | Agentic Coding`}
+  structuredDataType={updatedAt ? 'article' : undefined}
+  updatedAt={updatedAt}
+>
+  <header class="border-b border-border py-16 sm:py-24">
+    <div class="prose-shell">
+      <p class="eyebrow">{eyebrow}</p>
+      <h1
+        class="mt-4 max-w-4xl text-4xl leading-[1.02] font-extrabold tracking-[-0.04em] text-balance sm:text-6xl"
+      >
+        {title}
+      </h1>
+      <p class="lede mt-6">{description}</p>
+      <slot name="metadata" />
+    </div>
+  </header>
+  <slot />
+</BaseLayout>

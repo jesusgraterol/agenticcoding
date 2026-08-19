@@ -1,0 +1,57 @@
+---
+import ResourceDocument from '../components/resource-document/resource-document.astro';
+import ContentLayout from '../layouts/content-layout.astro';
+import { RESOURCE_CONFIG, RESOURCE_IDS } from '../site.config.ts';
+import { loadResource } from '../utilities/resource-text/index.ts';
+
+const resourceId = RESOURCE_IDS.AgentsFoundation;
+const { text } = await loadResource(resourceId);
+const resourceConfig = RESOURCE_CONFIG[resourceId];
+---
+
+<ContentLayout
+  canonicalPath="/start/"
+  description="A neutral, ready-to-use engineering foundation for coding agents in new or existing repositories."
+  eyebrow="Start with the foundation"
+  title="Give the agent a reliable way to work."
+>
+  <div
+    slot="metadata"
+    class="mt-7 flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs font-bold text-muted"
+  >
+    <span>Version {resourceConfig.version}</span>
+    <span>Updated {resourceConfig.updatedAt}</span>
+  </div>
+
+  <section class="py-12 sm:py-16">
+    <div class="prose-shell">
+      <div class="mb-10 grid gap-5 border-l-2 border-accent pl-5 sm:pl-7">
+        <p class="text-lg leading-8">
+          This file establishes task intent, codebase-first reasoning, collaborative planning,
+          narrow authority, coherent execution, meaningful tests, adversarial review, transparency,
+          and safety.
+        </p>
+        <p class="text-sm leading-6 text-muted">
+          It deliberately does not prescribe a language, framework, folder structure, package
+          manager, database, model, vendor, or private package preference. Adapt concrete technical
+          rules to your repository after the foundation is in place.
+        </p>
+        <p class="text-sm leading-6 text-muted">
+          Already have useful instructions? Use the <a
+            class="font-bold underline underline-offset-4"
+            href="/refine/"
+            >preservation-first refinement workflow</a
+          > instead of replacing them.
+        </p>
+      </div>
+      <ResourceDocument
+        allowDownload
+        copyLabel="Copy AGENTS.md"
+        fileName={resourceConfig.fileName}
+        rawPath={resourceConfig.rawPath}
+        sourceId="agents-foundation-source"
+        text={text}
+      />
+    </div>
+  </section>
+</ContentLayout>

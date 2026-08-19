@@ -1,0 +1,80 @@
+---
+const codingAgents = [
+  { company: 'OpenAI', height: 300, name: 'Codex', path: '/coding-agents/codex.svg', width: 300 },
+  {
+    company: 'Anthropic',
+    height: 248,
+    name: 'Claude Code',
+    path: '/coding-agents/claude-code.svg',
+    width: 248,
+  },
+  {
+    company: 'Anysphere',
+    height: 532,
+    name: 'Cursor',
+    path: '/coding-agents/cursor.svg',
+    width: 467,
+  },
+  {
+    company: 'Anomaly',
+    height: 300,
+    name: 'OpenCode',
+    path: '/coding-agents/opencode.svg',
+    width: 300,
+  },
+  {
+    company: 'GitHub',
+    height: 96,
+    name: 'GitHub Copilot',
+    path: '/coding-agents/github-copilot.svg',
+    width: 96,
+  },
+  { company: 'Cline', height: 96, name: 'Cline', path: '/coding-agents/cline.svg', width: 92 },
+] as const;
+---
+
+<section
+  class="border-y border-border py-12"
+  aria-labelledby="coding-agent-strip-title"
+>
+  <div class="page-shell">
+    <div class="mb-7 grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
+      <div>
+        <p class="eyebrow">Host-agnostic</p>
+        <h2
+          id="coding-agent-strip-title"
+          class="mt-2 text-2xl font-bold tracking-tight"
+        >
+          Use the coding agent already in your repository.
+        </h2>
+      </div>
+      <p class="max-w-md text-sm leading-6 text-muted">
+        The prompt is portable. The engineering values matter more than the host.
+      </p>
+    </div>
+    <ul
+      class="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-3 lg:grid-cols-6"
+    >
+      {
+        codingAgents.map(({ company, height, name, path, width }) => (
+          <li class="flex min-w-0 flex-col items-center justify-center bg-background px-2 py-5 text-center">
+            <img
+              class:list={[
+                'size-9 object-contain',
+                name !== 'Claude Code' && name !== 'OpenCode' && 'dark:invert',
+              ]}
+              src={path}
+              width={width}
+              height={height}
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="mt-3 text-sm font-bold">{name}</span>
+            <span class="mt-1 text-xs text-muted">{company}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

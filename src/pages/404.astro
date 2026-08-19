@@ -1,0 +1,33 @@
+---
+import { ArrowLeft } from '@lucide/astro';
+
+import BaseLayout from '../layouts/base-layout.astro';
+---
+
+<BaseLayout
+  canonicalPath="/404.html"
+  description="The requested Agentic Coding page could not be found."
+  title="Page not found | Agentic Coding"
+  noIndex
+>
+  <section class="section-space">
+    <div class="prose-shell">
+      <p class="eyebrow">404 · Path not found</p>
+      <h1 class="display-title mt-6">This path is outside the plan.</h1>
+      <p class="lede mt-8">
+        The page may have moved, or the link may be incomplete. Return to the manifesto or open one
+        of the practical resources from the navigation.
+      </p>
+      <a
+        class="action-primary mt-9"
+        href="/"
+      >
+        <ArrowLeft
+          class="size-4"
+          aria-hidden="true"
+        />
+        Return home
+      </a>
+    </div>
+  </section>
+</BaseLayout>

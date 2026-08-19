@@ -1,0 +1,30 @@
+---
+import { SITE_CONFIG } from '../../site.config.ts';
+import BrandLogo from '../brand-logo/brand-logo.astro';
+---
+
+<footer class="border-t border-border py-12">
+  <div class="page-shell grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
+    <div>
+      <BrandLogo />
+      <p class="mt-4 max-w-xl text-sm leading-6 text-muted">
+        Built by <a
+          class="underline underline-offset-4"
+          href={SITE_CONFIG.author.url}
+          >{SITE_CONFIG.author.name}</a
+        > using Agentic Coding. This project reflects how he believes professional software development
+        should evolve.
+      </p>
+    </div>
+    <div class="grid gap-2 text-sm text-muted md:text-right">
+      <a
+        href={SITE_CONFIG.repositoryUrl}
+        target="_blank"
+        rel="noreferrer"
+        >Source repository</a
+      >
+      <span>{SITE_CONFIG.url.replace('https://', '')}</span>
+      <span>{SITE_CONFIG.license} License · © 2026</span>
+    </div>
+  </div>
+</footer>

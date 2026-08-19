@@ -1,0 +1,67 @@
+---
+import { Download, ExternalLink } from '@lucide/astro';
+
+import CopyControl from '../copy-control/copy-control.astro';
+
+interface Props {
+  copyLabel: string;
+  fileName: string;
+  rawPath: string;
+  sourceId: string;
+  text: string;
+  allowDownload?: boolean;
+}
+
+const { allowDownload = false, copyLabel, fileName, rawPath, sourceId, text } = Astro.props;
+---
+
+<section class="overflow-hidden rounded-xl border border-border bg-surface shadow-surface">
+  <header
+    class="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3 sm:px-5"
+  >
+    <div class="flex items-center gap-2 font-mono text-sm font-bold">
+      <span
+        class="size-2.5 rounded-full bg-chart-3"
+        aria-hidden="true"
+      ></span>
+      {fileName}
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <CopyControl
+        label={copyLabel}
+        sourceId={sourceId}
+      />
+      {
+        allowDownload && (
+          <a
+            class="action-secondary"
+            href={rawPath}
+            download={fileName}
+          >
+            <Download
+              class="size-4"
+              aria-hidden="true"
+            />
+            Download
+          </a>
+        )
+      }
+      <a
+        class="action-secondary"
+        href={rawPath}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <ExternalLink
+          class="size-4"
+          aria-hidden="true"
+        />
+        View raw
+      </a>
+    </div>
+  </header>
+  <pre
+    id={sourceId}
+    class="max-h-[70vh] overflow-auto p-4 text-[0.8125rem] leading-6 whitespace-pre-wrap text-foreground sm:p-6 sm:text-sm"
+    tabindex="0"><code>{text}</code></pre>
+</section>

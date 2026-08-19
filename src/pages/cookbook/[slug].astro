@@ -1,0 +1,124 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import { ArrowLeft, ArrowRight } from '@lucide/astro';
+
+import CopyControl from '../../components/copy-control/copy-control.astro';
+import ContentLayout from '../../layouts/content-layout.astro';
+import { calculateReadingTime, loadPublishedRecipes } from '../../utilities/cookbook/index.ts';
+
+interface Props {
+  recipe: CollectionEntry<'cookbook'>;
+}
+
+export const getStaticPaths = async () => {
+  const recipes = await loadPublishedRecipes();
+
+  return recipes.map((recipe) => ({
+    params: { slug: recipe.data.slug },
+    props: { recipe },
+  }));
+};
+
+const { recipe } = Astro.props;
+const { Content } = await render(recipe);
+const recipes = await loadPublishedRecipes();
+const relatedRecipes = recipe.data.relatedSlugs.flatMap((relatedSlug) => {
+  const relatedRecipe = recipes.find(({ data }) => data.slug === relatedSlug);
+
+  return relatedRecipe ? [relatedRecipe] : [];
+});
+const promptSourceId = `${recipe.data.slug}-prompt`;
+const formattedDate = new Intl.DateTimeFormat('en', {
+  dateStyle: 'long',
+  timeZone: 'UTC',
+}).format(recipe.data.updatedAt);
+---
+
+<ContentLayout
+  canonicalPath={`/cookbook/${recipe.data.slug}/`}
+  description={recipe.data.description}
+  eyebrow={`Cookbook · ${recipe.data.category}`}
+  title={recipe.data.title}
+  updatedAt={recipe.data.updatedAt}
+>
+  <div
+    slot="metadata"
+    class="mt-7 flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs font-bold text-muted"
+  >
+    <span>{calculateReadingTime(recipe.body ?? '')} min read</span>
+    <span>Updated {formattedDate}</span>
+  </div>
+
+  <article class="py-12 sm:py-16">
+    <div class="prose-shell">
+      <section
+        class="mb-12 overflow-hidden rounded-xl border border-border bg-surface shadow-surface"
+        aria-labelledby="conversation-starter-title"
+      >
+        <header
+          class="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3 sm:px-5"
+        >
+          <h2
+            id="conversation-starter-title"
+            class="font-bold"
+          >
+            Conversation starter
+          </h2>
+          <CopyControl
+            label="Copy prompt"
+            sourceId={promptSourceId}
+          />
+        </header>
+        <pre
+          id={promptSourceId}
+          class="overflow-auto p-5 text-sm leading-6 whitespace-pre-wrap"
+          tabindex="0"><code>{recipe.data.prompt}</code></pre>
+      </section>
+
+      <div class="article-content">
+        <Content />
+      </div>
+
+      {
+        relatedRecipes.length > 0 && (
+          <aside
+            class="mt-16 border-t border-border pt-8"
+            aria-labelledby="related-recipes-title"
+          >
+            <h2
+              id="related-recipes-title"
+              class="text-2xl font-extrabold tracking-tight"
+            >
+              Related recipes
+            </h2>
+            <div class="mt-5 grid gap-3 sm:grid-cols-2">
+              {relatedRecipes.map(({ data }) => (
+                <a
+                  class="group flex items-center justify-between gap-4 rounded-lg border border-border p-4 font-bold no-underline hover:bg-secondary"
+                  href={`/cookbook/${data.slug}/`}
+                >
+                  {data.title}
+                  <ArrowRight
+                    class="size-4 shrink-0 transition-transform group-hover:translate-x-1 motion-reduce:transform-none"
+                    aria-hidden="true"
+                  />
+                </a>
+              ))}
+            </div>
+          </aside>
+        )
+      }
+
+      <a
+        class="mt-12 inline-flex items-center gap-2 font-bold underline underline-offset-4"
+        href="/cookbook/"
+      >
+        <ArrowLeft
+          class="size-4"
+          aria-hidden="true"
+        />
+        Back to the cookbook
+      </a>
+    </div>
+  </article>
+</ContentLayout>

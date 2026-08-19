@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 160" role="img" aria-labelledby="title description">
+  <title id="title">Agentic Coding</title>
+  <desc id="description">A code chevron mark followed by the Agentic Coding name.</desc>
+  <rect width="660" height="160" rx="24" fill="#1e2939"/>
+  <path d="M86 45 52 80l34 35M126 45l34 35-34 35M119 29 92 131" fill="none" stroke="#76c8ad" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="196" y="98" fill="#f4f6f1" font-family="Ubuntu Sans, Ubuntu, sans-serif" font-size="55" font-weight="750" letter-spacing="-2">Agentic Coding</text>
+</svg>

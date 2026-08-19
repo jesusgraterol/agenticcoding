@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Agentic Coding Open Graph image</title>
+    <style>
+      @font-face {
+        font-family: 'Ubuntu Sans Variable';
+        font-style: normal;
+        font-weight: 100 800;
+        src: url('../node_modules/@fontsource-variable/ubuntu-sans/files/ubuntu-sans-latin-wght-normal.woff2')
+          format('woff2-variations');
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 1200px;
+        height: 630px;
+        margin: 0;
+        overflow: hidden;
+      }
+
+      body {
+        background: #1e2939;
+        color: #f4f6f1;
+        font-family: 'Ubuntu Sans Variable', sans-serif;
+      }
+
+      .canvas {
+        position: relative;
+        display: grid;
+        width: 1200px;
+        height: 630px;
+        grid-template-columns: 310px 1fr;
+        padding: 72px;
+        overflow: hidden;
+      }
+
+      .canvas::before {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgb(244 246 241 / 7%) 1px, transparent 1px),
+          linear-gradient(90deg, rgb(244 246 241 / 7%) 1px, transparent 1px);
+        background-size: 52px 52px;
+        content: '';
+        mask-image: linear-gradient(to right, black, transparent 72%);
+      }
+
+      .mark-column,
+      .copy-column {
+        position: relative;
+        z-index: 1;
+      }
+
+      .mark-column {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border-right: 1px solid rgb(244 246 241 / 28%);
+        padding-right: 54px;
+      }
+
+      .mark {
+        color: #76c8ad;
+        font-family: ui-monospace, monospace;
+        font-size: 122px;
+        font-weight: 800;
+        letter-spacing: -18px;
+        line-height: 1;
+      }
+
+      .domain {
+        color: rgb(244 246 241 / 62%);
+        font-family: ui-monospace, monospace;
+        font-size: 18px;
+      }
+
+      .copy-column {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-left: 68px;
+      }
+
+      .eyebrow {
+        margin: 0 0 24px;
+        color: #76c8ad;
+        font-family: ui-monospace, monospace;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        max-width: 700px;
+        margin: 0;
+        font-size: 82px;
+        font-variation-settings: 'wght' 760;
+        letter-spacing: -4px;
+        line-height: 0.94;
+      }
+
+      .thesis {
+        max-width: 690px;
+        margin: 32px 0 0;
+        color: rgb(244 246 241 / 78%);
+        font-size: 27px;
+        font-weight: 500;
+        line-height: 1.35;
+      }
+    </style>
+  </head>
+  <body>
+    <main
+      class="canvas"
+      aria-label="Agentic Coding social preview"
+    >
+      <div class="mark-column">
+        <div
+          class="mark"
+          aria-hidden="true"
+        >
+          &lt;/&gt;
+        </div>
+        <div class="domain">agenticcoding.<br />jesusgraterol.dev</div>
+      </div>
+      <div class="copy-column">
+        <p class="eyebrow">A software-development discipline</p>
+        <h1>Agentic Coding</h1>
+        <p class="thesis">More leverage without surrendering engineering discipline.</p>
+      </div>
+    </main>
+  </body>
+</html>

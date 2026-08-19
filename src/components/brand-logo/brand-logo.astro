@@ -1,0 +1,25 @@
+---
+interface Props {
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+---
+
+<span class="inline-flex min-w-0 items-center gap-2.5 font-bold tracking-tight">
+  <svg
+    class="h-8 w-9 shrink-0"
+    viewBox="0 0 44 36"
+    fill="none"
+    aria-hidden="true"
+  >
+    <path
+      d="M16 8 6 18l10 10M28 8l10 10-10 10M25 4l-7 28"
+      stroke="currentColor"
+      stroke-width="3.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    ></path>
+  </svg>
+  <span class:list={['truncate text-lg', compact && 'sr-only sm:not-sr-only']}>Agentic Coding</span>
+</span>
