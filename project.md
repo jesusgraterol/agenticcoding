@@ -1991,7 +1991,7 @@ The first production release is complete only when all of the following are true
 - both `review` and `review <branch-name>` are documented with their distinct scopes
 - the ready-to-use foundation is complete
 - the refinement prompt is complete
-- all eight initial cookbook recipes are published
+- all twelve initial cookbook recipes are published
 - author attribution and source links are present
 
 ### 31.2 Functional
