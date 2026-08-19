@@ -5,50 +5,166 @@ import ContentLayout from '../../layouts/content-layout.astro';
 import { calculateReadingTime, loadPublishedRecipes } from '../../utilities/cookbook/index.ts';
 
 const recipes = await loadPublishedRecipes();
+
+const startingPoints = [
+  {
+    description: 'Build a working map before choosing where a change belongs.',
+    href: '/cookbook/orient-to-a-codebase/',
+    label: 'The codebase is new to me',
+  },
+  {
+    description: 'Turn an outcome into one grounded, approval-ready strategy.',
+    href: '/cookbook/plan-a-feature/',
+    label: 'I need a plan',
+  },
+  {
+    description: 'Test assumptions while changing course is still inexpensive.',
+    href: '/cookbook/challenge-a-plan/',
+    label: 'The plan feels too easy',
+  },
+  {
+    description: 'Audit the current state and recover without discarding useful work.',
+    href: '/cookbook/recover-from-agent-drift/',
+    label: 'The agent has drifted',
+  },
+] as const;
+
+const tracks = [
+  {
+    category: 'planning',
+    description:
+      'Understand the system, choose a design, and expose weak assumptions before editing.',
+    label: 'Understand and plan',
+  },
+  {
+    category: 'execution',
+    description:
+      'Implement bounded outcomes, preserve scope, and recover cleanly when work wanders.',
+    label: 'Execute with control',
+  },
+  {
+    category: 'review',
+    description: 'Investigate failures and demand evidence that matches the real production risks.',
+    label: 'Verify and correct',
+  },
+  {
+    category: 'instructions',
+    description: 'Improve the durable rules that shape every future agent conversation.',
+    label: 'Govern the workflow',
+  },
+] as const;
 ---
 
 <ContentLayout
   canonicalPath="/cookbook/"
-  description="Practical workflows for planning, challenging, executing, reviewing, and correcting work with coding agents."
+  description="A practical field guide for orienting, planning, executing, testing, reviewing, and recovering work with coding agents."
   eyebrow="Agentic Coding cookbook"
   structuredDataType="collection"
-  title="Techniques, not magic prompts."
+  title="Choose the conversation your work needs."
 >
   <section class="section-space">
     <div class="page-shell">
-      <p class="lede mx-auto mb-12 text-center">
-        Each recipe explains the situation, the tempting mistake, a reusable conversation starter,
-        warning signs, and the developer judgment that cannot be delegated.
-      </p>
-      <ol class="grid gap-px overflow-hidden rounded-xl border border-border bg-border">
+      <div class="grid gap-8 border-b border-border pb-16 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+        <div>
+          <p class="eyebrow">Start from the state you are in</p>
+          <p
+            class="mt-4 text-2xl leading-snug font-semibold tracking-tight text-balance sm:text-3xl"
+          >
+            A strong prompt names the engineering situation, the evidence required, and the point
+            where the agent must stop.
+          </p>
+          <p class="mt-5 leading-7 text-muted">
+            These recipes are working conversations, not incantations. Adapt the context, inspect
+            the result, and use the follow-up moves when the first answer is not good enough.
+          </p>
+        </div>
+
+        <nav aria-labelledby="starting-points-title">
+          <h2
+            id="starting-points-title"
+            class="text-sm font-bold"
+          >
+            What is happening right now?
+          </h2>
+          <ul class="mt-4 grid gap-3 sm:grid-cols-2">
+            {
+              startingPoints.map((startingPoint) => (
+                <li>
+                  <a
+                    class="group flex h-full items-start justify-between gap-4 rounded-xl border border-border bg-surface p-4 no-underline transition-colors hover:bg-secondary"
+                    href={startingPoint.href}
+                  >
+                    <span>
+                      <span class="font-bold">{startingPoint.label}</span>
+                      <span class="mt-1 block text-sm leading-6 text-muted">
+                        {startingPoint.description}
+                      </span>
+                    </span>
+                    <ArrowRight
+                      class="mt-1 size-4 shrink-0 text-muted transition-transform group-hover:translate-x-1 motion-reduce:transform-none"
+                      aria-hidden="true"
+                    />
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+      </div>
+
+      <div class="mt-16 space-y-16">
         {
-          recipes.map(({ body, data }) => (
-            <li>
-              <a
-                class="group grid gap-5 bg-background p-5 no-underline transition-colors hover:bg-secondary sm:grid-cols-[4rem_1fr_auto] sm:items-center sm:p-7"
-                href={`/cookbook/${data.slug}/`}
-              >
-                <span class="font-mono text-sm font-bold text-muted">
-                  {String(data.order).padStart(2, '0')}
-                </span>
-                <span>
-                  <span class="text-xl font-semibold tracking-tight sm:text-2xl">{data.title}</span>
-                  <span class="mt-2 block max-w-3xl text-sm leading-6 text-muted">
-                    {data.description}
-                  </span>
-                  <span class="mt-3 block font-mono text-xs font-bold text-muted uppercase">
-                    {data.category} · {calculateReadingTime(body ?? '')} min read
-                  </span>
-                </span>
-                <ArrowRight
-                  class="size-5 text-muted transition-transform group-hover:translate-x-1 motion-reduce:transform-none"
-                  aria-hidden="true"
-                />
-              </a>
-            </li>
-          ))
+          tracks.map((track) => {
+            const trackRecipes = recipes.filter(({ data }) => data.category === track.category);
+
+            return (
+              <section aria-labelledby={`${track.category}-title`}>
+                <div class="mb-6 grid gap-2 sm:grid-cols-[minmax(0,0.65fr)_minmax(0,1fr)] sm:items-end sm:gap-8">
+                  <h2
+                    id={`${track.category}-title`}
+                    class="text-2xl font-semibold tracking-tight sm:text-3xl"
+                  >
+                    {track.label}
+                  </h2>
+                  <p class="max-w-2xl text-sm leading-6 text-muted sm:justify-self-end sm:text-right">
+                    {track.description}
+                  </p>
+                </div>
+
+                <ol class="grid gap-px overflow-hidden rounded-xl border border-border bg-border">
+                  {trackRecipes.map(({ body, data }) => (
+                    <li>
+                      <a
+                        class="group grid gap-4 bg-background p-5 no-underline transition-colors hover:bg-secondary sm:grid-cols-[4rem_1fr_auto] sm:items-center sm:gap-5 sm:p-7"
+                        href={`/cookbook/${data.slug}/`}
+                      >
+                        <span class="font-mono text-sm font-bold text-muted">
+                          {String(data.order).padStart(2, '0')}
+                        </span>
+                        <span>
+                          <span class="text-xl font-semibold tracking-tight sm:text-2xl">
+                            {data.title}
+                          </span>
+                          <span class="mt-2 block max-w-3xl text-sm leading-6 text-muted">
+                            {data.description}
+                          </span>
+                          <span class="mt-3 block font-mono text-xs font-bold text-muted uppercase">
+                            {calculateReadingTime(body ?? '')} min read
+                          </span>
+                        </span>
+                        <ArrowRight
+                          class="size-5 text-muted transition-transform group-hover:translate-x-1 motion-reduce:transform-none"
+                          aria-hidden="true"
+                        />
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            );
+          })
         }
-      </ol>
+      </div>
     </div>
   </section>
 </ContentLayout>

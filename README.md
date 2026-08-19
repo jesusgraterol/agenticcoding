@@ -7,7 +7,7 @@ The website turns that approach into four practical resources:
 - a concise explanation of the operating model and its maturity path
 - a neutral `AGENTS.md` foundation for new or existing repositories
 - a preservation-first prompt for refining instructions that already contain useful project knowledge
-- a cookbook of reusable conversations for planning, execution, investigation, and review
+- a field guide of reusable conversations, worked examples, and recovery techniques for planning, execution, investigation, and review
 
 The landing page also identifies [`moldea`](https://moldea.ai/) as the real project work through which these principles were developed and tested.
 

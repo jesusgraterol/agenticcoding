@@ -21,13 +21,17 @@ const REQUIRED_ROUTES = [
   '/start/',
   '/refine/',
   '/cookbook/',
+  '/cookbook/orient-to-a-codebase/',
   '/cookbook/plan-a-feature/',
   '/cookbook/challenge-a-plan/',
   '/cookbook/break-down-a-plan/',
   '/cookbook/execute-one-milestone/',
-  '/cookbook/review-a-change/',
-  '/cookbook/investigate-a-failing-test/',
   '/cookbook/control-scope/',
+  '/cookbook/synchronize-documentation/',
+  '/cookbook/recover-from-agent-drift/',
+  '/cookbook/investigate-a-failing-test/',
+  '/cookbook/deepen-a-test-strategy/',
+  '/cookbook/review-a-change/',
   '/cookbook/refine-coding-instructions/',
 ] as const;
 
@@ -172,6 +176,44 @@ test.describe('production website', () => {
     await expect(page.getByText('scope-map', { exact: true })).toBeVisible();
   });
 
+  test('cookbook routes developers from a live situation to an actionable recipe', async ({
+    page,
+  }) => {
+    await page.goto('/cookbook/');
+
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Choose the conversation your work needs.' }),
+    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'What is happening right now?' })).toBeVisible();
+    await expect(page.getByRole('link', { name: /The codebase is new to me/u })).toHaveAttribute(
+      'href',
+      '/cookbook/orient-to-a-codebase/',
+    );
+    await expect(page.getByRole('link', { name: /The agent has drifted/u })).toHaveAttribute(
+      'href',
+      '/cookbook/recover-from-agent-drift/',
+    );
+
+    await page.getByRole('link', { name: /I need a plan/u }).click();
+
+    await expect(page).toHaveURL('/cookbook/plan-a-feature/');
+    await expect(page.getByRole('heading', { name: 'Working prompt' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Worked example' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Useful follow-ups' })).toBeVisible();
+  });
+
+  test('cookbook index and working prompt do not overflow at 320 pixels', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 900 });
+
+    for (const route of ['/cookbook/', '/cookbook/plan-a-feature/'] as const) {
+      await page.goto(route);
+
+      expect(
+        await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+      ).toBe(true);
+    }
+  });
+
   for (const viewportWidth of [320, 768, 1440] as const) {
     test(`homepage has no horizontal overflow at ${viewportWidth} pixels`, async ({ page }) => {
       await page.setViewportSize({ width: viewportWidth, height: 900 });
@@ -272,16 +314,22 @@ test.describe('production website', () => {
     page,
   }) => {
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-    await page.goto('/start/');
 
-    const sourceText = await readTextContent(page, '#agents-foundation-source');
-    const copyControl = page.locator('button[data-copy-source="agents-foundation-source"]');
+    for (const copySource of [
+      { pagePath: '/start/', sourceId: 'agents-foundation-source' },
+      { pagePath: '/cookbook/plan-a-feature/', sourceId: 'plan-a-feature-prompt' },
+    ] as const) {
+      await page.goto(copySource.pagePath);
 
-    await copyControl.click();
+      const sourceText = await readTextContent(page, `#${copySource.sourceId}`);
+      const copyControl = page.locator(`button[data-copy-source="${copySource.sourceId}"]`);
 
-    await expect(copyControl).toHaveAttribute('data-copy-state', 'success');
-    await expect(copyControl).toContainText('Copied');
-    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(sourceText);
+      await copyControl.click();
+
+      await expect(copyControl).toHaveAttribute('data-copy-state', 'success');
+      await expect(copyControl).toContainText('Copied');
+      expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(sourceText);
+    }
   });
 
   test('copy controls expose a useful failure state', async ({ page }) => {

@@ -40,13 +40,17 @@ describe('static build artifact', () => {
   test('publishes every required cookbook recipe', async () => {
     const sitemap = await readFile(resolve(repositoryRoot, 'dist/sitemap-0.xml'), 'utf8');
     const expectedSlugs = [
+      'orient-to-a-codebase',
       'plan-a-feature',
       'challenge-a-plan',
       'break-down-a-plan',
       'execute-one-milestone',
-      'review-a-change',
-      'investigate-a-failing-test',
       'control-scope',
+      'synchronize-documentation',
+      'recover-from-agent-drift',
+      'investigate-a-failing-test',
+      'deepen-a-test-strategy',
+      'review-a-change',
       'refine-coding-instructions',
     ];
 
@@ -58,13 +62,17 @@ describe('static build artifact', () => {
   test('publishes an LLM index synchronized with every cookbook recipe', async () => {
     const llmsText = await readFile(resolve(repositoryRoot, 'dist/llms.txt'), 'utf8');
     const expectedSlugs = [
+      'orient-to-a-codebase',
       'plan-a-feature',
       'challenge-a-plan',
       'break-down-a-plan',
       'execute-one-milestone',
-      'review-a-change',
-      'investigate-a-failing-test',
       'control-scope',
+      'synchronize-documentation',
+      'recover-from-agent-drift',
+      'investigate-a-failing-test',
+      'deepen-a-test-strategy',
+      'review-a-change',
       'refine-coding-instructions',
     ];
 

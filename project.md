@@ -1155,45 +1155,62 @@ The cookbook converts the philosophy into repeatable day-to-day workflows.
 
 It should teach techniques rather than present prompts as magic incantations.
 
+The cookbook MUST function as an operating playbook rather than a prompt gallery. It should help developers identify their current engineering situation, provide the right context, steer weak first responses, inspect evidence, and preserve the decisions that remain theirs.
+
 Each recipe MUST explain:
 
 - the situation
 - the common mistake
 - the Agentic Coding approach
+- the context to provide before using the prompt
 - a copyable prompt or conversation starter
+- a concrete worked example
 - what a good result should contain
+- useful follow-up moves for shallow or drifting results
 - warning signs
 - the developer's review responsibility
 
 ### 16.2 Initial recipes
 
-The first production release MUST include these eight recipes:
+The cookbook MUST include these twelve recipes in intentional editorial order:
 
-1. **Plan a feature**
+1. **Orient to a codebase**
+   - build a verified working map of an unfamiliar repository before planning changes
+
+2. **Plan a feature**
    - turn a vague requirement into a codebase-grounded implementation plan
 
-2. **Challenge a plan**
+3. **Challenge a plan**
    - ask the agent to attack assumptions, alternatives, risks, and missing cases before implementation
 
-3. **Break down a plan**
+4. **Break down a plan**
    - convert an approved strategy into coherent, reviewable milestones without redesigning it
 
-4. **Execute one milestone**
+5. **Execute one milestone**
    - authorize a bounded implementation slice and stop before later work
 
-5. **Review a change**
-   - perform a findings-first review of correctness, regression risk, architecture, scope, tests, and maintainability
-
-6. **Investigate a failing test**
-   - determine intended behavior before changing production code or the expectation
-
-7. **Control scope**
+6. **Control scope**
    - give the agent enough context to understand dependencies without authorizing adjacent work
 
-8. **Refine coding instructions**
+7. **Synchronize documentation**
+   - keep durable documentation aligned with implemented behavior and authoritative ownership
+
+8. **Recover from agent drift**
+   - stop a wandering implementation, preserve useful work, and restore a bounded contract
+
+9. **Investigate a failing test**
+   - determine intended behavior before changing production code or the expectation
+
+10. **Deepen a test strategy**
+    - design correctness evidence around realistic defects and meaningful integration boundaries
+
+11. **Review a change**
+    - perform a findings-first review of correctness, regression risk, architecture, scope, tests, and maintainability
+
+12. **Refine coding instructions**
    - use the canonical refinement process to strengthen an existing `AGENTS.md`
 
-A later version MAY add recipes such as introducing agents to an unfamiliar codebase, improving test depth, synchronizing documentation, or preparing a pull request.
+A later version MAY add recipes only when they cover a distinct, recurring engineering situation that the current playbook does not already handle.
 
 ### 16.3 Recipe content model
 
@@ -1220,6 +1237,8 @@ Draft entries must not be rendered into public routes or the production sitemap.
 The `/cookbook` page MUST:
 
 - explain the purpose of the cookbook
+- help developers choose a recipe from their current engineering situation
+- group recipes into understandable workflow tracks
 - show all published recipes
 - order recipes intentionally rather than by filename
 - include descriptions
@@ -1237,8 +1256,11 @@ Every recipe page MUST include:
 - situation
 - common mistake
 - Agentic approach
+- context to provide before using the prompt
 - copyable prompt
+- a worked example
 - what to inspect in the result
+- follow-up moves
 - warning signs
 - related recipes
 - last updated date
