@@ -12,7 +12,7 @@ export const RESOURCE_CONFIG = {
     fileName: 'AGENTS.md',
     rawPath: '/AGENTS.md',
     updatedAt: '2026-08-19',
-    version: '1.1.0',
+    version: '1.2.0',
   },
   [RESOURCE_IDS.RefinementPrompt]: {
     fileName: 'refine.txt',
@@ -37,7 +37,7 @@ export const SITE_CONFIG = {
     url: 'https://jesusgraterol.dev/',
   },
   defaultDescription:
-    'A disciplined way to plan, build, verify, and review software with coding agents without surrendering context, control, or quality.',
+    'Plan, build, verify, and review with coding agents while developers retain final engineering judgment.',
   language: 'en',
   license: 'MIT',
   moldeaUrl: 'https://moldea.ai/',

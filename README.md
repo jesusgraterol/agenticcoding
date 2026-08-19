@@ -1,15 +1,17 @@
 # Agentic Coding
 
-[Agentic Coding](https://agenticcoding.jesusgraterol.dev) is a disciplined approach to planning, building, verifying, and reviewing software with coding agents without surrendering context, control, or quality.
+[Agentic Coding](https://agenticcoding.jesusgraterol.dev) is a disciplined approach to planning, building, verifying, and reviewing software with coding agents while developers retain final engineering judgment.
 
 The website turns that approach into four practical resources:
 
 - a concise explanation of the operating model and its maturity path
 - a neutral `AGENTS.md` foundation for new or existing repositories
 - a preservation-first prompt for refining instructions that already contain useful project knowledge
-- a field guide of reusable conversations, worked examples, and recovery techniques for planning, execution, investigation, and review
+- a field guide of reusable conversations, worked examples, and recovery techniques for planning, execution, investigation, agent review, and developer acceptance
 
 The landing page also identifies [`moldea`](https://moldea.ai/) as the real project work through which these principles were developed and tested.
+
+Change review is deliberately two-layered. The coding agent performs a findings-first review, preferably through `review` for uncommitted work or `review <branch-name>` for a branch. A developer then reviews the change and the agent's evidence, typically as the pull request reviewer, and owns the acceptance decision.
 
 The site is statically generated with Astro and Tailwind CSS. It uses the same Ubuntu Sans typography and core color palette as the Moldea projects while establishing a minimal technical product-documentation visual language. Client-routed navigation provides an accessible progress indicator while the next page is loading.
 

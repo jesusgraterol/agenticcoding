@@ -25,7 +25,7 @@ const leverageItems = [
   },
   {
     icon: Braces,
-    text: 'Repeat review and revision without treating the first output as final.',
+    text: 'Repeat agent review and developer inspection without treating the first output as final.',
     title: 'Correct more',
   },
   {
@@ -51,8 +51,8 @@ const leverageItems = [
           <span class="block text-accent">with coding agents.</span>
         </h1>
         <p class="lede mx-auto mt-7">
-          Use coding agents across planning, implementation, verification, and review while keeping
-          intent, direction, and quality in the developer's hands.
+          Use coding agents across planning, implementation, verification, and a first adversarial
+          review. Developers still own intent, direction, and final acceptance.
         </p>
         <div class="mt-8 flex flex-wrap justify-center gap-3">
           <a
@@ -133,7 +133,9 @@ const leverageItems = [
           </div>
           <div class="bg-background p-4">
             <dt class="font-mono text-xs font-bold text-accent uppercase">Closed by evidence</dt>
-            <dd class="mt-2 text-sm leading-6 text-muted">Tests and review earn confidence.</dd>
+            <dd class="mt-2 text-sm leading-6 text-muted">
+              Tests, agent review, and developer inspection earn confidence.
+            </dd>
           </div>
         </dl>
       </div>
@@ -155,7 +157,9 @@ const leverageItems = [
         </h2>
         <p class="lede mx-auto mt-6 text-base sm:text-lg">
           The agent can inspect the system, challenge an approach, and help converge on a stronger
-          strategy before production code is written.
+          strategy before production code is written. After implementation, use <code>review</code>
+          for the worktree or <code>review &lt;branch-name&gt;</code> for a branch, then have a developer
+          review the result, usually in the pull request.
         </p>
       </div>
       <CollaborationWorkbench />
@@ -261,7 +265,8 @@ const leverageItems = [
         </h2>
         <p class="lede mx-auto mt-6 text-base sm:text-lg">
           Agentic Coding was shaped while building moldea, where project context, agent
-          instructions, deterministic validation, and review have to operate as one coherent system.
+          instructions, deterministic validation, agent review, and developer inspection have to
+          operate as one coherent system.
         </p>
       </div>
       <MoldeaProof />

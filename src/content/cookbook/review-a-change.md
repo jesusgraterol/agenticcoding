@@ -1,6 +1,6 @@
 ---
 title: Review a change
-description: Review the exact change adversarially, test its real risks, and issue a readiness verdict supported by evidence.
+description: Have the agent review the exact change, then give the developer evidence for an informed acceptance decision.
 slug: review-a-change
 order: 11
 category: review
@@ -25,7 +25,7 @@ prompt: |
 
 ## Situation
 
-Implementation is complete enough to inspect, but plausible output and passing checks are not yet trusted. You need to know whether this exact change is safe to accept.
+Implementation is complete enough to inspect, but plausible output and passing checks are not yet trusted. The agent must review the exact change first, then a developer must inspect the change and evidence before accepting it.
 
 ## Common mistake
 
@@ -45,6 +45,8 @@ Use the agent as an adversarial reviewer, not as the author defending its work. 
 Findings come first because a blocking defect should not be buried beneath a completion summary.
 
 ## Before you send the prompt
+
+When the repository uses the Agentic Coding foundation, prefer `review` for the complete uncommitted worktree or `review <branch-name>` for committed work intended for a target branch. Use the prompt above when those commands are unavailable or when you need to provide additional review constraints.
 
 Provide the original task, approved plan or milestone when one exists, and the intended destination branch for branch reviews. Mention unavailable infrastructure or known pre-existing failures.
 
@@ -104,4 +106,4 @@ To re-review after fixes:
 
 ## Developer review responsibility
 
-Validate the review's interpretation of product intent and risk. Decide whether the evidence meets the real commit, merge, or release threshold. A review verdict is evidence for a decision, not a substitute for ownership of that decision.
+After the agent review, inspect the change and validate its interpretation of product intent and risk. Act as the pull request reviewer when a pull request exists. Decide whether the evidence meets the real commit, merge, or release threshold. The agent's verdict informs this decision but never replaces developer review.

@@ -84,6 +84,10 @@ The central position of the project is:
 
 **Agentic Coding is a collaborative software-development discipline in which developers use coding agents across planning, decomposition, implementation, verification, and review while retaining responsibility for intent, system direction, and engineering quality.**
 
+Throughout this specification, reviewing implementation is a two-layer gate. The coding agent performs a findings-first review, preferably through `review` for uncommitted work or `review <branch-name>` for a branch. A developer then reviews the change and the agent's evidence, typically as the pull request reviewer, and owns the acceptance decision. Neither layer replaces the other.
+
+Every product surface, public resource, and cookbook workflow that describes implementation review MUST preserve both perspectives. It must identify the agent as the first adversarial reviewer and the developer as the independent acceptance reviewer. A review description is incomplete if it presents only one perspective or implies that an agent readiness verdict replaces developer inspection.
+
 Agentic Coding sits between traditional manual coding and vibe coding, but it is not defined by the percentage of code written by AI.
 
 The distinguishing question is:
@@ -114,7 +118,7 @@ Vibe coding can be appropriate for experimentation, disposable prototypes, learn
 
 The developer and agent collaborate on the problem and the solution.
 
-The agent may inspect, plan, propose, challenge, decompose, implement, test, and review. The developer actively shapes the process, approves material decisions, controls scope, and verifies that the resulting system deserves to exist.
+The agent may inspect, plan, propose, challenge, decompose, implement, test, and perform the first adversarial review. The developer actively shapes the process, approves material decisions, controls scope, independently reviews the change and evidence, and decides whether the resulting system deserves to exist.
 
 The site MUST make clear that Agentic Coding is not merely a compromise between writing code manually and delegating code blindly. It is a distinct engineering discipline.
 
@@ -203,7 +207,7 @@ Implement only the currently authorized scope. Keep required production changes 
 
 **Review**
 
-Assume the implementation may contain mistakes. Inspect correctness, regressions, architecture, duplication, security, edge cases, test adequacy, maintainability, and documentation.
+The coding agent must assume the implementation may contain mistakes and inspect correctness, regressions, architecture, duplication, security, edge cases, test adequacy, maintainability, and documentation. A developer must then inspect the change and evidence before accepting it, normally through pull request review when one exists.
 
 **Repeat**
 
@@ -234,7 +238,7 @@ The site must not advocate unrestricted autonomy.
 
 The desired system around the agent is:
 
-> **Context → Constraints → Plan → Breakdown → Execution → Tests → Review → Correction**
+> **Context → Constraints → Plan → Breakdown → Execution → Tests → Agent and Developer Review → Correction**
 
 A required message is:
 
@@ -256,7 +260,7 @@ The site's stronger thesis is that coding agents make previously expensive engin
 - type safety
 - failure-path analysis
 - refactoring analysis
-- repeated review
+- repeated agent review and developer inspection
 
 A required editorial idea is:
 
@@ -448,7 +452,7 @@ Recommended starting direction:
 
 Supporting idea:
 
-> Coding agents can help us plan, build, test, and review at extraordinary speed. Agentic Coding is the discipline of using that leverage without surrendering context, control, or quality.
+> Coding agents can help us plan, build, test, and perform a first adversarial review at extraordinary speed. Agentic Coding is the discipline of using that leverage while preserving independent developer review and final acceptance.
 
 The final copy may be refined during implementation, but it must preserve the meaning established in this specification.
 
@@ -490,8 +494,8 @@ The section should reinforce:
 
 - the agent is a planning collaborator
 - the agent can propose and challenge architecture
-- the agent can implement and review
-- the developer retains accountability
+- the agent can implement and perform the first adversarial review
+- the developer independently reviews the change and retains accountability for acceptance
 - Agentic Coding increases leverage rather than removing discipline
 
 A featured line should be:
@@ -552,7 +556,9 @@ The visualization MUST expose four selectable or focusable stages:
 
 #### Review
 
-- review findings before praise or summary
+- require an agent review followed by an independent developer review, typically in the pull request
+- recommend `review` for uncommitted work and `review <branch-name>` for a branch
+- require the agent to report findings before praise or summary
 - inspect correctness and regressions
 - inspect scope and duplication
 - inspect tests and whether defects could survive them
@@ -821,11 +827,12 @@ For substantial work:
 
 #### Review
 
-- review the complete scoped change
+- require the agent to review the complete scoped change, preferably through `review` or `review <branch-name>`
 - report findings first
 - inspect correctness, regressions, architecture, scope, reuse, tests, security, maintainability, and documentation
 - distinguish verified facts from uncertainty
 - do not declare readiness while a material concern is unresolved
+- require a developer to review the change and agent evidence before acceptance, typically as the pull request reviewer
 
 #### Transparency
 
@@ -892,20 +899,25 @@ When explicitly invoked:
 - state that breakdown does not approve the plan or authorize implementation
 - require explicit authorization for each milestone unless approval and milestone authorization are clearly combined
 
-#### `review`
+#### `review` and `review <branch-name>`
 
-When explicitly invoked:
+When either command is explicitly invoked:
 
-- default to the complete uncommitted worktree against `HEAD`, including staged, unstaged, untracked, deleted, and renamed paths, unless another scope is explicit
-- exclude existing commits from an unqualified review
+- make `review` inspect the complete uncommitted worktree against `HEAD`, including staged, unstaged, untracked, deleted, and renamed paths
+- exclude existing commits from `review`
+- make `review <branch-name>` require an active branch, resolve the local or remote-tracking target unambiguously, and inspect the commits and cumulative diff from the merge base through the active branch
+- refresh the relevant remote-tracking ref when available, otherwise report the target commit and any material freshness limitation
+- account for target-side changes after the merge base and assess the prospective merge result
+- exclude uncommitted changes from `review <branch-name>` and report them separately
 - perform review-only work
 - do not edit the reviewed change
 - inspect the complete requested scope
 - run relevant non-writing checks when available
 - report findings in severity order
 - report checks run and checks not run
-- provide a clear readiness verdict
+- provide `Ready to commit` for `review`, `Ready to merge into <branch-name>` for branch review, or a clear not-ready or incomplete verdict
 - avoid a ready verdict when material uncertainty remains
+- state that the agent verdict informs but does not replace the required developer review, typically as the pull request reviewer
 
 The neutral foundation SHOULD NOT include a `repo push` command in v1 because commit signing, staging, remote selection, and publication policy vary significantly across repositories.
 
@@ -1205,7 +1217,7 @@ The cookbook MUST include these twelve recipes in intentional editorial order:
     - design correctness evidence around realistic defects and meaningful integration boundaries
 
 11. **Review a change**
-    - perform a findings-first review of correctness, regression risk, architecture, scope, tests, and maintainability
+    - use `review` or `review <branch-name>` for the agent's findings-first review, then require a developer to inspect the change and evidence before acceptance
 
 12. **Refine coding instructions**
    - use the canonical refinement process to strengthen an existing `AGENTS.md`
@@ -1975,6 +1987,8 @@ The first production release is complete only when all of the following are true
 - the quality-over-speed thesis is present
 - the caution against free rein is present
 - the Moldea field-application section is factual and understated
+- implementation review is consistently shown as agent review followed by independent developer review
+- both `review` and `review <branch-name>` are documented with their distinct scopes
 - the ready-to-use foundation is complete
 - the refinement prompt is complete
 - all eight initial cookbook recipes are published

@@ -110,12 +110,12 @@ When implementation is authorized:
 
 1. Establish a bounded implementation plan proportional to the work.
 2. Execute in small logical steps.
-3. Review each completed step before continuing.
+3. Inspect each completed step before continuing.
 4. Keep the behavior with the tests, documentation, contracts, exports, configuration, and migrations required to support it.
 5. Run the narrowest useful verification first, then the relevant broader checks.
 6. Reconfirm that remaining work still serves the authorized scope.
 
-If work is authorized by milestone, implement only that milestone. Leave the repository internally coherent, complete its verification and review checkpoint, report the result, and stop before the next milestone.
+If work is authorized by milestone, implement only that milestone. Leave the repository internally coherent, complete its verification, report the result, and stop before the next milestone. The developer should then invoke `review` or `review <branch-name>` for the agent review before performing the developer review.
 
 Do not create throwaway scaffolding, temporary duplicate paths, or deliberately incomplete implementations merely to divide work.
 
@@ -139,7 +139,12 @@ Never weaken, delete, or blindly update a test solely to make the suite pass. Do
 
 ## Review
 
-Review the complete requested scope, not only the most visible file.
+Every implementation review requires both layers:
+
+1. **Agent review:** The coding agent reviews the complete requested scope, preferably through `review` for uncommitted work or `review <branch-name>` for a branch.
+2. **Developer review:** A developer inspects the change and the agent's evidence, typically as the pull request reviewer, and decides whether to accept, merge, release, or request corrections.
+
+The agent review must inspect the complete requested scope, not only the most visible file.
 
 Report findings first, ordered by severity. Evaluate:
 
@@ -155,6 +160,8 @@ Report findings first, ordered by severity. Evaluate:
 
 Distinguish verified facts from uncertainty. Report checks run, their results, checks not run, and why. Do not declare readiness while a material concern remains unresolved.
 
+An agent readiness verdict is evidence for the developer review. It is not approval to accept, merge, or release the change.
+
 ## Transparency and preservation
 
 - State important assumptions.
@@ -163,7 +170,7 @@ Distinguish verified facts from uncertainty. Report checks run, their results, c
 - Preserve developer-authored and unrelated work.
 - Inspect the current worktree before editing when version control is available.
 - Do not reset, clean, stash, revert, or overwrite unrelated changes merely to simplify the worktree.
-- Review the final diff and ensure every reported change is intentional and in scope.
+- Inspect the final diff and ensure every reported change is intentional and in scope.
 - Do not hide failures, skipped checks, or uncertainty.
 
 ## Safety
@@ -231,11 +238,13 @@ If no current plan exists or the plan is materially stale, report the blocker in
 
 The `breakdown` command does not approve the plan or authorize implementation. After approval, implement a milestone only when the developer explicitly authorizes that milestone, unless the same instruction clearly combines approval with milestone authorization.
 
-### `review`
+### `review` and `review <branch-name>`
 
-When the developer invokes `review`:
+When the developer invokes either review command:
 
-Unless the developer explicitly identifies another scope, review the complete uncommitted worktree against `HEAD`, including staged, unstaged, untracked, deleted, and renamed paths. Do not include existing commits in an unqualified review.
+- For `review`, review the complete uncommitted worktree against `HEAD`, including staged, unstaged, untracked, deleted, and renamed paths. Do not include existing commits.
+- For `review <branch-name>`, require an active branch and resolve the named local or remote-tracking target unambiguously. Refresh the relevant remote-tracking ref when network access is available. If freshness cannot be established, report the exact target commit and limitation, and use an incomplete verdict when that uncertainty is material.
+- For the branch review, find the merge base and review the commits and cumulative diff that would enter the target. Account for target-side changes after the merge base and assess the prospective merge result. Exclude uncommitted changes and report them separately.
 
 1. Perform review-only work and do not modify the reviewed change.
 2. Establish the exact review scope and repository state.
@@ -243,6 +252,8 @@ Unless the developer explicitly identifies another scope, review the complete un
 4. Run applicable non-writing verification.
 5. Report findings first in severity order, with concrete locations, risks, and the smallest correction.
 6. Report the exact scope, checks run, results, checks not run, and limitations.
-7. End with a clear readiness verdict.
+7. End with `Ready to commit` for `review`, `Ready to merge into <branch-name>` for a branch review, or a clear not-ready or incomplete verdict.
 
 Use a ready verdict only when no blocking findings remain, relevant verification passed or was legitimately unnecessary, test depth is sufficient for material behavior, and no material uncertainty remains.
+
+After the agent review, the developer must independently review the change and evidence, normally through the pull request when one exists. Neither review layer substitutes for the other.

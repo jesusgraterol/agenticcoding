@@ -1,6 +1,6 @@
 ---
 title: Execute one milestone
-description: Authorize one complete implementation slice, verify it proportionally, and stop at its review checkpoint.
+description: Authorize one complete implementation slice, verify it proportionally, then hand it to agent and developer review.
 slug: execute-one-milestone
 order: 5
 category: execution
@@ -19,9 +19,9 @@ prompt: |
 
   Before editing, confirm the milestone's exact outcome, editable scope, inspect-only dependencies, acceptance criteria, and required checks from current repository evidence. Preserve unrelated and pre-existing work.
 
-  Complete the milestone's production behavior together with its contracts, validation, error handling, tests, documentation, migrations, compatibility work, and verification. Review each logical step and the final diff. If new evidence requires crossing the milestone boundary or materially changing the approved strategy, stop before doing so and explain the required deviation.
+  Complete the milestone's production behavior together with its contracts, validation, error handling, tests, documentation, migrations, compatibility work, and verification. Inspect each logical step and the final diff. If new evidence requires crossing the milestone boundary or materially changing the approved strategy, stop before doing so and explain the required deviation.
 
-  Report files changed, behavior delivered, tests and checks actually run, skipped checks and limitations, migration or deployment state, documentation synchronization, and remaining risks. Stop at this milestone's review checkpoint. Do not scaffold or begin a later milestone, commit, push, deploy, or perform another external action unless separately authorized.
+  Report files changed, behavior delivered, tests and checks actually run, skipped checks and limitations, migration or deployment state, documentation synchronization, and remaining risks. Stop so the developer can invoke `review` or `review <branch-name>` for the agent review and then perform the developer review. Do not scaffold or begin a later milestone, commit, push, deploy, or perform another external action unless separately authorized.
 ---
 
 ## Situation
@@ -44,10 +44,10 @@ Execution should follow a tight loop:
 
 1. Confirm the contract against current repository state.
 2. Implement one logical step.
-3. Review the step and run the narrowest useful check.
+3. Inspect the step and run the narrowest useful check.
 4. Reconfirm that remaining work still belongs to the milestone.
 5. Run the complete milestone verification and inspect the final diff.
-6. Stop for developer review.
+6. After implementation stops, invoke `review` or `review <branch-name>` for the agent review, then complete the developer review, typically in the pull request.
 
 ## Before you send the prompt
 
@@ -85,7 +85,7 @@ A strong completion report would say which contract now exists, which permission
 - exact verification results rather than assumed success
 - explicit handling of failures or stale test expectations
 - a final diff audit for accidental scope growth and dead paths
-- a clear review checkpoint and no later-milestone work
+- a clear handoff to agent review and developer review, with no later-milestone work
 
 ## Useful follow-ups
 
@@ -112,4 +112,4 @@ Before accepting completion:
 
 ## Developer review responsibility
 
-Inspect the milestone at the promised checkpoint. Verify the behavior and evidence, decide whether new discoveries change the remaining plan, and authorize the next milestone only when the repository is in a coherent state.
+After the agent review, inspect the milestone at the promised checkpoint, typically as the pull request reviewer. Verify the behavior and evidence, decide whether new discoveries change the remaining plan, and authorize the next milestone only when the repository is in a coherent state.
