@@ -5,50 +5,91 @@ import ContentLayout from '../../layouts/content-layout.astro';
 import { calculateReadingTime, loadPublishedRecipes } from '../../utilities/cookbook/index.ts';
 
 const recipes = await loadPublishedRecipes();
+const featuredRecipes = recipes.filter((recipe) => recipe.data.featured);
+const longformRecipes = recipes.filter((recipe) => !recipe.data.featured);
+
+const renderRecipeCard = (recipe: (typeof recipes)[number]) => {
+  const categoryLabel = recipe.data.category;
+
+  return (
+    <li>
+      <a
+        class="group grid gap-5 bg-background p-5 no-underline transition-colors hover:bg-secondary sm:grid-cols-[4rem_1fr_auto] sm:items-center sm:p-7"
+        href={`/cookbook/${recipe.data.slug}/`}
+      >
+        <span class="font-mono text-sm font-bold text-muted">
+          {String(recipe.data.order).padStart(2, '0')}
+        </span>
+        <span>
+          <span class="text-xl font-semibold tracking-tight sm:text-2xl">{recipe.data.title}</span>
+          <span class="mt-2 block max-w-3xl text-sm leading-6 text-muted">
+            {recipe.data.description}
+          </span>
+          <span class="mt-3 block font-mono text-xs font-bold text-muted uppercase">
+            {categoryLabel} · {calculateReadingTime(recipe.body ?? '')} min read
+          </span>
+        </span>
+        <ArrowRight
+          class="size-5 text-muted transition-transform group-hover:translate-x-1 motion-reduce:transform-none"
+          aria-hidden="true"
+        />
+      </a>
+    </li>
+  );
+};
 ---
 
 <ContentLayout
   canonicalPath="/cookbook/"
-  description="Practical workflows for planning, challenging, executing, reviewing, and correcting work with coding agents."
+  description="Production-oriented playbooks that turn agent work into reliable engineering outcomes."
   eyebrow="Agentic Coding cookbook"
   structuredDataType="collection"
-  title="Techniques, not magic prompts."
+  title="Techniques, not magic prompts"
 >
   <section class="section-space">
     <div class="page-shell">
-      <p class="lede mx-auto mb-12 text-center">
-        Each recipe explains the situation, the tempting mistake, a reusable conversation starter,
-        warning signs, and the developer judgment that cannot be delegated.
+      <p class="lede mx-auto mb-8 max-w-4xl text-center">
+        The cookbook is for high-stakes engineering, not template prompts. Each recipe includes a
+        concrete scenario, a reliable interaction pattern, warning signs, and the parts that still
+        require your judgment.
       </p>
+      <div class="mb-12 grid gap-3 sm:grid-cols-3">
+        <article class="rounded-lg border border-border bg-surface p-5">
+          <h2 class="text-lg font-semibold">Planning recipes</h2>
+          <p class="mt-2 text-sm text-muted">
+            Turn vague ideas and half-formed requests into approved implementation scopes.
+          </p>
+        </article>
+        <article class="rounded-lg border border-border bg-surface p-5">
+          <h2 class="text-lg font-semibold">Execution recipes</h2>
+          <p class="mt-2 text-sm text-muted">
+            Keep authorized changes tight, observable, and reversible.
+          </p>
+        </article>
+        <article class="rounded-lg border border-border bg-surface p-5">
+          <h2 class="text-lg font-semibold">Review recipes</h2>
+          <p class="mt-2 text-sm text-muted">
+            Verify outcomes before production with explicit gates instead of trusting generated
+            output.
+          </p>
+        </article>
+      </div>
+
+      <h2 class="mb-3 text-2xl font-semibold tracking-tight">Featured playbooks</h2>
       <ol class="grid gap-px overflow-hidden rounded-xl border border-border bg-border">
-        {
-          recipes.map(({ body, data }) => (
-            <li>
-              <a
-                class="group grid gap-5 bg-background p-5 no-underline transition-colors hover:bg-secondary sm:grid-cols-[4rem_1fr_auto] sm:items-center sm:p-7"
-                href={`/cookbook/${data.slug}/`}
-              >
-                <span class="font-mono text-sm font-bold text-muted">
-                  {String(data.order).padStart(2, '0')}
-                </span>
-                <span>
-                  <span class="text-xl font-semibold tracking-tight sm:text-2xl">{data.title}</span>
-                  <span class="mt-2 block max-w-3xl text-sm leading-6 text-muted">
-                    {data.description}
-                  </span>
-                  <span class="mt-3 block font-mono text-xs font-bold text-muted uppercase">
-                    {data.category} · {calculateReadingTime(body ?? '')} min read
-                  </span>
-                </span>
-                <ArrowRight
-                  class="size-5 text-muted transition-transform group-hover:translate-x-1 motion-reduce:transform-none"
-                  aria-hidden="true"
-                />
-              </a>
-            </li>
-          ))
-        }
+        {featuredRecipes.map((recipe) => renderRecipeCard(recipe))}
       </ol>
+
+      {
+        longformRecipes.length > 0 && (
+          <>
+            <h2 class="mt-12 mb-3 text-2xl font-semibold tracking-tight">Complete collection</h2>
+            <ol class="grid gap-px overflow-hidden rounded-xl border border-border bg-border">
+              {longformRecipes.map((recipe) => renderRecipeCard(recipe))}
+            </ol>
+          </>
+        )
+      }
     </div>
   </section>
 </ContentLayout>
