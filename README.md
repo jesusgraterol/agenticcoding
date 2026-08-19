@@ -56,6 +56,8 @@ The two downloadable resources have one canonical Markdown source each:
 
 Rendered code blocks and copy controls use the same normalized text as the raw routes, preventing the displayed, copied, and downloaded versions from drifting apart. The root repository `AGENTS.md`, when present in a development environment, is a protected coding-instruction file and is not the public template source.
 
+The root `/llms.txt` endpoint is generated from the site configuration and published cookbook collection. It gives coding agents a concise project summary, direct links to the raw instruction resources, the complete ordered recipe index, and optional project context. Every public HTML page identifies it through `rel="describedby"`; `/start/` and `/refine/` also identify their canonical raw documents through `rel="alternate"`.
+
 Cookbook recipes live in `src/content/cookbook/`. To add one:
 
 1. Create a kebab-case Markdown file in that directory.
@@ -79,7 +81,7 @@ Cookbook recipes live in `src/content/cookbook/`. To add one:
 │   ├── layouts/             # shared document metadata, navigation, and content shells
 │   ├── pages/               # static routes and raw text endpoints
 │   ├── styles/              # Tailwind entry point and branded semantic design tokens
-│   └── utilities/           # resource, recipe, and theme behavior with focused tests
+│   └── utilities/           # resource, recipe, LLM index, SEO, and theme behavior with focused tests
 ├── vitest/                  # test-category discovery configuration
 ├── astro.config.ts          # static site, sitemap, syntax highlighting, and Tailwind setup
 ├── playwright.config.ts     # production-preview browser verification
@@ -105,7 +107,7 @@ The quality pipeline checks:
 - application-owned text normalization, reading-time, sorting, and theme preference behavior
 - TypeScript and Astro diagnostics
 - ESLint and Prettier conformance
-- production generation, sitemap output, internal links, SEO metadata, structured data, and raw resource fidelity
+- production generation, sitemap output, internal links, LLM discovery, SEO metadata, structured data, and raw resource fidelity
 - browser accessibility, navigation progress, copy controls, raw routes, theme persistence, reduced motion, keyboard navigation, and layouts down to 320 pixels
 
 Run the complete pipeline before publishing:

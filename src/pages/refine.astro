@@ -10,13 +10,22 @@ import { loadResource } from '../utilities/resource-text/index.ts';
 const resourceId = RESOURCE_IDS.RefinementPrompt;
 const { text } = await loadResource(resourceId);
 const resourceConfig = RESOURCE_CONFIG[resourceId];
+const updatedAt = new Date(`${resourceConfig.updatedAt}T00:00:00.000Z`);
 ---
 
 <ContentLayout
+  alternateDocument={{
+    href: resourceConfig.rawPath,
+    mediaType: 'text/plain',
+    title: resourceConfig.fileName,
+  }}
+  articleSection="Coding instructions"
   canonicalPath="/refine/"
   description="One canonical prompt for strengthening existing coding-agent instructions without erasing useful project guidance."
   eyebrow="Refine existing instructions"
+  structuredDataType="article"
   title="Preserve what the repository already knows."
+  updatedAt={updatedAt}
 >
   <div
     slot="metadata"

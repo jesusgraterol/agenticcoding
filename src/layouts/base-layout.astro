@@ -5,44 +5,52 @@ import NavigationProgress from '../components/navigation-progress/navigation-pro
 import SiteFooter from '../components/site-footer/site-footer.astro';
 import SiteNavigation from '../components/site-navigation/site-navigation.astro';
 import { SITE_CONFIG } from '../site.config.ts';
+import {
+  buildStructuredData,
+  type IAlternateDocument,
+  type IStructuredDataType,
+} from '../utilities/seo/index.ts';
 import { THEME_STORAGE_KEY } from '../utilities/theme-preference/index.ts';
 import '../styles/global.css';
 
 interface Props {
+  alternateDocument?: IAlternateDocument | undefined;
+  articleSection?: string | undefined;
   canonicalPath: string;
   description: string;
   title: string;
   noIndex?: boolean | undefined;
-  structuredDataType?: 'website' | 'article' | undefined;
+  structuredDataTitle?: string | undefined;
+  structuredDataType?: IStructuredDataType | undefined;
   updatedAt?: Date | undefined;
 }
 
 const {
+  alternateDocument,
+  articleSection,
   canonicalPath,
   description,
   noIndex = false,
   structuredDataType,
   title,
+  structuredDataTitle = title,
   updatedAt,
 } = Astro.props;
 const canonicalUrl = new URL(canonicalPath, SITE_CONFIG.url).toString();
-const openGraphImageUrl = new URL(SITE_CONFIG.defaultOpenGraphImage, SITE_CONFIG.url).toString();
+const alternateDocumentUrl = alternateDocument
+  ? new URL(alternateDocument.href, SITE_CONFIG.url).toString()
+  : undefined;
+const llmsTextUrl = new URL('/llms.txt', SITE_CONFIG.url).toString();
+const openGraphImageUrl = new URL(SITE_CONFIG.openGraph.image, SITE_CONFIG.url).toString();
 const structuredData = structuredDataType
-  ? {
-      '@context': 'https://schema.org',
-      '@type': structuredDataType === 'website' ? 'WebSite' : 'Article',
-      author: {
-        '@type': 'Person',
-        name: SITE_CONFIG.author.name,
-        url: SITE_CONFIG.author.url,
-      },
-      dateModified: updatedAt?.toISOString(),
+  ? buildStructuredData({
+      articleSection,
+      canonicalUrl,
       description,
-      headline: title,
-      image: openGraphImageUrl,
-      name: structuredDataType === 'website' ? SITE_CONFIG.name : undefined,
-      url: canonicalUrl,
-    }
+      title: structuredDataTitle,
+      type: structuredDataType,
+      updatedAt,
+    })
   : undefined;
 const serializedStructuredData = structuredData
   ? JSON.stringify(structuredData).replaceAll('<', '\\u003c')
@@ -66,6 +74,10 @@ const serializedStructuredData = structuredData
       content={description}
     />
     <meta
+      name="author"
+      content={SITE_CONFIG.author.name}
+    />
+    <meta
       name="theme-color"
       content={SITE_CONFIG.themeColors.light}
       media="(prefers-color-scheme: light)"
@@ -75,18 +87,28 @@ const serializedStructuredData = structuredData
       content={SITE_CONFIG.themeColors.dark}
       media="(prefers-color-scheme: dark)"
     />
-    {
-      noIndex && (
-        <meta
-          name="robots"
-          content="noindex, follow"
-        />
-      )
-    }
+    <meta
+      name="robots"
+      content={noIndex ? 'noindex, follow' : 'index, follow, max-image-preview:large'}
+    />
     <link
       rel="canonical"
       href={canonicalUrl}
     />
+    <link
+      rel="describedby"
+      href={llmsTextUrl}
+    />
+    {
+      alternateDocument && alternateDocumentUrl && (
+        <link
+          rel="alternate"
+          type={alternateDocument.mediaType}
+          title={alternateDocument.title}
+          href={alternateDocumentUrl}
+        />
+      )
+    }
     <link
       rel="icon"
       type="image/svg+xml"
@@ -96,6 +118,10 @@ const serializedStructuredData = structuredData
     <meta
       property="og:site_name"
       content={SITE_CONFIG.name}
+    />
+    <meta
+      property="og:locale"
+      content={SITE_CONFIG.openGraph.locale}
     />
     <meta
       property="og:type"
@@ -118,17 +144,41 @@ const serializedStructuredData = structuredData
       content={openGraphImageUrl}
     />
     <meta
+      property="og:image:secure_url"
+      content={openGraphImageUrl}
+    />
+    <meta
+      property="og:image:type"
+      content={SITE_CONFIG.openGraph.imageType}
+    />
+    <meta
       property="og:image:width"
-      content="1200"
+      content={String(SITE_CONFIG.openGraph.width)}
     />
     <meta
       property="og:image:height"
-      content="630"
+      content={String(SITE_CONFIG.openGraph.height)}
     />
     <meta
       property="og:image:alt"
-      content="Agentic Coding: engineering with coding agents"
+      content={SITE_CONFIG.openGraph.imageAlt}
     />
+    {
+      structuredDataType === 'article' && (
+        <meta
+          property="article:author"
+          content={SITE_CONFIG.author.url}
+        />
+      )
+    }
+    {
+      structuredDataType === 'article' && articleSection && (
+        <meta
+          property="article:section"
+          content={articleSection}
+        />
+      )
+    }
     {
       updatedAt && (
         <meta
@@ -156,7 +206,7 @@ const serializedStructuredData = structuredData
     />
     <meta
       name="twitter:image:alt"
-      content="Agentic Coding: engineering with coding agents"
+      content={SITE_CONFIG.openGraph.imageAlt}
     />
 
     <title>{title}</title>

@@ -38,7 +38,7 @@ export const SITE_CONFIG = {
   },
   defaultDescription:
     'A disciplined way to plan, build, verify, and review software with coding agents without surrendering context, control, or quality.',
-  defaultOpenGraphImage: '/og/agentic-coding.png',
+  language: 'en',
   license: 'MIT',
   moldeaUrl: 'https://moldea.ai/',
   name: 'Agentic Coding',
@@ -48,6 +48,14 @@ export const SITE_CONFIG = {
     { href: '/refine/', label: 'Refine' },
     { href: '/cookbook/', label: 'Cookbook' },
   ],
+  openGraph: {
+    height: 630,
+    image: '/og/agentic-coding.png',
+    imageAlt: 'Agentic Coding: engineering with coding agents',
+    imageType: 'image/png',
+    locale: 'en_US',
+    width: 1200,
+  },
   repositoryUrl: 'https://github.com/jesusgraterol/agenticcoding',
   themeColors: {
     dark: '#1e2939',

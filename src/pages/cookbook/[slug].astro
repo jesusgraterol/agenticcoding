@@ -35,9 +35,11 @@ const formattedDate = new Intl.DateTimeFormat('en', {
 ---
 
 <ContentLayout
+  articleSection={`Cookbook: ${recipe.data.category}`}
   canonicalPath={`/cookbook/${recipe.data.slug}/`}
   description={recipe.data.description}
   eyebrow={`Cookbook · ${recipe.data.category}`}
+  structuredDataType="article"
   title={recipe.data.title}
   updatedAt={recipe.data.updatedAt}
 >

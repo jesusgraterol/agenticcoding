@@ -1681,6 +1681,7 @@ Every public HTML route MUST include:
 The project MUST include:
 
 - `robots.txt`
+- a root `llms.txt` generated from canonical project content
 - generated sitemap
 - descriptive favicon
 - a default 1200×630 Open Graph image
@@ -1689,6 +1690,8 @@ The project MUST include:
 Cookbook recipes should use article-style structured metadata when it can be added accurately.
 
 The homepage should use website-level structured metadata.
+
+The cookbook index should use collection-page structured metadata. Public HTML pages should identify `/llms.txt` with `rel="describedby"`, and pages with canonical raw resources should expose them with `rel="alternate"` and an accurate media type.
 
 Do not add fabricated ratings, dates, organizations, or author profiles to structured data.
 

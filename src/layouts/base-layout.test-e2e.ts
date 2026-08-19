@@ -87,10 +87,24 @@ test.describe('production website', () => {
         'href',
         new RegExp(`${route.replaceAll('/', '\\/')}$`),
       );
+      await expect(page.locator('link[rel="describedby"]')).toHaveAttribute(
+        'href',
+        'https://agenticcoding.jesusgraterol.dev/llms.txt',
+      );
+      await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+        'content',
+        'index, follow, max-image-preview:large',
+      );
+      await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute('content', 'en_US');
+      await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
+        'content',
+        new RegExp(`${route.replaceAll('/', '\\/')}$`),
+      );
       await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
         'content',
         'https://agenticcoding.jesusgraterol.dev/og/agentic-coding.png',
       );
+      await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(1);
     });
   }
 
@@ -222,6 +236,35 @@ test.describe('production website', () => {
       expect(rawResponse.headers()['content-type']).toContain(resource.mediaType);
       expect(await rawResponse.text()).toBe(renderedText);
     }
+  });
+
+  test('publishes the LLM index and raw-resource discovery links', async ({ page, request }) => {
+    const llmsResponse = await request.get('/llms.txt');
+    const llmsText = await llmsResponse.text();
+
+    expect(llmsResponse.status()).toBe(200);
+    expect(llmsResponse.headers()['content-type']).toContain('text/plain');
+    expect(llmsText).toMatch(/^# Agentic Coding\n\n> .+\n/u);
+    expect(llmsText).toContain(
+      '[AGENTS.md foundation](https://agenticcoding.jesusgraterol.dev/AGENTS.md)',
+    );
+    expect(llmsText).toContain(
+      '[Plan a feature](https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/)',
+    );
+
+    await page.goto('/start/');
+    await expect(page.locator('link[rel="alternate"]')).toHaveAttribute(
+      'href',
+      'https://agenticcoding.jesusgraterol.dev/AGENTS.md',
+    );
+    await expect(page.locator('link[rel="alternate"]')).toHaveAttribute('type', 'text/markdown');
+
+    await page.goto('/refine/');
+    await expect(page.locator('link[rel="alternate"]')).toHaveAttribute(
+      'href',
+      'https://agenticcoding.jesusgraterol.dev/refine.txt',
+    );
+    await expect(page.locator('link[rel="alternate"]')).toHaveAttribute('type', 'text/plain');
   });
 
   test('copy controls write the exact visible source and report success', async ({

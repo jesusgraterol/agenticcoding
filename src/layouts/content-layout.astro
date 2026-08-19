@@ -1,22 +1,39 @@
 ---
+import type { IAlternateDocument, IStructuredDataType } from '../utilities/seo/index.ts';
+
 import BaseLayout from './base-layout.astro';
 
 interface Props {
+  alternateDocument?: IAlternateDocument | undefined;
+  articleSection?: string | undefined;
   canonicalPath: string;
   description: string;
   eyebrow: string;
+  structuredDataType: Exclude<IStructuredDataType, 'website'>;
   title: string;
   updatedAt?: Date | undefined;
 }
 
-const { canonicalPath, description, eyebrow, title, updatedAt } = Astro.props;
+const {
+  alternateDocument,
+  articleSection,
+  canonicalPath,
+  description,
+  eyebrow,
+  structuredDataType,
+  title,
+  updatedAt,
+} = Astro.props;
 ---
 
 <BaseLayout
+  alternateDocument={alternateDocument}
+  articleSection={articleSection}
   canonicalPath={canonicalPath}
   description={description}
   title={`${title} | Agentic Coding`}
-  structuredDataType={updatedAt ? 'article' : undefined}
+  structuredDataTitle={title}
+  structuredDataType={structuredDataType}
   updatedAt={updatedAt}
 >
   <header class="border-b border-border py-16 sm:py-20">

@@ -7,13 +7,22 @@ import { loadResource } from '../utilities/resource-text/index.ts';
 const resourceId = RESOURCE_IDS.AgentsFoundation;
 const { text } = await loadResource(resourceId);
 const resourceConfig = RESOURCE_CONFIG[resourceId];
+const updatedAt = new Date(`${resourceConfig.updatedAt}T00:00:00.000Z`);
 ---
 
 <ContentLayout
+  alternateDocument={{
+    href: resourceConfig.rawPath,
+    mediaType: 'text/markdown',
+    title: resourceConfig.fileName,
+  }}
+  articleSection="Coding instructions"
   canonicalPath="/start/"
   description="A neutral, ready-to-use engineering foundation for coding agents in new or existing repositories."
   eyebrow="Start with the foundation"
+  structuredDataType="article"
   title="Give the agent a reliable way to work."
+  updatedAt={updatedAt}
 >
   <div
     slot="metadata"

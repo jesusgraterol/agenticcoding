@@ -54,4 +54,29 @@ describe('static build artifact', () => {
       expect(sitemap).toContain(`/cookbook/${slug}/`);
     }
   });
+
+  test('publishes an LLM index synchronized with every cookbook recipe', async () => {
+    const llmsText = await readFile(resolve(repositoryRoot, 'dist/llms.txt'), 'utf8');
+    const expectedSlugs = [
+      'plan-a-feature',
+      'challenge-a-plan',
+      'break-down-a-plan',
+      'execute-one-milestone',
+      'review-a-change',
+      'investigate-a-failing-test',
+      'control-scope',
+      'refine-coding-instructions',
+    ];
+
+    expect(llmsText).toContain(
+      '[AGENTS.md foundation](https://agenticcoding.jesusgraterol.dev/AGENTS.md)',
+    );
+    expect(llmsText).toContain(
+      '[Instruction refinement prompt](https://agenticcoding.jesusgraterol.dev/refine.txt)',
+    );
+
+    for (const slug of expectedSlugs) {
+      expect(llmsText).toContain(`/cookbook/${slug}/`);
+    }
+  });
 });
