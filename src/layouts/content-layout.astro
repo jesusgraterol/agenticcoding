@@ -19,15 +19,15 @@ const { canonicalPath, description, eyebrow, title, updatedAt } = Astro.props;
   structuredDataType={updatedAt ? 'article' : undefined}
   updatedAt={updatedAt}
 >
-  <header class="border-b border-border py-16 sm:py-24">
-    <div class="prose-shell">
+  <header class="border-b border-border py-16 sm:py-20">
+    <div class="prose-shell text-center">
       <p class="eyebrow">{eyebrow}</p>
       <h1
-        class="mt-4 max-w-4xl text-4xl leading-[1.02] font-extrabold tracking-[-0.04em] text-balance sm:text-6xl"
+        class="mx-auto mt-4 max-w-4xl text-[clamp(2.75rem,6vw,4rem)] leading-[1.02] font-semibold tracking-[-0.045em] text-balance"
       >
         {title}
       </h1>
-      <p class="lede mt-6">{description}</p>
+      <p class="lede mx-auto mt-6">{description}</p>
       <slot name="metadata" />
     </div>
   </header>

@@ -43,7 +43,7 @@ const formattedDate = new Intl.DateTimeFormat('en', {
 >
   <div
     slot="metadata"
-    class="mt-7 flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs font-bold text-muted"
+    class="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-2 font-mono text-xs font-bold text-muted"
   >
     <span>{calculateReadingTime(recipe.body ?? '')} min read</span>
     <span>Updated {formattedDate}</span>
@@ -52,11 +52,11 @@ const formattedDate = new Intl.DateTimeFormat('en', {
   <article class="py-12 sm:py-16">
     <div class="prose-shell">
       <section
-        class="mb-12 overflow-hidden rounded-xl border border-border bg-surface shadow-surface"
+        class="mb-12 overflow-hidden rounded-xl border border-border bg-surface"
         aria-labelledby="conversation-starter-title"
       >
         <header
-          class="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3 sm:px-5"
+          class="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-secondary/45 px-4 py-3 sm:px-5"
         >
           <h2
             id="conversation-starter-title"
@@ -87,7 +87,7 @@ const formattedDate = new Intl.DateTimeFormat('en', {
           >
             <h2
               id="related-recipes-title"
-              class="text-2xl font-extrabold tracking-tight"
+              class="text-2xl font-semibold tracking-tight"
             >
               Related recipes
             </h2>

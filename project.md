@@ -1,10 +1,15 @@
-# Agentic Coding — Project Specification
+# Agentic Coding: Project Specification
 
-**Status:** Approved for implementation  
-**Version:** 1.0.0  
-**Last updated:** 2026-08-15  
-**Owner:** Jesus Graterol  
-**Canonical domain:** `https://agenticcoding.jesusgraterol.dev`  
+**Status:** Approved for implementation
+
+**Version:** 1.1.0
+
+**Last updated:** 2026-08-19
+
+**Owner:** Jesus Graterol
+
+**Canonical domain:** `https://agenticcoding.jesusgraterol.dev`
+
 **Canonical filename:** `project.md`
 
 ## 1. Document purpose and authority
@@ -304,6 +309,7 @@ The first production release MUST:
 14. be beautiful, modern, responsive, accessible, fast, and shareable
 15. support Jesus Graterol's professional reputation in an understated way
 16. remain free and usable without an account, backend, or AI API
+17. ground the discipline in an understated example from the real project work behind it
 
 ## 9. Non-goals
 
@@ -646,7 +652,21 @@ It should explain that agents can:
 
 The solution presented by the site is not less capable agents. It is stronger context, boundaries, transparency, tests, review, and developer control.
 
-### 13.12 Practical resources
+### 13.12 Applied in practice
+
+The homepage MUST identify `moldea` as the real project work through which Agentic Coding was shaped.
+
+The section must:
+
+- keep the brand name lowercase
+- use the approved light- and dark-theme Moldea lockups without modifying their artwork
+- connect the project to durable context, instructions as production assets, and deterministic verification
+- link to `https://moldea.ai/`
+- remain an understated evidence section rather than a product advertisement
+
+The section MUST NOT claim customer adoption, general availability, or outcomes that the current Moldea project does not establish. It must not invent a Moldea tagline or use an under-construction product screenshot as evidence.
+
+### 13.13 Practical resources
 
 The homepage MUST conclude the main narrative with three clear destinations:
 
@@ -654,7 +674,7 @@ The homepage MUST conclude the main narrative with three clear destinations:
 - **Refine existing instructions** → `/refine`
 - **Practice the workflow** → `/cookbook`
 
-### 13.13 Author section and footer
+### 13.14 Author section and footer
 
 The footer MUST include:
 
@@ -900,7 +920,7 @@ The human-readable `/refine` page and raw `/refine.txt` endpoint MUST derive fro
 
 The prompt MUST instruct the coding agent to follow this workflow.
 
-#### Stage 1 — Inspect before proposing
+#### Stage 1: Inspect before proposing
 
 Inspect:
 
@@ -924,7 +944,7 @@ Summarize:
 - potentially obsolete guidance
 - decisions that require developer input
 
-#### Stage 2 — Collaborate interactively
+#### Stage 2: Collaborate interactively
 
 Ask one focused question at a time only when the answer materially affects the result.
 
@@ -945,7 +965,7 @@ Questions may address:
 
 Do not edit while material decisions remain unresolved.
 
-#### Stage 3 — Present a preservation-first proposal
+#### Stage 3: Present a preservation-first proposal
 
 Organize the proposal as:
 
@@ -965,7 +985,7 @@ For every proposed change:
 
 Removal or consolidation requires especially clear justification.
 
-#### Stage 4 — Obtain explicit approval
+#### Stage 4: Obtain explicit approval
 
 The agent must stop before editing and request approval for the proposed change set.
 
@@ -978,7 +998,7 @@ The following do not count as approval:
 
 The developer may approve, reject, or amend individual changes.
 
-#### Stage 5 — Apply minimal edits
+#### Stage 5: Apply minimal edits
 
 After approval:
 
@@ -993,7 +1013,7 @@ After approval:
 - do not remove a meaningful rule merely to shorten the file
 - do not add conflicting parallel rules
 
-#### Stage 6 — Audit the result
+#### Stage 6: Audit the result
 
 After editing, report:
 
@@ -1855,6 +1875,7 @@ The first production release is complete only when all of the following are true
 - wide context and narrow authority are clearly represented
 - the quality-over-speed thesis is present
 - the caution against free rein is present
+- the Moldea field-application section is factual and understated
 - the ready-to-use foundation is complete
 - the refinement prompt is complete
 - all eight initial cookbook recipes are published

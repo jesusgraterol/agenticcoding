@@ -126,7 +126,7 @@ const serializedStructuredData = structuredData
     />
     <meta
       property="og:image:alt"
-      content="Agentic Coding — engineering with coding agents"
+      content="Agentic Coding: engineering with coding agents"
     />
     {
       updatedAt && (
@@ -155,7 +155,7 @@ const serializedStructuredData = structuredData
     />
     <meta
       name="twitter:image:alt"
-      content="Agentic Coding — engineering with coding agents"
+      content="Agentic Coding: engineering with coding agents"
     />
 
     <title>{title}</title>
@@ -204,6 +204,7 @@ const serializedStructuredData = structuredData
                 resolvedTheme === 'dark' ? darkThemeColor : lightThemeColor,
               ),
             );
+          window.dispatchEvent(new Event('agentic-theme-applied'));
         };
 
         applyTheme();

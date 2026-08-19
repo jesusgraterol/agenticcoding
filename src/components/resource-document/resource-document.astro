@@ -15,9 +15,9 @@ interface Props {
 const { allowDownload = false, copyLabel, fileName, rawPath, sourceId, text } = Astro.props;
 ---
 
-<section class="overflow-hidden rounded-xl border border-border bg-surface shadow-surface">
+<section class="overflow-hidden rounded-xl border border-border bg-surface">
   <header
-    class="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3 sm:px-5"
+    class="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-secondary/45 px-4 py-3 sm:px-5"
   >
     <div class="flex items-center gap-2 font-mono text-sm font-bold">
       <span

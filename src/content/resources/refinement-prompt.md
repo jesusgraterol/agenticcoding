@@ -10,7 +10,7 @@ This is an inspection-and-proposal request first. Do not edit any file until I e
 
 Follow this workflow.
 
-## Stage 1 — Inspect before proposing
+## Stage 1: Inspect before proposing
 
 Inspect the current instruction system and the repository evidence needed to understand it. Include:
 
@@ -36,7 +36,7 @@ Summarize:
 
 Base every conclusion on the current repository. Distinguish evidence from inference.
 
-## Stage 2 — Collaborate interactively
+## Stage 2: Collaborate interactively
 
 Ask one focused question at a time only when the answer would materially change the proposal.
 
@@ -54,7 +54,7 @@ Questions may address:
 
 Do not edit while a material decision remains unresolved.
 
-## Stage 3 — Present a preservation-first proposal
+## Stage 3: Present a preservation-first proposal
 
 Organize the proposed changes under these headings:
 
@@ -89,7 +89,7 @@ For every proposed material change:
 
 Present one coherent final proposal. Do not include optional cleanup or broad rewriting that is not required.
 
-## Stage 4 — Obtain explicit approval
+## Stage 4: Obtain explicit approval
 
 Stop after the proposal and ask me to approve, reject, or amend the change set.
 
@@ -103,7 +103,7 @@ The following do not count as approval to edit:
 
 Do not modify instruction files until I explicitly approve the proposed edits.
 
-## Stage 5 — Apply minimal approved edits
+## Stage 5: Apply minimal approved edits
 
 After approval:
 
@@ -119,7 +119,7 @@ After approval:
 
 If new repository evidence would materially change the approved proposal, stop and request approval for the revised change before deviating.
 
-## Stage 6 — Audit the result
+## Stage 6: Audit the result
 
 After editing, compare the final instructions against the original files and the approved proposal.
 

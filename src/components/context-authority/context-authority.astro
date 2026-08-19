@@ -13,63 +13,102 @@ const paths = [
   { depth: 2, mode: 'inspect', path: 'organization.model.ts' },
   { depth: 1, mode: 'inspect', path: 'shared/crypto/' },
 ] as const;
+
+const reliabilityStages = [
+  'Context',
+  'Constraints',
+  'Plan',
+  'Breakdown',
+  'Execution',
+  'Tests',
+  'Review',
+  'Correction',
+] as const;
 ---
 
-<div class="mt-12 grid overflow-hidden rounded-xl border border-border lg:grid-cols-[1fr_22rem]">
-  <div class="bg-code p-5 font-mono text-sm sm:p-8">
-    <div class="mb-5 flex flex-wrap gap-4 border-b border-border pb-4 text-xs font-bold">
-      <span class="inline-flex items-center gap-2"
-        ><Eye
-          class="size-4"
-          aria-hidden="true"
-        /> Inspect to understand</span
+<figure class="mt-12 overflow-hidden rounded-xl border border-border bg-surface">
+  <figcaption
+    class="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4 font-mono text-xs text-muted sm:px-6"
+  >
+    <span>scope-map</span>
+    <span>inspect widely, edit narrowly</span>
+  </figcaption>
+  <div class="grid lg:grid-cols-[1fr_24rem]">
+    <div class="bg-code p-5 font-mono text-sm sm:p-8">
+      <div class="mb-5 flex flex-wrap gap-4 border-b border-border pb-4 text-xs font-bold">
+        <span class="inline-flex items-center gap-2"
+          ><Eye
+            class="size-4"
+            aria-hidden="true"
+          /> Inspect to understand</span
+        >
+        <span class="inline-flex items-center gap-2 text-accent"
+          ><PencilLine
+            class="size-4"
+            aria-hidden="true"
+          /> Authorized to edit</span
+        >
+      </div>
+      <ul
+        class="grid gap-1.5"
+        aria-label="Example repository paths and authority"
       >
-      <span class="inline-flex items-center gap-2 text-accent"
-        ><PencilLine
-          class="size-4"
-          aria-hidden="true"
-        /> Authorized to edit</span
-      >
+        {
+          paths.map(({ depth, mode, path }) => (
+            <li
+              class:list={[
+                'flex min-w-0 items-center gap-2 rounded px-2 py-1.5',
+                mode === 'edit' && 'bg-accent/12 font-bold text-accent dark:bg-primary/50',
+              ]}
+              style={`padding-left: ${depth * 1.25 + 0.5}rem`}
+            >
+              {mode === 'edit' ? (
+                <PencilLine
+                  class="size-3.5 shrink-0"
+                  aria-hidden="true"
+                />
+              ) : (
+                <Eye
+                  class="size-3.5 shrink-0 text-muted"
+                  aria-hidden="true"
+                />
+              )}
+              <span class="truncate">{path}</span>
+              <span class="sr-only">
+                : {mode === 'edit' ? 'authorized to edit' : 'inspect only'}
+              </span>
+            </li>
+          ))
+        }
+      </ul>
     </div>
-    <ul
-      class="grid gap-1.5"
-      aria-label="Example repository paths and authority"
+    <aside
+      class="border-t border-border bg-primary p-6 text-primary-foreground sm:p-8 lg:border-t-0 lg:border-l"
     >
-      {
-        paths.map(({ depth, mode, path }) => (
-          <li
-            class:list={[
-              'flex min-w-0 items-center gap-2 rounded px-2 py-1.5',
-              mode === 'edit' && 'bg-accent/12 font-bold text-accent dark:bg-primary/50',
-            ]}
-            style={`padding-left: ${depth * 1.25 + 0.5}rem`}
-          >
-            {mode === 'edit' ? (
-              <PencilLine
-                class="size-3.5 shrink-0"
-                aria-hidden="true"
-              />
-            ) : (
-              <Eye
-                class="size-3.5 shrink-0 text-muted"
-                aria-hidden="true"
-              />
-            )}
-            <span class="truncate">{path}</span>
-            <span class="sr-only">— {mode === 'edit' ? 'authorized to edit' : 'inspect only'}</span>
-          </li>
-        ))
-      }
-    </ul>
-  </div>
-  <aside class="bg-surface p-6 sm:p-8">
-    <p class="eyebrow">Requested task</p>
-    <p class="mt-3 text-xl leading-8 font-bold">Add organization-owned API-key rotation.</p>
-    <div class="mt-8 border-t border-border pt-6">
-      <p class="text-sm leading-6 text-muted">
+      <p class="font-mono text-xs text-white/50 uppercase">Requested task</p>
+      <p class="mt-3 text-xl leading-8 font-semibold">Add organization-owned API-key rotation.</p>
+      <p class="mt-5 text-sm leading-6 text-white/65">
         Authentication, organization ownership, and cryptography are dependencies worth
         understanding. Only the API-key path is a deliverable.
       </p>
-    </div>
-  </aside>
-</div>
+      <div class="mt-8 border-t border-white/15 pt-6">
+        <p class="font-mono text-xs text-white/50 uppercase">Reliability layers</p>
+        <ol class="mt-4 grid grid-cols-2 gap-px overflow-hidden rounded-lg bg-white/15">
+          {
+            reliabilityStages.map((stage, index) => (
+              <li class="bg-primary p-3 text-sm">
+                <span class="mr-2 font-mono text-xs text-accent-on-primary">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                {stage}
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </aside>
+  </div>
+  <p class="border-t border-border px-5 py-4 text-sm font-semibold sm:px-6">
+    A dependency is not automatically a deliverable. Capability still requires a reliable process.
+  </p>
+</figure>

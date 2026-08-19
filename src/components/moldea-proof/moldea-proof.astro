@@ -1,0 +1,89 @@
+---
+import { ArrowUpRight } from '@lucide/astro';
+
+import { SITE_CONFIG } from '../../site.config.ts';
+
+const evidenceItems = [
+  {
+    description:
+      'Project context, decisions, instructions, and relationships live beside the code they guide.',
+    title: 'Context in Git',
+  },
+  {
+    description:
+      'Reusable instruction systems are structured, versioned, and kept visible to the team.',
+    title: 'Instructions as production assets',
+  },
+  {
+    description:
+      'Repository tooling and review make behavioral alignment inspectable instead of assumed.',
+    title: 'Deterministic verification',
+  },
+] as const;
+---
+
+<div
+  class="mt-12 overflow-hidden rounded-xl border border-border bg-surface lg:grid lg:grid-cols-2"
+>
+  <div class="flex flex-col border-b border-border p-6 sm:p-8 lg:border-r lg:border-b-0">
+    <div class="flex items-center justify-between gap-4 font-mono text-xs text-muted">
+      <span>field-application/01</span>
+      <span>moldea.ai</span>
+    </div>
+    <div class="flex flex-1 flex-col justify-center py-12 sm:py-16">
+      <img
+        class="h-auto w-52 max-w-full dark:hidden"
+        src="/moldea/logo-light.png"
+        width="942"
+        height="210"
+        loading="lazy"
+        decoding="async"
+        alt=""
+        data-moldea-logo="light"
+      />
+      <img
+        class="hidden h-auto w-52 max-w-full dark:block"
+        src="/moldea/logo-dark.png"
+        width="942"
+        height="210"
+        loading="lazy"
+        decoding="async"
+        alt=""
+        data-moldea-logo="dark"
+      />
+      <p class="mt-8 max-w-md text-base leading-7 text-muted">
+        A Git-native platform for structuring project context, building complete agent instructions,
+        and keeping the resulting system aligned with code.
+      </p>
+    </div>
+    <a
+      class="inline-flex w-fit items-center gap-2 text-sm font-semibold underline-offset-4 hover:underline"
+      href={SITE_CONFIG.moldeaUrl}
+      target="_blank"
+      rel="noreferrer"
+    >
+      Explore moldea
+      <ArrowUpRight
+        class="size-4"
+        aria-hidden="true"
+      />
+    </a>
+  </div>
+  <ol class="grid gap-px bg-border">
+    {
+      evidenceItems.map(({ description, title }, index) => (
+        <li class="bg-background p-6 sm:p-8">
+          <div class="flex items-start gap-5">
+            <span class="font-mono text-xs font-bold text-accent">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <div>
+              <h3 class="text-lg font-semibold tracking-tight">{title}</h3>
+              <p class="mt-3 text-sm leading-6 text-muted">{description}</p>
+            </div>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+</div>

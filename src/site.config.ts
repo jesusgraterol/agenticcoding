@@ -18,7 +18,7 @@ export const RESOURCE_CONFIG = {
     fileName: 'refine.txt',
     rawPath: '/refine.txt',
     updatedAt: '2026-08-19',
-    version: '1.0.0',
+    version: '1.0.1',
   },
 } as const satisfies Record<
   IResourceId,
@@ -37,9 +37,10 @@ export const SITE_CONFIG = {
     url: 'https://jesusgraterol.dev/',
   },
   defaultDescription:
-    'A disciplined way to plan, build, verify, and review software with coding agents—without surrendering context, control, or quality.',
+    'A disciplined way to plan, build, verify, and review software with coding agents without surrendering context, control, or quality.',
   defaultOpenGraphImage: '/og/agentic-coding.png',
   license: 'MIT',
+  moldeaUrl: 'https://moldea.ai/',
   name: 'Agentic Coding',
   navigation: [
     { href: '/', label: 'Agentic Coding' },

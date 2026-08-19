@@ -1,0 +1,52 @@
+---
+const workItems = [
+  {
+    label: 'Intent',
+    owner: 'Developer',
+    text: 'Add organization-owned API-key rotation without creating a parallel credential system.',
+  },
+  {
+    label: 'Plan',
+    owner: 'Together',
+    text: 'Extend the existing credential boundary and preserve one rotation flow.',
+  },
+  {
+    label: 'Execute',
+    owner: 'Agent',
+    text: 'Implement the approved slice with ownership checks and focused tests.',
+  },
+  {
+    label: 'Evidence',
+    owner: 'Developer',
+    text: 'Review behavior, scope, and verification before accepting the change.',
+  },
+] as const;
+---
+
+<figure
+  class="mt-14 overflow-hidden rounded-xl border border-border bg-primary text-primary-foreground"
+>
+  <figcaption
+    class="flex flex-wrap items-center justify-between gap-3 border-b border-white/15 px-5 py-4 font-mono text-xs text-white/55 sm:px-6"
+  >
+    <span>change/organization-api-keys</span>
+    <span>controlled execution</span>
+  </figcaption>
+  <ol class="grid gap-px bg-white/15 md:grid-cols-2 lg:grid-cols-4">
+    {
+      workItems.map(({ label, owner, text }, index) => (
+        <li class="flex min-h-52 flex-col bg-primary p-5 sm:p-6">
+          <div class="flex items-center justify-between gap-4 font-mono text-xs">
+            <span class="text-white/55">{String(index + 1).padStart(2, '0')}</span>
+            <span class="text-accent-on-primary">{owner}</span>
+          </div>
+          <h2 class="mt-10 text-xl font-semibold tracking-tight">{label}</h2>
+          <p class="mt-3 text-sm leading-6 text-white/65">{text}</p>
+        </li>
+      ))
+    }
+  </ol>
+  <p class="border-t border-white/15 px-5 py-4 text-sm font-semibold sm:px-6">
+    Responsibility remains with the developer from intent through acceptance.
+  </p>
+</figure>

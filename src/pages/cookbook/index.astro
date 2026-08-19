@@ -15,7 +15,7 @@ const recipes = await loadPublishedRecipes();
 >
   <section class="section-space">
     <div class="page-shell">
-      <p class="lede mb-12">
+      <p class="lede mx-auto mb-12 text-center">
         Each recipe explains the situation, the tempting mistake, a reusable conversation starter,
         warning signs, and the developer judgment that cannot be delegated.
       </p>
@@ -31,9 +31,7 @@ const recipes = await loadPublishedRecipes();
                   {String(data.order).padStart(2, '0')}
                 </span>
                 <span>
-                  <span class="text-xl font-extrabold tracking-tight sm:text-2xl">
-                    {data.title}
-                  </span>
+                  <span class="text-xl font-semibold tracking-tight sm:text-2xl">{data.title}</span>
                   <span class="mt-2 block max-w-3xl text-sm leading-6 text-muted">
                     {data.description}
                   </span>

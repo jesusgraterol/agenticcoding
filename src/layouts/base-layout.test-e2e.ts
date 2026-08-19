@@ -9,6 +9,13 @@ const ACCESSIBILITY_ROUTES = [
   '/cookbook/plan-a-feature/',
 ] as const;
 
+const DARK_ACCESSIBILITY_ROUTES = [
+  '/',
+  '/start/',
+  '/refine/',
+  '/cookbook/plan-a-feature/',
+] as const;
+
 const REQUIRED_ROUTES = [
   '/',
   '/start/',
@@ -56,36 +63,70 @@ test.describe('production website', () => {
     });
   }
 
-  test('dark theme has no automatically detectable accessibility violations', async ({ page }) => {
-    await page.goto('/');
-    await page.getByLabel('Color theme').first().selectOption('dark');
+  for (const route of DARK_ACCESSIBILITY_ROUTES) {
+    test(`${route} has no automatically detectable dark-theme accessibility violations`, async ({
+      page,
+    }) => {
+      await page.goto(route);
+      await page.getByRole('button', { name: 'Use dark theme' }).first().click();
 
-    const results = await new AxeBuilder({ page }).analyze();
+      const results = await new AxeBuilder({ page }).analyze();
 
-    expect(results.violations).toStrictEqual([]);
-  });
+      expect(results.violations).toStrictEqual([]);
+    });
+  }
 
   test('homepage communicates the full operating model', async ({ page }) => {
     await page.goto('/');
 
     await expect(
-      page.getByRole('heading', { level: 1, name: 'More leverage. Same responsibility.' }),
+      page.getByRole('heading', {
+        level: 1,
+        name: 'A disciplined way to build software with coding agents.',
+      }),
     ).toBeVisible();
     await expect(
       page.getByRole('heading', { name: 'The difference is control, not line count.' }),
     ).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: 'Plan → Breakdown → Execute → Review' }),
+      page.getByRole('heading', { name: 'Plan together. Execute in bounded slices.' }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Clear systems earn wider delegation.' }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Wide context. Narrow authority.' }),
     ).toBeVisible();
     await expect(
       page.getByRole('heading', {
-        name: 'Capability is not a substitute for a clear engineering system.',
+        name: 'The first benefit is speed. The lasting benefit should be better software.',
       }),
     ).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: 'Demonstrate → Codify → Delegate → Verify' }),
+      page.getByRole('heading', { name: 'Built through real project work.' }),
     ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Give the work a stronger operating system.' }),
+    ).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Explore moldea' })).toHaveAttribute(
+      'href',
+      'https://moldea.ai/',
+    );
+    await expect(page.getByText('controlled execution', { exact: true })).toBeVisible();
+    await expect(page.getByText('repository-maturity.system', { exact: true })).toBeVisible();
+    await expect(page.getByText('scope-map', { exact: true })).toBeVisible();
   });
+
+  for (const viewportWidth of [320, 768, 1440] as const) {
+    test(`homepage has no horizontal overflow at ${viewportWidth} pixels`, async ({ page }) => {
+      await page.setViewportSize({ width: viewportWidth, height: 900 });
+      await page.goto('/');
+
+      expect(
+        await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+      ).toBe(true);
+    });
+  }
 
   test('raw resources exactly match their rendered copy sources', async ({ page, request }) => {
     for (const resource of [
@@ -152,17 +193,29 @@ test.describe('production website', () => {
   test('theme preference persists and resolves before reload completes', async ({ page }) => {
     await page.goto('/');
 
-    await page.getByLabel('Color theme').first().selectOption('dark');
+    const lightMoldeaLogo = page.locator('[data-moldea-logo="light"]');
+    const darkMoldeaLogo = page.locator('[data-moldea-logo="dark"]');
+
+    await expect(lightMoldeaLogo).toBeVisible();
+    await expect(darkMoldeaLogo).toBeHidden();
+
+    await page.getByRole('button', { name: 'Use dark theme' }).first().click();
     await expect(page.locator('html')).toHaveClass(/dark/);
     await expect(page.locator('html')).toHaveAttribute('data-theme-preference', 'dark');
+    await expect(page.getByRole('button', { name: 'Use light theme' }).first()).toBeVisible();
+    await expect(lightMoldeaLogo).toBeHidden();
+    await expect(darkMoldeaLogo).toBeVisible();
 
     await page.reload();
 
     await expect(page.locator('html')).toHaveClass(/dark/);
-    await expect(page.getByLabel('Color theme').first()).toHaveValue('dark');
+    await expect(page.getByRole('button', { name: 'Use light theme' }).first()).toBeVisible();
 
-    await page.getByLabel('Color theme').first().selectOption('light');
+    await page.getByRole('button', { name: 'Use light theme' }).first().click();
     await expect(page.locator('html')).not.toHaveClass(/dark/);
+    await expect(page.locator('html')).toHaveAttribute('data-theme-preference', 'light');
+    await expect(lightMoldeaLogo).toBeVisible();
+    await expect(darkMoldeaLogo).toBeHidden();
   });
 
   test('mobile navigation is keyboard accessible at 320 pixels without page overflow', async ({
@@ -171,12 +224,18 @@ test.describe('production website', () => {
     await page.setViewportSize({ width: 320, height: 720 });
     await page.goto('/');
 
-    const menu = page.getByText('Menu', { exact: true });
+    await expect(page.getByRole('link', { name: 'Agentic Coding home' })).toContainText(
+      'Agentic Coding',
+    );
+
+    const menu = page.getByLabel('Open navigation menu');
     await menu.focus();
     await page.keyboard.press('Enter');
 
-    await expect(page.getByRole('navigation', { name: 'Mobile navigation' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Start', exact: true })).toBeVisible();
+    const mobileNavigation = page.getByRole('navigation', { name: 'Mobile navigation' });
+
+    await expect(mobileNavigation).toBeVisible();
+    await expect(mobileNavigation.getByRole('link', { name: 'Start', exact: true })).toBeVisible();
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     ).toBe(true);

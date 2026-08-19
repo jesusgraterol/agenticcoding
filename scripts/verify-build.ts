@@ -13,6 +13,8 @@ const REQUIRED_BUILD_PATHS = [
   'refine/index.html',
   'cookbook/index.html',
   'favicon.svg',
+  'moldea/logo-dark.png',
+  'moldea/logo-light.png',
   'og/agentic-coding.png',
   'robots.txt',
   'sitemap-index.xml',

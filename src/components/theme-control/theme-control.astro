@@ -1,82 +1,66 @@
 ---
-import { Monitor, Moon, Sun } from '@lucide/astro';
+import { Moon, Sun } from '@lucide/astro';
 ---
 
-<label class="relative inline-flex items-center gap-2 text-sm font-semibold">
-  <span class="sr-only">Theme</span>
-  <span
-    class="pointer-events-none absolute left-2.5 flex items-center"
+<button
+  type="button"
+  class="inline-flex size-9 items-center justify-center rounded-full text-muted transition-colors hover:bg-secondary hover:text-foreground"
+  data-theme-control
+  aria-label="Toggle color theme"
+  title="Toggle color theme"
+>
+  <Moon
+    class="size-4 [[data-resolved-theme=dark]_&]:hidden"
     aria-hidden="true"
-  >
-    <Monitor
-      class="size-4 [[data-theme-preference=dark]_&]:hidden [[data-theme-preference=light]_&]:hidden"
-      data-theme-system-icon
-    />
-    <Moon
-      class="hidden size-4 [[data-theme-preference=dark]_&]:block"
-      data-theme-dark-icon
-    />
-    <Sun
-      class="hidden size-4 [[data-theme-preference=light]_&]:block"
-      data-theme-light-icon
-    />
-  </span>
-  <select
-    class="h-10 max-w-28 appearance-none rounded-md border border-border-strong bg-background py-1 pr-7 pl-8 text-sm font-semibold text-foreground"
-    data-theme-control
-    aria-label="Color theme"
-  >
-    <option value="system">System</option>
-    <option value="light">Light</option>
-    <option value="dark">Dark</option>
-  </select>
-  <span
-    class="pointer-events-none absolute right-2 text-xs text-muted"
+  />
+  <Sun
+    class="hidden size-4 [[data-resolved-theme=dark]_&]:block"
     aria-hidden="true"
-    >⌄</span
-  >
-</label>
+  />
+</button>
 
 <script>
-  import {
-    parseThemePreference,
-    THEME_STORAGE_KEY,
-  } from '../../utilities/theme-preference/index.ts';
+  import { THEME_STORAGE_KEY } from '../../utilities/theme-preference/index.ts';
+
+  const getResolvedTheme = (): 'light' | 'dark' =>
+    document.documentElement.dataset['resolvedTheme'] === 'dark' ? 'dark' : 'light';
+
+  const updateThemeControls = (): void => {
+    const label = getResolvedTheme() === 'dark' ? 'Use light theme' : 'Use dark theme';
+
+    document.querySelectorAll<HTMLButtonElement>('[data-theme-control]').forEach((control) => {
+      control.setAttribute('aria-label', label);
+      control.title = label;
+    });
+  };
 
   const setupThemeControls = (): void => {
-    let storedPreference = parseThemePreference(null);
-
-    try {
-      storedPreference = parseThemePreference(localStorage.getItem(THEME_STORAGE_KEY));
-    } catch {
-      // continue with session-only theming when browser storage is unavailable
-    }
-
-    document.querySelectorAll<HTMLSelectElement>('[data-theme-control]').forEach((control) => {
-      control.value = storedPreference;
-
+    document.querySelectorAll<HTMLButtonElement>('[data-theme-control]').forEach((control) => {
       if (control.dataset['initialized'] === 'true') {
         return;
       }
 
       control.dataset['initialized'] = 'true';
-      control.addEventListener('change', () => {
-        const preference = parseThemePreference(control.value);
+      control.addEventListener('click', () => {
+        const nextTheme = getResolvedTheme() === 'dark' ? 'light' : 'dark';
 
         try {
-          localStorage.setItem(THEME_STORAGE_KEY, preference);
+          localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
         } catch {
           // the current page still applies the preference without persistence
         }
 
         window.dispatchEvent(
           new CustomEvent('agentic-theme-change', {
-            detail: { preference },
+            detail: { preference: nextTheme },
           }),
         );
       });
     });
+
+    updateThemeControls();
   };
 
+  window.addEventListener('agentic-theme-applied', updateThemeControls);
   document.addEventListener('astro:page-load', setupThemeControls);
 </script>

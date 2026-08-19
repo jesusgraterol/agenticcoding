@@ -10,14 +10,14 @@ const isActivePath = (href: string): boolean =>
   href === '/' ? currentPath === '/' : currentPath.startsWith(href);
 ---
 
-<header class="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
+<header class="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-md">
   <div class="page-shell flex min-h-16 items-center justify-between gap-4">
     <a
       href="/"
       class="min-w-0 no-underline"
       aria-label="Agentic Coding home"
     >
-      <BrandLogo compact />
+      <BrandLogo />
     </a>
 
     <nav
@@ -25,12 +25,12 @@ const isActivePath = (href: string): boolean =>
       aria-label="Primary navigation"
     >
       {
-        SITE_CONFIG.navigation.slice(1).map(({ href, label }) => (
+        SITE_CONFIG.navigation.slice(2).map(({ href, label }) => (
           <a
             href={href}
             class:list={[
-              'rounded-md px-3 py-2 text-sm font-semibold text-muted no-underline hover:bg-secondary hover:text-foreground',
-              isActivePath(href) && 'bg-secondary text-foreground',
+              'rounded-full px-3 py-2 text-sm font-medium text-muted no-underline hover:text-foreground',
+              isActivePath(href) && 'text-foreground',
             ]}
             aria-current={isActivePath(href) ? 'page' : undefined}
           >
@@ -40,28 +40,35 @@ const isActivePath = (href: string): boolean =>
       }
       <a
         href={SITE_CONFIG.repositoryUrl}
-        class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-semibold text-muted no-underline hover:bg-secondary hover:text-foreground"
+        class="inline-flex size-9 items-center justify-center rounded-full text-muted no-underline hover:bg-secondary hover:text-foreground"
         target="_blank"
         rel="noreferrer"
+        aria-label="Source repository"
       >
         <GitBranch
           class="size-4"
           aria-hidden="true"
         />
-        Source
       </a>
       <ThemeControl />
+      <a
+        class="action-primary ml-1 !min-h-9"
+        href="/start/"
+        aria-current={isActivePath('/start/') ? 'page' : undefined}
+      >
+        Start
+      </a>
     </nav>
 
     <details class="group relative lg:hidden">
       <summary
-        class="flex min-h-11 list-none items-center gap-2 rounded-md border border-border-strong px-3 text-sm font-semibold marker:content-none"
+        class="flex size-10 list-none items-center justify-center rounded-full border border-border-strong marker:content-none"
+        aria-label="Open navigation menu"
       >
         <Menu
-          class="size-4"
+          class="size-5"
           aria-hidden="true"
         />
-        Menu
       </summary>
       <div
         class="absolute right-0 mt-2 w-[min(19rem,calc(100vw-2rem))] rounded-xl border border-border bg-surface p-3 shadow-raised"

@@ -3,20 +3,27 @@ import { SITE_CONFIG } from '../../site.config.ts';
 import BrandLogo from '../brand-logo/brand-logo.astro';
 ---
 
-<footer class="border-t border-border py-12">
-  <div class="page-shell grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
-    <div>
+<footer class="border-t border-border py-12 sm:py-16">
+  <div class="page-shell grid gap-10 sm:grid-cols-2 lg:grid-cols-[1fr_auto_auto]">
+    <div class="max-w-md">
       <BrandLogo />
-      <p class="mt-4 max-w-xl text-sm leading-6 text-muted">
+      <p class="mt-4 text-sm leading-6 text-muted">
         Built by <a
           class="underline underline-offset-4"
           href={SITE_CONFIG.author.url}
           >{SITE_CONFIG.author.name}</a
-        > using Agentic Coding. This project reflects how he believes professional software development
-        should evolve.
+        > using Agentic Coding. This project reflects how professional software development should evolve.
       </p>
     </div>
-    <div class="grid gap-2 text-sm text-muted md:text-right">
+    <nav
+      class="grid content-start gap-2 text-sm"
+      aria-label="Footer navigation"
+    >
+      <p class="mb-2 font-mono text-xs font-bold text-muted uppercase">Resources</p>
+      {SITE_CONFIG.navigation.slice(1).map(({ href, label }) => <a href={href}>{label}</a>)}
+    </nav>
+    <div class="grid content-start gap-2 text-sm text-muted lg:text-right">
+      <p class="mb-2 font-mono text-xs font-bold uppercase">Project</p>
       <a
         href={SITE_CONFIG.repositoryUrl}
         target="_blank"

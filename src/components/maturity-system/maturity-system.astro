@@ -1,0 +1,86 @@
+---
+const stages = [
+  {
+    name: 'Demonstrate',
+    text: 'Work closely, make decisions visible, and correct what does not fit.',
+  },
+  {
+    name: 'Codify',
+    text: 'Turn recurring decisions into durable project guidance and checks.',
+  },
+  {
+    name: 'Delegate',
+    text: 'Grant broader tasks as the surrounding system becomes dependable.',
+  },
+  {
+    name: 'Verify',
+    text: 'Use tests and review to improve both the change and the next cycle.',
+  },
+] as const;
+
+const artifacts = [
+  'Instructions',
+  'Architecture',
+  'Tests',
+  'Schemas',
+  'Documentation',
+  'Automation',
+] as const;
+
+const ambiguityCosts = [
+  'Missed contracts',
+  'Duplicate mechanisms',
+  'Inconsistent architecture',
+  'Adjacent work',
+  'Unclear stopping points',
+  'Misplaced solutions',
+] as const;
+---
+
+<figure class="mt-12 overflow-hidden rounded-xl border border-border bg-surface">
+  <figcaption
+    class="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4 font-mono text-xs text-muted sm:px-6"
+  >
+    <span>repository-maturity.system</span>
+    <span>repeat continuously</span>
+  </figcaption>
+  <ol class="grid gap-px bg-border md:grid-cols-2 lg:grid-cols-4">
+    {
+      stages.map(({ name, text }, index) => (
+        <li class="bg-background p-5 sm:p-6">
+          <span class="font-mono text-xs font-bold text-accent">
+            STEP {String(index + 1).padStart(2, '0')}
+          </span>
+          <h3 class="mt-6 text-xl font-semibold tracking-tight">{name}</h3>
+          <p class="mt-3 text-sm leading-6 text-muted">{text}</p>
+        </li>
+      ))
+    }
+  </ol>
+  <div class="grid border-t border-border lg:grid-cols-2">
+    <div class="p-5 sm:p-6 lg:border-r lg:border-border">
+      <p class="font-mono text-xs font-bold text-muted uppercase">What the project codifies</p>
+      <ul
+        class="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-3"
+      >
+        {
+          artifacts.map((artifact) => (
+            <li class="bg-background px-3 py-4 text-center text-sm font-semibold">{artifact}</li>
+          ))
+        }
+      </ul>
+    </div>
+    <div class="border-t border-border p-5 sm:p-6 lg:border-t-0">
+      <p class="font-mono text-xs font-bold text-muted uppercase">What ambiguity produces</p>
+      <ul class="mt-5 grid gap-x-5 gap-y-3 sm:grid-cols-2">
+        {
+          ambiguityCosts.map((cost) => (
+            <li class="flex items-center gap-2 text-sm text-muted before:size-1.5 before:shrink-0 before:rounded-full before:bg-chart-3 before:content-['']">
+              {cost}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</figure>

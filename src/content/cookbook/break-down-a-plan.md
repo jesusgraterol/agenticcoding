@@ -20,7 +20,7 @@ The implementation strategy is approved, but completing it in one change would b
 
 ## Common mistake
 
-Splitting work by file creation—types first, wiring later, tests last—leaves deliberately incomplete states and separates behavior from its correctness evidence.
+Splitting work by file creation, with types first, wiring later, and tests last, leaves deliberately incomplete states and separates behavior from its correctness evidence.
 
 ## Agentic approach
 

@@ -34,21 +34,19 @@ const codingAgents = [
 ---
 
 <section
-  class="border-y border-border py-12"
+  class="border-y border-border py-14 sm:py-16"
   aria-labelledby="coding-agent-strip-title"
 >
   <div class="page-shell">
-    <div class="mb-7 grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
-      <div>
-        <p class="eyebrow">Host-agnostic</p>
-        <h2
-          id="coding-agent-strip-title"
-          class="mt-2 text-2xl font-bold tracking-tight"
-        >
-          Use the coding agent already in your repository.
-        </h2>
-      </div>
-      <p class="max-w-md text-sm leading-6 text-muted">
+    <div class="mx-auto mb-8 max-w-2xl text-center">
+      <p class="eyebrow">Host-agnostic</p>
+      <h2
+        id="coding-agent-strip-title"
+        class="mt-3 text-2xl font-semibold tracking-tight"
+      >
+        Use the coding agent already in your repository.
+      </h2>
+      <p class="mx-auto mt-3 max-w-xl text-sm leading-6 text-muted">
         The prompt is portable. The engineering values matter more than the host.
       </p>
     </div>
@@ -57,7 +55,7 @@ const codingAgents = [
     >
       {
         codingAgents.map(({ company, height, name, path, width }) => (
-          <li class="flex min-w-0 flex-col items-center justify-center bg-background px-2 py-5 text-center">
+          <li class="flex min-w-0 flex-col items-center justify-center bg-background px-2 py-4 text-center">
             <img
               class:list={[
                 'size-9 object-contain',
@@ -70,8 +68,8 @@ const codingAgents = [
               loading="lazy"
               decoding="async"
             />
-            <span class="mt-3 text-sm font-bold">{name}</span>
-            <span class="mt-1 text-xs text-muted">{company}</span>
+            <span class="mt-3 text-sm font-semibold">{name}</span>
+            <span class="sr-only"> by {company}</span>
           </li>
         ))
       }

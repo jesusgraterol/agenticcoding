@@ -1,6 +1,6 @@
 # Agentic Coding
 
-[Agentic Coding](https://agenticcoding.jesusgraterol.dev) is a disciplined approach to planning, building, verifying, and reviewing software with coding agents—without surrendering context, control, or quality.
+[Agentic Coding](https://agenticcoding.jesusgraterol.dev) is a disciplined approach to planning, building, verifying, and reviewing software with coding agents without surrendering context, control, or quality.
 
 The website turns that approach into four practical resources:
 
@@ -9,7 +9,9 @@ The website turns that approach into four practical resources:
 - a preservation-first prompt for refining instructions that already contain useful project knowledge
 - a cookbook of reusable conversations for planning, execution, investigation, and review
 
-The site is statically generated with Astro and Tailwind CSS. It uses the same Ubuntu Sans typography and core color palette as the Moldea projects while establishing its own editorial, documentation-led visual language.
+The landing page also identifies [`moldea`](https://moldea.ai/) as the real project work through which these principles were developed and tested.
+
+The site is statically generated with Astro and Tailwind CSS. It uses the same Ubuntu Sans typography and core color palette as the Moldea projects while establishing a minimal technical product-documentation visual language.
 
 ## Local development
 
@@ -92,7 +94,7 @@ The `/docs` directory is reserved for essential, durable project concepts and pr
 
 The semantic color tokens in `src/styles/global.css` derive from the Moldea base palette and include accessible light and dark modes. The site uses the variable Ubuntu Sans package locally rather than loading a remote webfont.
 
-The logo is a code-mark SVG with a wordmark variant. The open-graph image is committed at `public/og/agentic-coding.png` so normal builds remain deterministic. After changing its template, regenerate it with `npm run assets:generate` and commit both the template and PNG.
+The Agentic Coding logo is a code-mark SVG with a wordmark variant. The paired Moldea lockups under `public/moldea/` are unmodified copies of the authoritative theme assets from the sibling Moldea app UI package. The open-graph image is committed at `public/og/agentic-coding.png` so normal builds remain deterministic. After changing its template, regenerate it with `npm run assets:generate` and commit both the template and PNG.
 
 Coding-agent marks are copied from the Moldea skill project. Their origin and use are recorded in `docs/asset-attribution.md`.
 

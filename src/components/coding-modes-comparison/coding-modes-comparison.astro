@@ -51,31 +51,37 @@ const comparisonRows = [
 ] as const;
 ---
 
-<div class="mt-12 overflow-hidden rounded-xl border border-border">
+<div class="mt-12 overflow-hidden rounded-xl border border-border bg-surface">
   <div
-    class="hidden grid-cols-[10rem_repeat(3,minmax(0,1fr))] bg-primary text-sm font-bold text-primary-foreground md:grid"
+    class="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4 font-mono text-xs text-muted sm:px-6"
+  >
+    <span>operating-model.matrix</span>
+    <span>control determines the mode</span>
+  </div>
+  <div
+    class="hidden grid-cols-[9rem_repeat(3,minmax(0,1fr))] border-b border-border bg-secondary/70 text-sm font-semibold md:grid"
   >
     <div class="p-4">Dimension</div>
-    <div class="border-l border-white/20 p-4">Manual coding</div>
-    <div class="border-l border-white/20 bg-accent p-4 text-accent-foreground">Agentic Coding</div>
-    <div class="border-l border-white/20 p-4">Vibe coding</div>
+    <div class="border-l border-border p-4">Manual coding</div>
+    <div class="border-l border-border bg-accent/10 p-4 text-accent">Agentic Coding</div>
+    <div class="border-l border-border p-4">Vibe coding</div>
   </div>
   <ul class="divide-y divide-border">
     {
       comparisonRows.map(({ agentic, category, manual, vibe }) => (
-        <li class="grid bg-background md:grid-cols-[10rem_repeat(3,minmax(0,1fr))]">
-          <h3 class="bg-secondary p-4 text-sm font-bold md:bg-background">{category}</h3>
+        <li class="grid bg-background md:grid-cols-[9rem_repeat(3,minmax(0,1fr))]">
+          <h3 class="bg-secondary/70 p-4 text-sm font-semibold md:bg-background">{category}</h3>
           <dl class="contents">
             <div class="grid grid-cols-[7rem_1fr] gap-3 border-t border-border p-4 text-sm md:block md:border-t-0 md:border-l">
-              <dt class="font-bold md:sr-only">Manual</dt>
+              <dt class="font-semibold md:sr-only">Manual</dt>
               <dd class="leading-6 text-muted">{manual}</dd>
             </div>
             <div class="grid grid-cols-[7rem_1fr] gap-3 border-t border-border bg-accent/8 p-4 text-sm md:block md:border-t-0 md:border-l">
-              <dt class="font-bold text-accent md:sr-only">Agentic</dt>
+              <dt class="font-semibold text-accent md:sr-only">Agentic</dt>
               <dd class="leading-6 font-semibold">{agentic}</dd>
             </div>
             <div class="grid grid-cols-[7rem_1fr] gap-3 border-t border-border p-4 text-sm md:block md:border-t-0 md:border-l">
-              <dt class="font-bold md:sr-only">Vibe</dt>
+              <dt class="font-semibold md:sr-only">Vibe</dt>
               <dd class="leading-6 text-muted">{vibe}</dd>
             </div>
           </dl>

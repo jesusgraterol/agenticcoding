@@ -25,94 +25,127 @@
       }
 
       body {
-        background: #1e2939;
-        color: #f4f6f1;
+        background: #fefdfb;
+        color: #111827;
         font-family: 'Ubuntu Sans Variable', sans-serif;
       }
 
       .canvas {
-        position: relative;
-        display: grid;
+        display: flex;
         width: 1200px;
         height: 630px;
-        grid-template-columns: 310px 1fr;
-        padding: 72px;
-        overflow: hidden;
-      }
-
-      .canvas::before {
-        position: absolute;
-        inset: 0;
-        background-image:
-          linear-gradient(rgb(244 246 241 / 7%) 1px, transparent 1px),
-          linear-gradient(90deg, rgb(244 246 241 / 7%) 1px, transparent 1px);
-        background-size: 52px 52px;
-        content: '';
-        mask-image: linear-gradient(to right, black, transparent 72%);
-      }
-
-      .mark-column,
-      .copy-column {
-        position: relative;
-        z-index: 1;
-      }
-
-      .mark-column {
-        display: flex;
         flex-direction: column;
+        padding: 56px 64px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
         justify-content: space-between;
-        border-right: 1px solid rgb(244 246 241 / 28%);
-        padding-right: 54px;
+        padding-bottom: 32px;
+        border-bottom: 1px solid #dfe3e2;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-size: 22px;
+        font-weight: 650;
       }
 
       .mark {
-        color: #76c8ad;
-        font-family: ui-monospace, monospace;
-        font-size: 122px;
-        font-weight: 800;
-        letter-spacing: -18px;
-        line-height: 1;
+        width: 48px;
+        height: 48px;
       }
 
       .domain {
-        color: rgb(244 246 241 / 62%);
+        color: #697371;
         font-family: ui-monospace, monospace;
-        font-size: 18px;
+        font-size: 16px;
       }
 
-      .copy-column {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        padding-left: 68px;
+      .content {
+        display: grid;
+        flex: 1;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 72px;
+        align-items: center;
       }
 
       .eyebrow {
-        margin: 0 0 24px;
-        color: #76c8ad;
+        margin: 0 0 20px;
+        color: #006c57;
         font-family: ui-monospace, monospace;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 700;
-        letter-spacing: 0.13em;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
       }
 
       h1 {
-        max-width: 700px;
+        max-width: 650px;
         margin: 0;
-        font-size: 82px;
-        font-variation-settings: 'wght' 760;
+        font-size: 78px;
+        font-variation-settings: 'wght' 650;
         letter-spacing: -4px;
-        line-height: 0.94;
+        line-height: 1;
       }
 
       .thesis {
-        max-width: 690px;
-        margin: 32px 0 0;
-        color: rgb(244 246 241 / 78%);
-        font-size: 27px;
-        font-weight: 500;
+        max-width: 650px;
+        margin: 28px 0 0;
+        color: #586360;
+        font-size: 28px;
+        font-weight: 450;
         line-height: 1.35;
+      }
+
+      .system {
+        overflow: hidden;
+        border: 1px solid #dfe3e2;
+        border-radius: 14px;
+        background: #ffffff;
+      }
+
+      .system-title,
+      .system-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .system-title {
+        padding: 17px 20px;
+        border-bottom: 1px solid #dfe3e2;
+        color: #697371;
+        font-family: ui-monospace, monospace;
+        font-size: 13px;
+      }
+
+      .system-item {
+        min-height: 68px;
+        padding: 16px 20px;
+        border-bottom: 1px solid #dfe3e2;
+        font-size: 19px;
+        font-weight: 600;
+      }
+
+      .system-item:last-child {
+        border-bottom: 0;
+      }
+
+      .system-index {
+        color: #006c57;
+        font-family: ui-monospace, monospace;
+        font-size: 13px;
+      }
+
+      .system-owner {
+        color: #697371;
+        font-size: 14px;
+        font-weight: 450;
       }
     </style>
   </head>
@@ -121,19 +154,74 @@
       class="canvas"
       aria-label="Agentic Coding social preview"
     >
-      <div class="mark-column">
-        <div
-          class="mark"
-          aria-hidden="true"
-        >
-          &lt;/&gt;
+      <div class="topbar">
+        <div class="brand">
+          <svg
+            class="mark"
+            viewBox="0 0 64 64"
+            aria-hidden="true"
+          >
+            <rect
+              width="64"
+              height="64"
+              rx="16"
+              fill="#111111"
+            />
+            <path
+              d="M27 18 13 32l14 14"
+              fill="none"
+              stroke="#f4f6f1"
+              stroke-width="5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="m37 18 14 14-14 14"
+              fill="none"
+              stroke="#76c8ad"
+              stroke-width="5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="m32 24 8 8-8 8-8-8 8-8Z"
+              fill="#ef6047"
+            />
+          </svg>
+          <span>Agentic Coding</span>
         </div>
-        <div class="domain">agenticcoding.<br />jesusgraterol.dev</div>
+        <span class="domain">agenticcoding.jesusgraterol.dev</span>
       </div>
-      <div class="copy-column">
-        <p class="eyebrow">A software-development discipline</p>
-        <h1>Agentic Coding</h1>
-        <p class="thesis">More leverage without surrendering engineering discipline.</p>
+
+      <div class="content">
+        <div>
+          <p class="eyebrow">A software-development discipline</p>
+          <h1>A disciplined way to build software.</h1>
+          <p class="thesis">With coding agents.</p>
+        </div>
+
+        <div class="system">
+          <div class="system-title">
+            <span>controlled-execution.system</span>
+            <span>01:04</span>
+          </div>
+          <div class="system-item">
+            <span><span class="system-index">01</span>&nbsp;&nbsp;Intent</span>
+            <span class="system-owner">Developer</span>
+          </div>
+          <div class="system-item">
+            <span><span class="system-index">02</span>&nbsp;&nbsp;Plan</span>
+            <span class="system-owner">Together</span>
+          </div>
+          <div class="system-item">
+            <span><span class="system-index">03</span>&nbsp;&nbsp;Execute</span>
+            <span class="system-owner">Agent</span>
+          </div>
+          <div class="system-item">
+            <span><span class="system-index">04</span>&nbsp;&nbsp;Evidence</span>
+            <span class="system-owner">Developer</span>
+          </div>
+        </div>
       </div>
     </main>
   </body>

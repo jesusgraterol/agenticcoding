@@ -17,7 +17,7 @@ const resourceConfig = RESOURCE_CONFIG[resourceId];
 >
   <div
     slot="metadata"
-    class="mt-7 flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs font-bold text-muted"
+    class="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-2 font-mono text-xs font-bold text-muted"
   >
     <span>Version {resourceConfig.version}</span>
     <span>Updated {resourceConfig.updatedAt}</span>
@@ -25,7 +25,7 @@ const resourceConfig = RESOURCE_CONFIG[resourceId];
 
   <section class="py-12 sm:py-16">
     <div class="prose-shell">
-      <div class="mb-10 grid gap-5 border-l-2 border-accent pl-5 sm:pl-7">
+      <div class="mb-10 grid gap-5 rounded-xl border border-border bg-secondary/35 p-5 sm:p-7">
         <p class="text-lg leading-8">
           This file establishes task intent, codebase-first reasoning, collaborative planning,
           narrow authority, coherent execution, meaningful tests, adversarial review, transparency,

@@ -1,0 +1,107 @@
+---
+import { Bot, Check, UserRound } from '@lucide/astro';
+
+const dialogue = [
+  {
+    speaker: 'Developer',
+    text: 'We need organization-level API keys. I think we should add a new keys table and expose CRUD endpoints.',
+    type: 'developer',
+  },
+  {
+    speaker: 'Coding agent',
+    text: 'Personal tokens already use a shared secret model, encrypted storage, scoped permissions, and revocation events. A parallel table would duplicate three contracts.',
+    type: 'agent',
+  },
+  {
+    speaker: 'Developer',
+    text: 'Organization keys need independent rotation and must never inherit a user’s access after that user leaves.',
+    type: 'developer',
+  },
+] as const;
+
+const stages = [
+  ['Plan', 'Establish the intended final state.'],
+  ['Breakdown', 'Create coherent reviewable slices.'],
+  ['Execute', 'Implement only the authorized scope.'],
+  ['Review', 'Challenge the result and its evidence.'],
+] as const;
+---
+
+<div class="mt-12 overflow-hidden rounded-xl border border-border bg-surface">
+  <div
+    class="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4 font-mono text-xs text-muted sm:px-6"
+  >
+    <span class="inline-flex items-center gap-2">
+      <span class="size-2 rounded-full bg-success"></span>
+      Planning session
+    </span>
+    <span>Credential architecture</span>
+  </div>
+  <ol class="grid gap-6 bg-secondary/35 p-5 sm:p-8">
+    {
+      dialogue.map(({ speaker, text, type }) => (
+        <li class:list={['flex gap-3', type === 'developer' && 'flex-row-reverse']}>
+          <span
+            class:list={[
+              'flex size-8 shrink-0 items-center justify-center rounded-full border',
+              type === 'agent'
+                ? 'border-accent/35 bg-accent/10 text-accent'
+                : 'border-border-strong bg-background text-foreground',
+            ]}
+            aria-hidden="true"
+          >
+            {type === 'agent' ? <Bot class="size-4" /> : <UserRound class="size-4" />}
+          </span>
+          <div
+            class:list={[
+              'max-w-[min(100%,42rem)]',
+              type === 'developer' && 'flex flex-col items-end',
+            ]}
+          >
+            <span class="mb-2 px-1 font-mono text-xs font-bold text-muted">{speaker}</span>
+            <p
+              class:list={[
+                'rounded-xl border px-4 py-3 text-sm leading-6 sm:px-5 sm:py-4 sm:text-base sm:leading-7',
+                type === 'agent'
+                  ? 'rounded-tl-sm border-border bg-background'
+                  : 'rounded-tr-sm border-primary bg-primary text-primary-foreground',
+              ]}
+            >
+              {text}
+            </p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+  <div class="border-t border-border bg-background p-5 sm:p-6">
+    <div class="flex gap-3 rounded-lg border border-accent/35 bg-accent/10 p-4 sm:items-center">
+      <span
+        class="flex size-7 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground"
+        aria-hidden="true"
+      >
+        <Check class="size-4" />
+      </span>
+      <div>
+        <p class="font-mono text-xs font-bold text-accent uppercase">Agreed plan</p>
+        <p class="mt-1 text-sm leading-6 sm:text-base sm:leading-7">
+          Extend the credential boundary, make organization ownership explicit, preserve one
+          rotation flow, and verify revocation and role changes.
+        </p>
+      </div>
+    </div>
+  </div>
+  <ol class="grid gap-px border-t border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+    {
+      stages.map(([name, summary], index) => (
+        <li class="bg-secondary/70 p-5">
+          <span class="font-mono text-xs text-muted">
+            STEP {String(index + 1).padStart(2, '0')}
+          </span>
+          <h3 class="mt-5 text-lg font-semibold tracking-tight">{name}</h3>
+          <p class="mt-2 text-sm leading-6 text-muted">{summary}</p>
+        </li>
+      ))
+    }
+  </ol>
+</div>
