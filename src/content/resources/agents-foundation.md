@@ -16,7 +16,7 @@ Before acting, determine whether the developer requested:
 
 - an answer, explanation, or investigation
 - a plan or proposal
-- a breakdown of an approved plan
+- a breakdown of a current plan
 - a review
 - an implementation or source-code change
 
@@ -28,9 +28,24 @@ When a material ambiguity could change behavior, contracts, security, data integ
 
 Inspection provides context. It does not grant authority to modify everything inspected.
 
+Authorization to edit files or implement code does not authorize commits, pushes, pull requests, deployments, releases, migrations in production or shared environments, external messages, or account and service changes. Require explicit authorization for each materially different external action.
+
+## Decision precedence and instruction scope
+
+When applicable instructions conflict, use this order:
+
+1. Explicit developer requirements and acceptance criteria, unless they would create a safety, security, privacy, data-integrity, or production-correctness risk.
+2. Safety, security, privacy, data integrity, and production correctness.
+3. Existing behavior, public contracts, and established architecture.
+4. Repository tooling, tests, configuration, and framework conventions.
+5. These general coding instructions.
+6. Official documentation that matches the installed dependency or platform version.
+
+Follow every instruction file that applies to the path being inspected or changed. More specific scoped instructions override broader repository guidance within their scope. Do not assume that an instruction applying to one directory or module applies elsewhere.
+
 ## Codebase-first workflow
 
-Before substantial planning or implementation:
+Before substantial planning, diagnosis, review, or implementation:
 
 1. Read the root project documentation when it exists.
 2. Inspect the smallest complete path affected by the task.
@@ -147,6 +162,7 @@ Distinguish verified facts from uncertainty. Report checks run, their results, c
 - Disclose material deviations before applying them.
 - Preserve developer-authored and unrelated work.
 - Inspect the current worktree before editing when version control is available.
+- Do not reset, clean, stash, revert, or overwrite unrelated changes merely to simplify the worktree.
 - Review the final diff and ensure every reported change is intentional and in scope.
 - Do not hide failures, skipped checks, or uncertainty.
 
@@ -162,15 +178,28 @@ Distinguish verified facts from uncertainty. Report checks run, their results, c
 
 Before a high-blast-radius change, explain why it is required, what contracts or files it affects, and the safest reversible path unless the approved request already provides that authority.
 
+## Conditional production safeguards
+
+Apply these requirements when the task touches the corresponding domain:
+
+- For user-facing interfaces, preserve accessibility, keyboard operation, responsive behavior, the existing theme strategy, and reduced-motion behavior.
+- For database schemas and migrations, use the repository's established migration workflow, plan compatibility and rollback, and never apply changes to production or shared environments without explicit authorization.
+- For external integrations, validate responses, use bounded timeouts or cancellation when supported, retry only safe operations, and make duplicate side effects idempotent.
+- For authenticated, authorized, billing, or value-bearing flows, verify server-side ownership and permissions, use exact arithmetic where required, and preserve transactional integrity.
+
 ## Documentation
 
 Keep documentation that describes current behavior, architecture, setup, operations, contracts, configuration, or workflows synchronized with implementation changes.
 
 Update only directly affected documentation. Do not perform cosmetic or unrelated documentation rewrites. If broader documentation is stale but outside scope, update the directly affected state and report the remaining issue.
 
+Coding-instruction files are governance, not ordinary documentation. Do not create, edit, rename, move, delete, or reformat them unless the developer explicitly requests an instruction change.
+
 ## Agent commands
 
 The following commands are executable workflows only when the developer clearly invokes the command name as an instruction. A command mention inside a question, example, quotation, or explanation does not invoke it.
+
+When a command is invoked, follow its workflow instead of treating the invocation as an ordinary answer, plan, review, or implementation request.
 
 ### `plan`
 
@@ -200,9 +229,13 @@ When the developer invokes `breakdown`:
 
 If no current plan exists or the plan is materially stale, report the blocker instead of inventing a new strategy inside the breakdown.
 
+The `breakdown` command does not approve the plan or authorize implementation. After approval, implement a milestone only when the developer explicitly authorizes that milestone, unless the same instruction clearly combines approval with milestone authorization.
+
 ### `review`
 
 When the developer invokes `review`:
+
+Unless the developer explicitly identifies another scope, review the complete uncommitted worktree against `HEAD`, including staged, unstaged, untracked, deleted, and renamed paths. Do not include existing commits in an unqualified review.
 
 1. Perform review-only work and do not modify the reviewed change.
 2. Establish the exact review scope and repository state.

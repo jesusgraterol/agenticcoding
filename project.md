@@ -2,7 +2,7 @@
 
 **Status:** Approved for implementation
 
-**Version:** 1.1.1
+**Version:** 1.2.0
 
 **Last updated:** 2026-08-19
 
@@ -748,9 +748,24 @@ Do not modify files for a planning-only or review-only request.
 
 Treat the stated objective, constraints, exclusions, and acceptance criteria as the task contract.
 
+Implementation authority does not automatically authorize commits, pushes, pull requests, deployments, releases, migrations in production or shared environments, external messages, or account and service changes.
+
+#### Decision precedence and instruction scope
+
+The foundation MUST establish this conflict order:
+
+1. explicit developer requirements and acceptance criteria, subject to safety and production correctness
+2. safety, security, privacy, data integrity, and production correctness
+3. existing behavior, public contracts, and established architecture
+4. repository tooling, tests, configuration, and framework conventions
+5. general foundation guidance
+6. official documentation matching the installed version
+
+The foundation MUST require agents to follow every instruction file applicable to the affected path and respect more specific scoped instructions within their scope.
+
 #### Codebase-first workflow
 
-Before substantial planning or implementation:
+Before substantial planning, diagnosis, review, or implementation:
 
 - inspect the root project documentation when available
 - inspect the smallest complete affected path
@@ -820,6 +835,7 @@ For substantial work:
 - do not claim a check passed unless it actually ran successfully
 - disclose unverified behavior
 - preserve user-authored work
+- do not reset, clean, stash, revert, or overwrite unrelated changes to simplify the worktree
 - do not hide failures
 
 #### Safety
@@ -828,6 +844,21 @@ For substantial work:
 - avoid destructive actions without explicit authorization
 - validate security-sensitive and data-integrity-sensitive paths
 - do not make high-blast-radius contract, dependency, schema, deployment, or infrastructure changes casually
+
+#### Conditional production safeguards
+
+The foundation MUST include concise, conditional safeguards for:
+
+- frontend accessibility, keyboard operation, responsive behavior, theme support, and reduced motion
+- established migration workflows, compatibility, rollback, and explicit authority before executing migrations in production or shared environments
+- external-response validation, bounded timeouts or cancellation, safe retries, and idempotent side effects
+- server-side authorization, exact value-bearing arithmetic where required, and transactional integrity
+
+#### Documentation and instruction governance
+
+The foundation MUST require directly affected state-bearing documentation to remain synchronized without authorizing unrelated rewrites.
+
+Coding-instruction files MUST be treated as governance files. Agents must not create, edit, rename, move, delete, or reformat them unless the developer explicitly requests an instruction change.
 
 ### 14.4 Foundation commands
 
@@ -858,11 +889,15 @@ When explicitly invoked:
 - keep supporting correctness work with the behavior
 - end with an approval boundary
 - do not begin implementation
+- state that breakdown does not approve the plan or authorize implementation
+- require explicit authorization for each milestone unless approval and milestone authorization are clearly combined
 
 #### `review`
 
 When explicitly invoked:
 
+- default to the complete uncommitted worktree against `HEAD`, including staged, unstaged, untracked, deleted, and renamed paths, unless another scope is explicit
+- exclude existing commits from an unqualified review
 - perform review-only work
 - do not edit the reviewed change
 - inspect the complete requested scope

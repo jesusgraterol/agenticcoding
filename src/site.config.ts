@@ -12,7 +12,7 @@ export const RESOURCE_CONFIG = {
     fileName: 'AGENTS.md',
     rawPath: '/AGENTS.md',
     updatedAt: '2026-08-19',
-    version: '1.0.0',
+    version: '1.1.0',
   },
   [RESOURCE_IDS.RefinementPrompt]: {
     fileName: 'refine.txt',
