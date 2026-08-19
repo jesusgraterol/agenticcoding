@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 
+import NavigationProgress from '../components/navigation-progress/navigation-progress.astro';
 import SiteFooter from '../components/site-footer/site-footer.astro';
 import SiteNavigation from '../components/site-navigation/site-navigation.astro';
 import { SITE_CONFIG } from '../site.config.ts';
@@ -221,6 +222,7 @@ const serializedStructuredData = structuredData
     </script>
   </head>
   <body>
+    <NavigationProgress />
     <a
       class="fixed top-2 left-2 z-[100] -translate-y-20 rounded-md bg-primary px-4 py-2 font-bold text-primary-foreground focus:translate-y-0"
       href="#main-content"

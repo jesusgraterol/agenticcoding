@@ -59,34 +59,69 @@ const comparisonRows = [
     <span>control determines the mode</span>
   </div>
   <div
-    class="hidden grid-cols-[9rem_repeat(3,minmax(0,1fr))] border-b border-border bg-secondary/70 text-sm font-semibold md:grid"
+    class="overflow-x-auto overscroll-x-contain focus-visible:ring-2 focus-visible:ring-focus focus-visible:outline-none focus-visible:ring-inset"
+    data-coding-mode-comparison-scroll
+    role="region"
+    aria-label="Coding mode comparison"
+    tabindex="0"
   >
-    <div class="p-4">Dimension</div>
-    <div class="border-l border-border p-4">Manual coding</div>
-    <div class="border-l border-border bg-accent/10 p-4 text-accent">Agentic Coding</div>
-    <div class="border-l border-border p-4">Vibe coding</div>
+    <table class="w-full min-w-[44rem] table-fixed border-collapse text-left">
+      <caption class="sr-only">
+        How manual coding, Agentic Coding, and vibe coding differ across the engineering lifecycle.
+      </caption>
+      <colgroup>
+        <col class="w-32" />
+        <col />
+        <col />
+        <col />
+      </colgroup>
+      <thead class="border-b border-border bg-secondary/70 text-sm font-semibold">
+        <tr>
+          <th
+            class="sticky left-0 z-20 border-r border-border bg-secondary p-4"
+            scope="col"
+          >
+            Dimension
+          </th>
+          <th
+            class="p-4"
+            scope="col"
+          >
+            Manual coding
+          </th>
+          <th
+            class="border-l border-border bg-accent/10 p-4 text-accent"
+            scope="col"
+          >
+            Agentic Coding
+          </th>
+          <th
+            class="border-l border-border p-4"
+            scope="col"
+          >
+            Vibe coding
+          </th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-border">
+        {
+          comparisonRows.map(({ agentic, category, manual, vibe }) => (
+            <tr class="bg-background align-top">
+              <th
+                class="sticky left-0 z-10 border-r border-border bg-background p-4 text-sm font-semibold"
+                scope="row"
+              >
+                {category}
+              </th>
+              <td class="p-4 text-sm leading-6 text-muted">{manual}</td>
+              <td class="border-l border-border bg-accent/8 p-4 text-sm leading-6 font-semibold">
+                {agentic}
+              </td>
+              <td class="border-l border-border p-4 text-sm leading-6 text-muted">{vibe}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
   </div>
-  <ul class="divide-y divide-border">
-    {
-      comparisonRows.map(({ agentic, category, manual, vibe }) => (
-        <li class="grid bg-background md:grid-cols-[9rem_repeat(3,minmax(0,1fr))]">
-          <h3 class="bg-secondary/70 p-4 text-sm font-semibold md:bg-background">{category}</h3>
-          <dl class="contents">
-            <div class="grid grid-cols-[7rem_1fr] gap-3 border-t border-border p-4 text-sm md:block md:border-t-0 md:border-l">
-              <dt class="font-semibold md:sr-only">Manual</dt>
-              <dd class="leading-6 text-muted">{manual}</dd>
-            </div>
-            <div class="grid grid-cols-[7rem_1fr] gap-3 border-t border-border bg-accent/8 p-4 text-sm md:block md:border-t-0 md:border-l">
-              <dt class="font-semibold text-accent md:sr-only">Agentic</dt>
-              <dd class="leading-6 font-semibold">{agentic}</dd>
-            </div>
-            <div class="grid grid-cols-[7rem_1fr] gap-3 border-t border-border p-4 text-sm md:block md:border-t-0 md:border-l">
-              <dt class="font-semibold md:sr-only">Vibe</dt>
-              <dd class="leading-6 text-muted">{vibe}</dd>
-            </div>
-          </dl>
-        </li>
-      ))
-    }
-  </ul>
 </div>

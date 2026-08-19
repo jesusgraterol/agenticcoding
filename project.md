@@ -2,7 +2,7 @@
 
 **Status:** Approved for implementation
 
-**Version:** 1.1.0
+**Version:** 1.1.1
 
 **Last updated:** 2026-08-19
 
@@ -480,7 +480,7 @@ The comparison should cover at least:
 
 The visual must communicate that the spectrum is about control and engineering process, not simply how many lines the agent writes.
 
-An accessible semantic table or equivalent structured markup must remain available even if the visual presentation becomes cards on small screens.
+The comparison must remain a semantic table at every viewport width. On small screens, its columns must remain intact inside an accessible horizontal scroll region instead of flattening into cards. That region must contain its own overflow so the page itself never scrolls horizontally.
 
 ### 13.4 Definition of Agentic Coding
 
@@ -1226,6 +1226,8 @@ Correctness must not depend on the client router. Standard links and statically 
 
 Client-side scripts must initialize correctly after client-routed navigation.
 
+Client-routed navigation MUST expose a lightweight progress indicator while the next page is being prepared. The indicator must provide immediate feedback without blocking interaction or shifting the page layout. It must clear after successful navigation, failed navigation, interruption, and browser history traversal.
+
 ### 17.5 Motion
 
 Motion may be used to:
@@ -1356,6 +1358,7 @@ Requirements:
 - no horizontal page overflow at 320px
 - navigation remains usable
 - comparison content adapts without losing meaning
+- the comparison table scrolls within its own region on narrow viewports
 - workflow diagrams stack or recompose cleanly
 - code and prompt blocks scroll internally when necessary
 - touch targets remain usable
@@ -1474,6 +1477,7 @@ Requirements:
 - standard anchor navigation remains valid
 - page titles and route announcements remain correct
 - scripts account for client-routed page lifecycle
+- client-routed preparation exposes accessible progress and always clears its loading state
 - transitions are minimal
 - reduced-motion users receive no unnecessary animation
 
@@ -1734,6 +1738,7 @@ Use browser-level tests for important user-visible flows:
 - copied resource text matches the canonical source
 - theme selection works and persists
 - mobile navigation is keyboard operable
+- the progress indicator behaves correctly during delayed, failed, interrupted, and browser history navigation
 - copy controls expose success state
 - the custom 404 page is generated and usable
 - the site has no horizontal page overflow at 320px in representative routes
@@ -1900,6 +1905,7 @@ The first production release is complete only when all of the following are true
 - the site works at 320px
 - light and dark modes are complete
 - keyboard navigation is complete
+- client-routed navigation provides clear loading feedback
 - reduced-motion behavior is complete
 - no required content is JavaScript-only
 - no page has unintended horizontal overflow

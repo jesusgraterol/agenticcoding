@@ -11,7 +11,7 @@ The website turns that approach into four practical resources:
 
 The landing page also identifies [`moldea`](https://moldea.ai/) as the real project work through which these principles were developed and tested.
 
-The site is statically generated with Astro and Tailwind CSS. It uses the same Ubuntu Sans typography and core color palette as the Moldea projects while establishing a minimal technical product-documentation visual language.
+The site is statically generated with Astro and Tailwind CSS. It uses the same Ubuntu Sans typography and core color palette as the Moldea projects while establishing a minimal technical product-documentation visual language. Client-routed navigation provides an accessible progress indicator while the next page is loading.
 
 ## Local development
 
@@ -106,7 +106,7 @@ The quality pipeline checks:
 - TypeScript and Astro diagnostics
 - ESLint and Prettier conformance
 - production generation, sitemap output, internal links, SEO metadata, structured data, and raw resource fidelity
-- browser accessibility, copy controls, raw routes, theme persistence, reduced motion, keyboard navigation, and layouts down to 320 pixels
+- browser accessibility, navigation progress, copy controls, raw routes, theme persistence, reduced motion, keyboard navigation, and layouts down to 320 pixels
 
 Run the complete pipeline before publishing:
 
