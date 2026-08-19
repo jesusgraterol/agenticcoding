@@ -379,6 +379,83 @@ test.describe('production website', () => {
     await expect(darkMoldeaLogo).toBeHidden();
   });
 
+  test('top navigation visibly identifies the current route', async ({ page }) => {
+    const routeCases = [
+      { currentLinkName: 'Refine', inactiveLinkName: 'Cookbook', route: '/refine/' },
+      {
+        currentLinkName: 'Cookbook',
+        inactiveLinkName: 'Refine',
+        route: '/cookbook/plan-a-feature/',
+      },
+      { currentLinkName: 'Start', inactiveLinkName: 'Refine', route: '/start/' },
+    ] as const;
+
+    for (const routeCase of routeCases) {
+      await page.goto(routeCase.route);
+
+      const primaryNavigation = page.getByRole('navigation', { name: 'Primary navigation' });
+
+      expect(await primaryNavigation.locator('a[href^="/"]').allTextContents()).toStrictEqual([
+        'Start',
+        'Refine',
+        'Cookbook',
+      ]);
+
+      const currentLink = primaryNavigation.getByRole('link', {
+        name: routeCase.currentLinkName,
+        exact: true,
+      });
+      const inactiveLink = primaryNavigation.getByRole('link', {
+        name: routeCase.inactiveLinkName,
+        exact: true,
+      });
+
+      await expect(currentLink).toHaveAttribute('aria-current', 'page');
+      await expect(inactiveLink).not.toHaveAttribute('aria-current');
+
+      const presentations = await Promise.all([
+        currentLink.evaluate((element) => {
+          const styles = getComputedStyle(element);
+
+          return { backgroundColor: styles.backgroundColor, borderColor: styles.borderColor };
+        }),
+        inactiveLink.evaluate((element) => {
+          const styles = getComputedStyle(element);
+
+          return { backgroundColor: styles.backgroundColor, borderColor: styles.borderColor };
+        }),
+      ]);
+
+      expect(presentations[0]).not.toStrictEqual(presentations[1]);
+    }
+
+    await page.goto('/refine/');
+
+    const primaryNavigation = page.getByRole('navigation', { name: 'Primary navigation' });
+    const inactivePresentations = await Promise.all(
+      ['Start', 'Cookbook'].map((linkName) =>
+        primaryNavigation.getByRole('link', { name: linkName, exact: true }).evaluate((element) => {
+          const styles = getComputedStyle(element);
+
+          return { backgroundColor: styles.backgroundColor, borderColor: styles.borderColor };
+        }),
+      ),
+    );
+
+    expect(inactivePresentations[0]).toStrictEqual(inactivePresentations[1]);
+
+    await page.goto('/');
+    await expect(page.getByRole('link', { name: 'Agentic Coding home' })).not.toHaveAttribute(
+      'aria-current',
+    );
+    await expect(
+      page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', {
+        name: 'Start',
+        exact: true,
+      }),
+    ).not.toHaveAttribute('aria-current');
+  });
+
   test('mobile navigation is keyboard accessible at 320 pixels without page overflow', async ({
     page,
   }) => {
@@ -400,6 +477,15 @@ test.describe('production website', () => {
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     ).toBe(true);
+
+    await page.goto('/cookbook/plan-a-feature/');
+    await page.getByLabel('Open navigation menu').click();
+
+    const currentCookbookLink = page
+      .getByRole('navigation', { name: 'Mobile navigation' })
+      .getByRole('link', { name: 'Cookbook', exact: true });
+
+    await expect(currentCookbookLink).toHaveAttribute('aria-current', 'page');
   });
 
   test('shows accessible progress during delayed client navigation and hides it after success', async ({

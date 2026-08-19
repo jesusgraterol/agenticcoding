@@ -24,13 +24,27 @@ const isActivePath = (href: string): boolean =>
       class="hidden items-center gap-1 lg:flex"
       aria-label="Primary navigation"
     >
+      <a
+        class:list={[
+          'inline-flex min-h-9 items-center justify-center rounded-full border px-4 text-sm font-semibold no-underline transition-colors',
+          isActivePath('/start/')
+            ? 'border-foreground bg-foreground text-background'
+            : 'border-transparent bg-transparent text-muted hover:bg-secondary hover:text-foreground',
+        ]}
+        href="/start/"
+        aria-current={isActivePath('/start/') ? 'page' : undefined}
+      >
+        Start
+      </a>
       {
         SITE_CONFIG.navigation.slice(2).map(({ href, label }) => (
           <a
             href={href}
             class:list={[
-              'rounded-full px-3 py-2 text-sm font-medium text-muted no-underline hover:text-foreground',
-              isActivePath(href) && 'text-foreground',
+              'rounded-full border px-3 py-2 text-sm font-medium no-underline',
+              isActivePath(href)
+                ? 'border-foreground bg-foreground text-background'
+                : 'border-transparent text-muted hover:bg-secondary hover:text-foreground',
             ]}
             aria-current={isActivePath(href) ? 'page' : undefined}
           >
@@ -51,13 +65,6 @@ const isActivePath = (href: string): boolean =>
         />
       </a>
       <ThemeControl />
-      <a
-        class="action-primary ml-1 !min-h-9"
-        href="/start/"
-        aria-current={isActivePath('/start/') ? 'page' : undefined}
-      >
-        Start
-      </a>
     </nav>
 
     <details class="group relative lg:hidden">
@@ -82,8 +89,10 @@ const isActivePath = (href: string): boolean =>
               <a
                 href={href}
                 class:list={[
-                  'rounded-md px-3 py-2.5 text-sm font-semibold no-underline hover:bg-secondary',
-                  isActivePath(href) && 'bg-secondary',
+                  'rounded-md border px-3 py-2.5 text-sm font-semibold no-underline',
+                  isActivePath(href)
+                    ? 'border-foreground bg-foreground text-background'
+                    : 'border-transparent hover:bg-secondary',
                 ]}
                 aria-current={isActivePath(href) ? 'page' : undefined}
               >
