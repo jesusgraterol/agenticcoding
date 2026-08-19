@@ -961,11 +961,16 @@ Inspect:
 
 - the target `AGENTS.md`
 - repository-level and nested instruction files that may affect the same scope
+- the agents or tools that consume each file and whether its filename, location, and syntax are supported
+- whether each file is authoritative, mirrored, generated, protected, or managed elsewhere
 - relevant project documentation
 - architecture and tooling evidence needed to understand existing rules
 - the hierarchy and precedence of instruction files
+- the current worktree state and pre-existing instruction-file changes
 
-Do not edit yet.
+Keep inspection proportional, respect repository context exclusions and sensitive-data boundaries, and do not edit files, install dependencies, create artifacts, or change Git state.
+
+Produce an instruction map covering each relevant source's path, consumer, scope, precedence, owner, editability, conflicts, duplication, and synchronization requirements.
 
 Summarize:
 
@@ -987,6 +992,7 @@ Do not use a generic questionnaire when repository evidence already answers the 
 
 Questions may address:
 
+- target instruction scope and consuming agents or tools
 - planning approval
 - breakdown and milestone boundaries
 - execution authorization
@@ -995,7 +1001,7 @@ Questions may address:
 - test expectations
 - review expectations
 - preservation of exact sections
-- instruction-file ownership
+- canonical ownership, generated or mirrored files, and precedence
 - conflicts between current rules and Agentic Coding values
 
 Do not edit while material decisions remain unresolved.
@@ -1012,13 +1018,21 @@ Organize the proposal as:
 
 For every proposed change:
 
-- explain why it is needed
-- identify the affected section
+- assign a stable proposal ID
+- identify the affected file, section, scope, and consuming agents or tools
+- describe the current behavior and supporting repository evidence
+- provide exact proposed rule text or a reviewable patch preview
+- explain why it is needed and what failure it prevents
 - preserve existing terminology and structure where practical
 - distinguish a missing value from a stylistic preference
+- explain scope, precedence, compatibility, source-ownership, and synchronization effects
+- identify rules replaced, consolidated, or made unnecessary
+- define concrete acceptance criteria
 - avoid replacing project-specific rules with generic text
 
 Removal or consolidation requires especially clear justification.
+
+Every meaningful affected rule must have an explicit final disposition. The agent should recommend no change when the current instructions already express the relevant values clearly and safely.
 
 #### Stage 4: Obtain explicit approval
 
@@ -1031,13 +1045,15 @@ The following do not count as approval:
 - answers to questions
 - discussion of options
 
-The developer may approve, reject, or amend individual changes.
+The developer may approve, reject, or amend individual proposal IDs. Approval must identify the complete proposal or the specific IDs authorized for editing. Approved IDs and explicit amendments become the editing contract; unresolved or unapproved items remain out of scope.
 
 #### Stage 5: Apply minimal edits
 
 After approval:
 
 - modify only approved instruction files
+- apply only approved proposal IDs and amendments
+- preserve pre-existing worktree changes and distinguish them from refinement edits
 - preserve unrelated guidance
 - preserve project-specific constraints
 - avoid broad rewrites
@@ -1047,10 +1063,19 @@ After approval:
 - do not modify tests, documentation, or configuration outside the approved instruction scope
 - do not remove a meaningful rule merely to shorten the file
 - do not add conflicting parallel rules
+- edit authoritative sources instead of generated or mirrored output
+- follow required handoff workflows for protected or externally managed instruction files
+- do not reset, clean, stash, revert, or overwrite unrelated work
+
+Approval to edit instructions does not authorize commits, pushes, pull requests, deployments, releases, production or shared-environment changes, external messages, dependency installation, or account and service actions.
 
 #### Stage 6: Audit the result
 
-After editing, report:
+After editing, compare the result with the original files, pre-existing worktree state, instruction map, and approved proposal. Verify supported filenames, locations, scopes, syntax, ownership, synchronization, precedence, command semantics, and every original rule's final disposition. Run existing instruction-specific checks when available without installing new tooling.
+
+Review representative failure scenarios when applicable, including answer-only and planning-only requests, partial proposal approval, scoped conflicts, pre-existing changes, high-blast-radius changes, and unauthorized external actions.
+
+Report:
 
 - what was preserved
 - what was strengthened
@@ -1061,6 +1086,8 @@ After editing, report:
 - any remaining conflict or ambiguity
 - whether instruction precedence remains clear
 - whether any important original rule was accidentally lost
+- checks and scenarios evaluated, results, and checks not run
+- pre-existing changes preserved
 - the exact files changed
 
 ### 15.4 Values the prompt must inject
@@ -1068,21 +1095,27 @@ After editing, report:
 The prompt MUST ask the coding agent to assess and, when appropriate, introduce or strengthen these values:
 
 1. quality, clarity, maintainability, and correctness over cleverness
-2. task intent and explicit authorization boundaries
-3. codebase-first reasoning
-4. collaborative planning
-5. plan approval before substantial implementation
-6. optional plan breakdown into coherent milestones
-7. milestone-scoped execution
-8. wide context and narrow authority
-9. reuse of existing architecture and ownership
-10. avoidance of adjacent refactors and duplicate implementations
-11. meaningful tests and self-correction
-12. test-failure triage instead of blindly changing expectations
-13. adversarial review
-14. transparent assumptions, blockers, skipped checks, and uncertainty
-15. progressive delegation after the project has established clear rails
-16. developer accountability for final engineering decisions
+2. task intent and explicit authorization boundaries, including separate authority for external actions
+3. decision precedence and correct scoped-instruction handling
+4. codebase-first reasoning
+5. collaborative planning
+6. plan approval before substantial implementation
+7. optional plan breakdown into coherent milestones
+8. milestone-scoped execution
+9. wide context and narrow authority
+10. reuse of existing architecture and ownership
+11. avoidance of adjacent refactors and duplicate implementations
+12. meaningful tests and self-correction
+13. test-failure triage instead of blindly changing expectations
+14. adversarial review
+15. preservation of developer-authored and pre-existing work
+16. security, privacy, authorization, data integrity, and destructive-action safety
+17. deliberate handling of high-blast-radius changes and conditional production safeguards
+18. state-bearing documentation synchronization and instruction governance
+19. unambiguous command activation, permissions, approval boundaries, and stopping conditions
+20. transparent assumptions, blockers, skipped checks, and uncertainty
+21. progressive delegation after the project has established clear rails
+22. developer accountability for final engineering decisions
 
 The prompt must not blindly impose:
 
@@ -1093,7 +1126,8 @@ The prompt must not blindly impose:
 - exact test filenames
 - a database convention
 - a particular model or vendor
-- Jesus's personal libraries
+- specific dependencies, personal packages, or third-party libraries
+- an instruction hierarchy unsupported by the repository's actual agents or tools
 - the full contents of the public foundation
 - the full contents of Jesus's private coding instructions
 

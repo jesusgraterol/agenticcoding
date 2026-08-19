@@ -18,7 +18,7 @@ export const RESOURCE_CONFIG = {
     fileName: 'refine.txt',
     rawPath: '/refine.txt',
     updatedAt: '2026-08-19',
-    version: '1.0.1',
+    version: '1.1.0',
   },
 } as const satisfies Record<
   IResourceId,
