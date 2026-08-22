@@ -11,8 +11,8 @@ export const RESOURCE_CONFIG = {
   [RESOURCE_IDS.AgentsFoundation]: {
     fileName: 'AGENTS.md',
     rawPath: '/AGENTS.md',
-    updatedAt: '2026-08-19',
-    version: '1.2.0',
+    updatedAt: '2026-08-22',
+    version: '2.0.1',
   },
   [RESOURCE_IDS.RefinementPrompt]: {
     fileName: 'refine.txt',
@@ -37,7 +37,7 @@ export const SITE_CONFIG = {
     url: 'https://jesusgraterol.dev/',
   },
   defaultDescription:
-    'Plan, build, verify, and review with coding agents while developers retain final engineering judgment.',
+    'Use agent-operated evidence and developer judgment to plan, build, verify, and review production software.',
   language: 'en',
   license: 'MIT',
   moldeaUrl: 'https://moldea.ai/',

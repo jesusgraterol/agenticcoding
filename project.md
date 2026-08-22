@@ -2,9 +2,9 @@
 
 **Status:** Approved for implementation
 
-**Version:** 1.2.0
+**Version:** 2.0.1
 
-**Last updated:** 2026-08-19
+**Last updated:** 2026-08-22
 
 **Owner:** Jesus Graterol
 
@@ -84,9 +84,11 @@ The central position of the project is:
 
 **Agentic Coding is a collaborative software-development discipline in which developers use coding agents across planning, decomposition, implementation, verification, and review while retaining responsibility for intent, system direction, and engineering quality.**
 
-Throughout this specification, reviewing implementation is a two-layer gate. The coding agent performs a findings-first review, preferably through `review` for uncommitted work or `review <branch-name>` for a branch. A developer then reviews the change and the agent's evidence, typically as the pull request reviewer, and owns the acceptance decision. Neither layer replaces the other.
+Throughout this specification, Evidence is agent-operated and developer-governed. The coding agent operates the phase by performing the findings-first review, running applicable verification, challenging test adequacy, investigating failures, and assembling reproducible evidence. A developer governs it by challenging intent and risk assumptions, strengthening independent test oracles, deciding when additional evidence or code inspection is necessary, and owning the acceptance decision.
 
-Every product surface, public resource, and cookbook workflow that describes implementation review MUST preserve both perspectives. It must identify the agent as the first adversarial reviewer and the developer as the independent acceptance reviewer. A review description is incomplete if it presents only one perspective or implies that an agent readiness verdict replaces developer inspection.
+This relationship separates workload from authority. The agent carries the verification workload. The developer builds the system that makes the evidence trustworthy and remains accountable for acceptance. The amount of direct developer involvement varies with risk, novelty, and project maturity rather than following a prescribed allocation.
+
+Every product surface, public resource, and cookbook workflow that describes implementation review MUST preserve this relationship. It must identify the agent as the primary evidence operator and the developer as the acceptance authority. Direct developer code inspection is proportional and risk-triggered rather than universally mandatory. As agents and independent verification systems mature, routine line-by-line inspection MAY give way to evidence-led acceptance, while code remains available for audit when evidence is weak, correlated, incomplete, novel, or attached to a high-risk change.
 
 Agentic Coding sits between traditional manual coding and vibe coding, but it is not defined by the percentage of code written by AI.
 
@@ -118,7 +120,7 @@ Vibe coding can be appropriate for experimentation, disposable prototypes, learn
 
 The developer and agent collaborate on the problem and the solution.
 
-The agent may inspect, plan, propose, challenge, decompose, implement, test, and perform the first adversarial review. The developer actively shapes the process, approves material decisions, controls scope, independently reviews the change and evidence, and decides whether the resulting system deserves to exist.
+The agent may inspect, plan, propose, challenge, decompose, implement, test, perform adversarial review, and assemble the evidence for acceptance. The developer actively shapes the process, approves material decisions, controls scope, supervises the evidence, invests in independent verification, and decides whether the resulting system deserves to exist.
 
 The site MUST make clear that Agentic Coding is not merely a compromise between writing code manually and delegating code blindly. It is a distinct engineering discipline.
 
@@ -168,7 +170,7 @@ Grant the agent progressively larger and more complete tasks as the surrounding 
 
 **Verify**
 
-Keep automated checks, agent review, and developer inspection as the corrective layer.
+Make the agent responsible for most verification and evidence assembly. The developer challenges the evidence, improves the verification system, and decides whether additional testing or code inspection is required before acceptance.
 
 ### 6.4 Wide context, narrow authority
 
@@ -207,7 +209,7 @@ Implement only the currently authorized scope. Keep required production changes 
 
 **Review**
 
-The coding agent must assume the implementation may contain mistakes and inspect correctness, regressions, architecture, duplication, security, edge cases, test adequacy, maintainability, and documentation. A developer must then inspect the change and evidence before accepting it, normally through pull request review when one exists.
+The coding agent must assume the implementation may contain mistakes and inspect correctness, regressions, architecture, duplication, security, edge cases, test adequacy, maintainability, and documentation. It must run applicable checks, identify uncertainty, and produce reproducible evidence tied to the exact reviewed state. The developer then challenges the evidence and its interpretation of product intent, strengthens independent tests or oracles where needed, and decides whether the evidence justifies acceptance. The developer inspects code when the change's risk, novelty, or evidence quality warrants it.
 
 **Repeat**
 
@@ -238,7 +240,7 @@ The site must not advocate unrestricted autonomy.
 
 The desired system around the agent is:
 
-> **Context → Constraints → Plan → Breakdown → Execution → Tests → Agent and Developer Review → Correction**
+> **Context → Constraints → Plan → Breakdown → Execution → Agent-operated Evidence → Developer Judgment → Correction**
 
 A required message is:
 
@@ -260,11 +262,36 @@ The site's stronger thesis is that coding agents make previously expensive engin
 - type safety
 - failure-path analysis
 - refactoring analysis
-- repeated agent review and developer inspection
+- repeated agent review, stronger evidence, and risk-triggered developer audits
 
 A required editorial idea is:
 
 > **The first benefit is speed. The lasting benefit should be better software.**
+
+### 6.9 Evidence matures beyond routine code inspection
+
+Agent-generated implementation and agent-generated tests can share the same mistaken assumption. A green suite is therefore not automatically independent evidence.
+
+Developers should invest in verification systems that challenge the implementation from outside its construction path. Depending on the behavior and failure risk, this may include:
+
+- property-based and fuzz testing
+- mutation testing that demonstrates whether tests detect meaningful defects
+- contract and differential testing
+- realistic integration and end-to-end tests
+- durable invariants, schemas, and transactional constraints
+- production observability, canaries, and reversible releases
+- an independent agent or model attacking the implementation and its evidence
+
+These techniques are selected from real risk rather than applied mechanically.
+
+As the agent, repository, and verification system mature, developer review may progress through four states:
+
+1. inspect the code and evidence directly
+2. inspect all material evidence while sampling implementation
+3. audit code only when risk or weak evidence triggers it
+4. accept primarily from specifications, system behavior, and independent evidence while preserving code as an auditable artifact
+
+The destination is not less engineering judgment. It is judgment exercised through stronger evidence instead of mandatory line-by-line inspection.
 
 ## 7. Target audience
 
@@ -452,7 +479,7 @@ Recommended starting direction:
 
 Supporting idea:
 
-> Coding agents can help us plan, build, test, and perform a first adversarial review at extraordinary speed. Agentic Coding is the discipline of using that leverage while preserving independent developer review and final acceptance.
+> Coding agents can help us plan, build, test, review, and assemble evidence at extraordinary speed. Agentic Coding is the discipline of using that leverage while developers supervise the evidence and retain final acceptance.
 
 The final copy may be refined during implementation, but it must preserve the meaning established in this specification.
 
@@ -494,8 +521,9 @@ The section should reinforce:
 
 - the agent is a planning collaborator
 - the agent can propose and challenge architecture
-- the agent can implement and perform the first adversarial review
-- the developer independently reviews the change and retains accountability for acceptance
+- the agent can implement, perform adversarial review, and assemble most acceptance evidence
+- the developer supervises the evidence and retains accountability for acceptance
+- direct code inspection becomes proportional to risk and evidence quality
 - Agentic Coding increases leverage rather than removing discipline
 
 A featured line should be:
@@ -556,7 +584,7 @@ The visualization MUST expose four selectable or focusable stages:
 
 #### Review
 
-- require an agent review followed by an independent developer review, typically in the pull request
+- make the agent the primary evidence operator and the developer the acceptance authority
 - recommend `review` for uncommitted work and `review <branch-name>` for a branch
 - require the agent to report findings before praise or summary
 - inspect correctness and regressions
@@ -565,6 +593,7 @@ The visualization MUST expose four selectable or focusable stages:
 - inspect security, maintainability, and documentation
 - report checks that did and did not run
 - produce a clear readiness verdict
+- require the developer to challenge the evidence, strengthen independent oracles where needed, and decide whether risk warrants code inspection
 
 The loop should visually return to planning or the next milestone.
 
@@ -595,6 +624,8 @@ A featured line should be:
 This section is the second signature loop.
 
 It MUST explain each stage using the definitions in section 6.3.
+
+The Verify stage MUST communicate that Evidence is agent-operated and developer-governed. It must separate verification workload from acceptance authority and show the maturity progression from direct code-and-evidence inspection toward evidence-led acceptance with risk-triggered code audits.
 
 The visual treatment should differ enough from the primary change loop that users do not confuse them:
 
@@ -638,7 +669,7 @@ The section should frame the benefit as:
 - more engineering work can be attempted
 - more alternatives can be evaluated
 - more quality checks can be afforded
-- developers can spend more effort on judgment and system design
+- developers can spend more effort on judgment, system design, independent test oracles, and verification systems
 
 ### 13.11 Capability without free rein
 
@@ -656,7 +687,7 @@ It should explain that agents can:
 - satisfy tests without satisfying the real requirement
 - produce convincing but fragile code
 
-The solution presented by the site is not less capable agents. It is stronger context, boundaries, transparency, tests, review, and developer control.
+The solution presented by the site is not less capable agents. It is stronger context, boundaries, transparency, independent evidence, risk-triggered auditing, and developer control.
 
 ### 13.12 Applied in practice
 
@@ -820,6 +851,8 @@ For substantial work:
 - add or update tests when they provide meaningful confidence
 - choose the test level that exercises the real correctness property
 - cover realistic failure modes and boundaries
+- identify when implementation and tests may share the same mistaken assumption
+- use independent oracles and adversarial verification techniques when risk justifies them
 - do not treat a passing test suite as proof
 - investigate whether production code or the expectation is wrong when tests fail
 - never weaken tests solely to make them pass
@@ -830,9 +863,11 @@ For substantial work:
 - require the agent to review the complete scoped change, preferably through `review` or `review <branch-name>`
 - report findings first
 - inspect correctness, regressions, architecture, scope, reuse, tests, security, maintainability, and documentation
+- assemble reproducible evidence tied to the exact reviewed state
 - distinguish verified facts from uncertainty
 - do not declare readiness while a material concern is unresolved
-- require a developer to review the change and agent evidence before acceptance, typically as the pull request reviewer
+- require a developer to challenge the evidence and retain the acceptance decision
+- make direct developer code inspection proportional to risk, novelty, and evidence quality
 
 #### Transparency
 
@@ -917,7 +952,8 @@ When either command is explicitly invoked:
 - report checks run and checks not run
 - provide `Ready to commit` for `review`, `Ready to merge into <branch-name>` for branch review, or a clear not-ready or incomplete verdict
 - avoid a ready verdict when material uncertainty remains
-- state that the agent verdict informs but does not replace the required developer review, typically as the pull request reviewer
+- state that the agent verdict informs but does not authorize developer acceptance
+- state that the developer must evaluate evidence and use code inspection as a risk-triggered escalation rather than a universal requirement
 
 The neutral foundation SHOULD NOT include a `repo push` command in v1 because commit signing, staging, remote selection, and publication policy vary significantly across repositories.
 
@@ -1217,7 +1253,7 @@ The cookbook MUST include these twelve recipes in intentional editorial order:
     - design correctness evidence around realistic defects and meaningful integration boundaries
 
 11. **Review a change**
-    - use `review` or `review <branch-name>` for the agent's findings-first review, then require a developer to inspect the change and evidence before acceptance
+    - use `review` or `review <branch-name>` for the agent's findings-first evidence package, then require a developer to challenge the evidence and decide whether acceptance or a deeper audit is justified
 
 12. **Refine coding instructions**
    - use the canonical refinement process to strengthen an existing `AGENTS.md`
@@ -1962,6 +1998,9 @@ When changing the project's philosophy or practical resources:
 
 - preserve the distinction between planning collaboration and implementation
 - preserve developer accountability
+- preserve agent-operated Evidence and developer-governed acceptance
+- preserve risk-triggered access to code inspection without making it universally mandatory
+- preserve the need for independent evidence that can challenge correlated implementation and test assumptions
 - preserve the warning against unrestricted authority
 - preserve wide context and narrow authority
 - preserve the role of self-correcting mechanisms
@@ -1987,7 +2026,9 @@ The first production release is complete only when all of the following are true
 - the quality-over-speed thesis is present
 - the caution against free rein is present
 - the Moldea field-application section is factual and understated
-- implementation review is consistently shown as agent review followed by independent developer review
+- Evidence is consistently shown as agent-operated and developer-governed
+- developer accountability remains explicit while code inspection is proportional and risk-triggered
+- the maturity path from direct code review to evidence-led acceptance is present
 - both `review` and `review <branch-name>` are documented with their distinct scopes
 - the ready-to-use foundation is complete
 - the refinement prompt is complete

@@ -172,7 +172,13 @@ test.describe('production website', () => {
       'https://moldea.ai/',
     );
     await expect(page.getByText('controlled execution', { exact: true })).toBeVisible();
+    await expect(page.getByText(/Agent-operated\. Developer-governed\./u)).toBeVisible();
     await expect(page.getByText('repository-maturity.system', { exact: true })).toBeVisible();
+    await expect(
+      page.getByRole('heading', {
+        name: 'Code inspection becomes a response to risk, not a permanent ritual.',
+      }),
+    ).toBeVisible();
     await expect(page.getByText('scope-map', { exact: true })).toBeVisible();
   });
 

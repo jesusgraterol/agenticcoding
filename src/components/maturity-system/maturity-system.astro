@@ -14,7 +14,26 @@ const stages = [
   },
   {
     name: 'Verify',
-    text: 'Use tests, agent review, and developer inspection to improve the change and the next cycle.',
+    text: 'Let the agent operate the evidence while the developer governs the proving system and acceptance.',
+  },
+] as const;
+
+const acceptanceStages = [
+  {
+    name: 'Inspect directly',
+    text: 'The developer reads the code and the evidence while the verification system is still young.',
+  },
+  {
+    name: 'Sample and challenge',
+    text: 'The developer examines all material evidence and samples the riskiest implementation paths.',
+  },
+  {
+    name: 'Audit on signal',
+    text: 'Weak evidence, novelty, or material risk triggers code inspection instead of routine habit.',
+  },
+  {
+    name: 'Lead with evidence',
+    text: 'Independent verification and system behavior support acceptance while code remains auditable.',
   },
 ] as const;
 
@@ -82,5 +101,32 @@ const ambiguityCosts = [
         }
       </ul>
     </div>
+  </div>
+  <div class="border-t border-border p-5 sm:p-6">
+    <div class="max-w-3xl">
+      <p class="font-mono text-xs font-bold text-accent uppercase">How acceptance matures</p>
+      <h3 class="mt-3 text-2xl font-semibold tracking-tight">
+        Code inspection becomes a response to risk, not a permanent ritual.
+      </h3>
+      <p class="mt-3 text-sm leading-6 text-muted sm:text-base sm:leading-7">
+        The agent carries the verification workload. The developer builds the system that makes the
+        evidence trustworthy and keeps the decision.
+      </p>
+    </div>
+    <ol
+      class="mt-6 grid gap-px overflow-hidden rounded-lg border border-border bg-border md:grid-cols-2 xl:grid-cols-4"
+    >
+      {
+        acceptanceStages.map(({ name, text }, index) => (
+          <li class="bg-background p-5">
+            <span class="font-mono text-xs font-bold text-accent">
+              LEVEL {String(index + 1).padStart(2, '0')}
+            </span>
+            <h4 class="mt-5 text-lg font-semibold tracking-tight">{name}</h4>
+            <p class="mt-2 text-sm leading-6 text-muted">{text}</p>
+          </li>
+        ))
+      }
+    </ol>
   </div>
 </figure>

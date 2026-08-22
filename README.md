@@ -7,11 +7,11 @@ The website turns that approach into four practical resources:
 - a concise explanation of the operating model and its maturity path
 - a neutral `AGENTS.md` foundation for new or existing repositories
 - a preservation-first prompt for refining instructions that already contain useful project knowledge
-- a field guide of reusable conversations, worked examples, and recovery techniques for planning, execution, investigation, agent review, and developer acceptance
+- a field guide of reusable conversations, worked examples, and recovery techniques for planning, execution, investigation, agent-operated evidence, and developer acceptance
 
 The landing page also identifies [`moldea`](https://moldea.ai/) as the real project work through which these principles were developed and tested.
 
-Change review is deliberately two-layered. The coding agent performs a findings-first review, preferably through `review` for uncommitted work or `review <branch-name>` for a branch. A developer then reviews the change and the agent's evidence, typically as the pull request reviewer, and owns the acceptance decision.
+Evidence is agent-operated and developer-governed. The coding agent carries the verification workload through findings-first review, tests, checks, failure investigation, and reproducible reporting. The developer builds the proving system, challenges whether the evidence is independent and sufficient, decides when risk warrants code inspection, and owns the acceptance decision.
 
 The site is statically generated with Astro and Tailwind CSS. It uses the same Ubuntu Sans typography and core color palette as the Moldea projects while establishing a minimal technical product-documentation visual language. Client-routed navigation provides an accessible progress indicator while the next page is loading.
 

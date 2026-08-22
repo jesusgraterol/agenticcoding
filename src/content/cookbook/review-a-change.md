@@ -1,10 +1,10 @@
 ---
 title: Review a change
-description: Have the agent review the exact change, then give the developer evidence for an informed acceptance decision.
+description: Have the agent assemble adversarial evidence for the developer's acceptance decision.
 slug: review-a-change
 order: 11
 category: review
-updatedAt: 2026-08-19
+updatedAt: 2026-08-22
 featured: true
 draft: false
 relatedSlugs:
@@ -18,14 +18,14 @@ prompt: |
 
   Inspect the task contract, root documentation, affected implementation path, callers, public contracts, tests, configuration, and state-bearing documentation. Evaluate correctness, regressions, security, privacy, authorization, data integrity, error behavior, compatibility, scope, ownership, dead paths, maintainability, and relevant frontend or operational requirements.
 
-  Evaluate test adequacy separately from test execution. Ask whether a material defect could survive while every focused test passes. Run the narrowest relevant non-writing checks and the established broader regression suite when practical. Triage failures instead of assuming the implementation is wrong.
+  Evaluate test adequacy separately from test execution. Ask whether a material defect could survive while every focused test passes, especially when the tests and implementation may share the same assumption. Recommend an independent oracle or adversarial check for material correlated risk. Run the narrowest relevant non-writing checks and the established broader regression suite when practical. Triage failures instead of assuming the implementation is wrong.
 
   Report findings first in severity order. For each finding, include the exact location, violated contract, concrete failure scenario, and smallest correction. Then report reviewed scope, immutable state, checks run and not run, limitations, and one verdict: ready, not ready, or review incomplete. Do not issue a ready verdict while a material finding or uncertainty remains.
 ---
 
 ## Situation
 
-Implementation is complete enough to inspect, but plausible output and passing checks are not yet trusted. The agent must review the exact change first, then a developer must inspect the change and evidence before accepting it.
+Implementation is complete enough to inspect, but plausible output and passing checks are not yet trusted. The agent must produce findings and reproducible evidence for the exact change so the developer can challenge the proof and make the acceptance decision.
 
 ## Common mistake
 
@@ -43,6 +43,8 @@ Use the agent as an adversarial reviewer, not as the author defending its work. 
 4. **Readiness:** Is the evidence strong enough for this exact commit or merge decision?
 
 Findings come first because a blocking defect should not be buried beneath a completion summary.
+
+The agent should carry most of the operational burden: inspect the implementation, run the checks, attack test depth, investigate failures, and identify uncertainty. The developer supervises the evidence rather than repeating the entire review by default.
 
 ## Before you send the prompt
 
@@ -75,6 +77,8 @@ The finding identifies the violated local pattern, a credible exploit, the small
 - concrete failure or regression scenarios
 - the smallest correction without unrelated redesign
 - separate analysis of focused test depth and executed regression checks
+- explicit identification of implementation and test assumptions that may fail together
+- independent oracles or adversarial checks for material correlated risk
 - scope evidence tied to an immutable state
 - checks run, exact results, skipped checks, and environmental limitations
 - a ready, not-ready, or incomplete verdict that follows from the evidence
@@ -90,6 +94,10 @@ To inspect integration quality:
 
 > Identify every mocked internal collaborator. Explain whether the important correctness property depends on those collaborators working together and which boundary should remain real in an integration test.
 
+To demand independent evidence:
+
+> Identify the strongest assumption shared by the implementation and its tests. Propose the smallest property, mutation, differential check, integration boundary, or system invariant that could disprove it independently.
+
 To re-review after fixes:
 
 > Re-establish the complete scope and immutable state. Confirm each previous finding against the new implementation, then inspect the correction for new regressions before issuing a fresh verdict.
@@ -100,10 +108,11 @@ To re-review after fixes:
 - only changed lines are inspected
 - “tests pass” is the complete correctness argument
 - no attempt to test permissions, failures, retries, concurrency, or malformed input where relevant
+- implementation and tests repeat the same assumptions without an independent oracle
 - snapshots or tests are modified during review
 - material uncertainty is hidden behind a ready verdict
 - the reviewed state cannot be reproduced
 
 ## Developer review responsibility
 
-After the agent review, inspect the change and validate its interpretation of product intent and risk. Act as the pull request reviewer when a pull request exists. Decide whether the evidence meets the real commit, merge, or release threshold. The agent's verdict informs this decision but never replaces developer review.
+After the agent review, challenge its interpretation of product intent, its risk model, and the independence of its evidence. Decide whether the proof meets the real commit, merge, or release threshold. Inspect code when evidence is weak, correlated, novel, incomplete, or attached to a high-impact change. The agent's verdict informs the decision but never authorizes acceptance.

@@ -4,7 +4,7 @@ description: Design tests around realistic defects and integration boundaries in
 slug: deepen-a-test-strategy
 order: 10
 category: review
-updatedAt: 2026-08-19
+updatedAt: 2026-08-22
 featured: true
 draft: false
 relatedSlugs:
@@ -22,7 +22,9 @@ prompt: |
 
   Cover applicable success, boundary, malformed input, permissions, ownership, duplicate and replay, retry, idempotency, partial failure, concurrency, numeric, compatibility, accessibility, responsive, theme, and pathological-input risks. Do not add cases mechanically or test framework guarantees.
 
-  Identify defects that could survive the current tests, redundant coverage, brittle implementation-detail assertions, and the smallest high-value test set. End with exact proposed test files, scenarios, fixtures, boundaries, and verification commands. Do not implement the tests yet.
+  Identify defects that could survive the current tests, including failures hidden because the implementation and tests share the same assumption. Recommend independent oracles where material risk justifies them, such as property-based or fuzz tests, mutation testing, contract or differential checks, realistic integration and end-to-end paths, durable invariants, or operational feedback. For each technique, name the defect it can detect and its practical cost.
+
+  End with exact proposed test files, scenarios, fixtures, boundaries, independent oracles, and verification commands. Do not implement the tests yet.
 ---
 
 ## Situation
@@ -48,8 +50,20 @@ For each correctness property, ask:
 3. What is the narrowest test that still keeps the important application path real?
 4. Which external boundary must be stubbed, and what uncertainty remains?
 5. Could the defect still survive if the proposed assertion passes?
+6. Did the test derive its expected result from the same assumption as the implementation?
 
 This produces fewer, stronger tests than copying the implementation structure.
+
+Independent evidence does not mean applying every advanced testing technique. Choose the smallest mechanism that can falsify the risky assumption from outside the implementation path:
+
+- use property-based or fuzz tests for broad input spaces and invariant violations
+- use mutation testing to prove that the suite detects meaningful implementation defects
+- use contract or differential tests when another authoritative behavior can serve as an oracle
+- use realistic integration and end-to-end tests when correctness depends on components working together
+- use database constraints, schemas, and durable invariants for states the system must never permit
+- use canaries, observability, and rollback controls for important behavior that cannot be proven fully before release
+
+An independent agent or model can provide another adversarial perspective, but it is not independent evidence when it relies on the same incomplete contract or mocks.
 
 ## Before you send the prompt
 
@@ -81,6 +95,8 @@ The key assertion is not that `creditBalance` was called. It is that the persist
 - a deliberate unit, integration, and end-to-end split
 - minimal external mocking with important application collaboration kept real
 - adversarial cases prioritized by impact
+- shared implementation and test assumptions identified explicitly
+- independent oracles selected for the material risks they can falsify
 - explicit assessment of defects that could survive
 - removal or avoidance of redundant and brittle tests
 - exact test ownership, fixtures, setup, and verification commands
@@ -99,6 +115,10 @@ To probe complexity:
 
 > Evaluate time and space behavior for realistic and pathological input sizes. Recommend representative tests without brittle wall-clock assertions.
 
+To challenge correlated evidence:
+
+> Identify every expected result derived from the implementation or its fixtures. Replace each material circular oracle with an invariant, independent reference, mutation, differential result, or real system outcome.
+
 ## Warning signs
 
 - test count or coverage is the primary objective
@@ -107,9 +127,11 @@ To probe complexity:
 - only happy paths and ordinary validation cases exist
 - authorization, duplicate delivery, retry, partial failure, or concurrency are ignored where relevant
 - snapshots replace precise assertions
+- implementation and tests can fail together because they encode the same assumption
+- advanced techniques are proposed without naming the distinct defect they can detect
 - proposed tests depend on private implementation details
 - performance claims rely on arbitrary timing thresholds
 
 ## Developer review responsibility
 
-Decide which failures justify integration cost and which external systems can participate reliably. Confirm that the final strategy would catch the defects you care about, not merely produce a reassuring report.
+Invest in the verification system the agent will operate. Decide which failures justify integration cost, which assumptions need an independent oracle, and which external systems can participate reliably. Confirm that the final strategy can falsify the defects you care about, not merely produce a reassuring report.

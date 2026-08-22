@@ -22,10 +22,16 @@ describe('Agentic Coding foundation review contract', () => {
     expect(foundation).toContain('`Ready to merge into <branch-name>`');
   });
 
-  test('requires agent review and developer review', () => {
-    expect(foundation).toContain('Every implementation review requires both layers');
-    expect(foundation).toContain('**Agent review:**');
-    expect(foundation).toContain('**Developer review:**');
-    expect(foundation).toContain('Neither review layer substitutes for the other');
+  test('defines agent-operated evidence and developer-governed acceptance', () => {
+    expect(foundation).toContain('Evidence is agent-operated and developer-governed');
+    expect(foundation).toContain('The agent carries the verification workload');
+    expect(foundation).toContain(
+      'The developer builds the system that makes the evidence trustworthy',
+    );
+    expect(foundation).toContain(
+      'Direct developer code inspection is proportional and risk-triggered',
+    );
+    expect(foundation).toContain('retains the acceptance decision');
+    expect(foundation).toContain('The agent verdict never authorizes acceptance by itself');
   });
 });

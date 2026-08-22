@@ -115,7 +115,7 @@ When implementation is authorized:
 5. Run the narrowest useful verification first, then the relevant broader checks.
 6. Reconfirm that remaining work still serves the authorized scope.
 
-If work is authorized by milestone, implement only that milestone. Leave the repository internally coherent, complete its verification, report the result, and stop before the next milestone. The developer should then invoke `review` or `review <branch-name>` for the agent review before performing the developer review.
+If work is authorized by milestone, implement only that milestone. Leave the repository internally coherent, complete its verification, report the result, and stop before the next milestone. The developer should then invoke `review` or `review <branch-name>` so the agent can assemble the findings and evidence needed for the acceptance decision.
 
 Do not create throwaway scaffolding, temporary duplicate paths, or deliberately incomplete implementations merely to divide work.
 
@@ -129,6 +129,8 @@ Add or update tests when behavior changes and automated coverage provides meanin
 
 Design tests to catch realistic defects, not to increase test count. Cover applicable success paths, boundaries, malformed input, failure paths, permissions, duplicate or replayed operations, concurrency, numeric precision, external failures, and regressions.
 
+Treat tests written from the same assumptions as the implementation as potentially correlated evidence. When risk justifies it, challenge the change through independent oracles such as property-based or fuzz testing, mutation testing, contract or differential checks, realistic integration and end-to-end tests, durable invariants, or another independent review path. Select techniques from plausible production failures rather than applying them mechanically.
+
 When a test fails, determine the intended behavior before changing production code or the expectation. Use the task, current implementation, documentation, invariants, nearby tests, and history as evidence.
 
 - Fix production code when the failure exposes a real bug or contract violation.
@@ -139,12 +141,11 @@ Never weaken, delete, or blindly update a test solely to make the suite pass. Do
 
 ## Review
 
-Every implementation review requires both layers:
+Evidence is agent-operated and developer-governed. The coding agent performs the complete findings-first review, preferably through `review` for uncommitted work or `review <branch-name>` for a branch. It operates the evidence phase by inspecting the complete scope, running applicable checks, challenging test adequacy, investigating failures, and reporting reproducible results.
 
-1. **Agent review:** The coding agent reviews the complete requested scope, preferably through `review` for uncommitted work or `review <branch-name>` for a branch.
-2. **Developer review:** A developer inspects the change and the agent's evidence, typically as the pull request reviewer, and decides whether to accept, merge, release, or request corrections.
+The developer governs the phase by validating intent and risk assumptions, challenging the evidence, strengthening independent test oracles when needed, and deciding whether to accept, merge, release, request corrections, or require a deeper audit. The agent carries the verification workload. The developer builds the system that makes the evidence trustworthy and retains the acceptance decision.
 
-The agent review must inspect the complete requested scope, not only the most visible file.
+Direct developer code inspection is proportional and risk-triggered. Use it when evidence is weak, incomplete, correlated with the implementation, attached to a novel design, or associated with high-impact security, authorization, privacy, data-integrity, financial, schema, infrastructure, or public-contract risk. As the agent and verification system mature, strong independent evidence may support acceptance without routine line-by-line inspection, while the code remains available for audit.
 
 Report findings first, ordered by severity. Evaluate:
 
@@ -160,7 +161,7 @@ Report findings first, ordered by severity. Evaluate:
 
 Distinguish verified facts from uncertainty. Report checks run, their results, checks not run, and why. Do not declare readiness while a material concern remains unresolved.
 
-An agent readiness verdict is evidence for the developer review. It is not approval to accept, merge, or release the change.
+An agent readiness verdict is evidence for the developer's decision. It is not approval to accept, merge, or release the change.
 
 ## Transparency and preservation
 
@@ -256,4 +257,4 @@ When the developer invokes either review command:
 
 Use a ready verdict only when no blocking findings remain, relevant verification passed or was legitimately unnecessary, test depth is sufficient for material behavior, and no material uncertainty remains.
 
-After the agent review, the developer must independently review the change and evidence, normally through the pull request when one exists. Neither review layer substitutes for the other.
+After the agent review, the developer must evaluate whether the evidence matches product intent and real risk. The developer may request stronger verification or inspect code when the evidence does not independently justify acceptance. The agent verdict never authorizes acceptance by itself.

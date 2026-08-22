@@ -16,9 +16,10 @@ describe('review-a-change recipe contract', () => {
     expect(recipe).toContain('`review <branch-name>` for committed work');
   });
 
-  test('keeps developer review as the acceptance gate', () => {
-    expect(recipe).toContain('After the agent review, inspect the change');
-    expect(recipe).toContain('Act as the pull request reviewer');
-    expect(recipe).toContain('never replaces developer review');
+  test('makes evidence agent-led and acceptance developer-owned', () => {
+    expect(recipe).toContain('The agent should carry most of the operational burden');
+    expect(recipe).toContain('challenge its interpretation of product intent');
+    expect(recipe).toContain('Inspect code when evidence is weak');
+    expect(recipe).toContain('never authorizes acceptance');
   });
 });
