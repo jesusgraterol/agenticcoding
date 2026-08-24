@@ -11,8 +11,8 @@ export const RESOURCE_CONFIG = {
   [RESOURCE_IDS.AgentsFoundation]: {
     fileName: 'AGENTS.md',
     rawPath: '/AGENTS.md',
-    updatedAt: '2026-08-22',
-    version: '2.0.1',
+    updatedAt: '2026-08-24',
+    version: '3.0.0',
   },
   [RESOURCE_IDS.RefinementPrompt]: {
     fileName: 'refine.txt',

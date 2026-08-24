@@ -72,6 +72,7 @@ Cookbook recipes live in `src/content/cookbook/`. To add one:
 ```text
 .
 ├── .github/workflows/       # verification and GitHub Pages deployment
+├── coding-agent-planning/   # tracked plans and optional milestone sequences
 ├── docs/                    # concise, durable project concepts and processes
 ├── public/                  # static logos, agent marks, robots.txt, and generated OG image
 ├── scripts/                 # deterministic asset generation and build-artifact validation
@@ -91,6 +92,8 @@ Cookbook recipes live in `src/content/cookbook/`. To add one:
 ```
 
 The root layouts own canonical URLs, search and social metadata, structured data, theme bootstrap behavior, the skip link, global navigation, and the footer. Page modules own page-specific hierarchy and content. Content collections own validated prose. Utilities own the small pieces of behavior that must remain identical across rendered and raw surfaces.
+
+Each timestamped directory under `coding-agent-planning/` contains one authoritative implementation plan and, when useful, its milestone sequence. These planning artifacts are intentionally version-controlled in this repository and are not Astro source inputs.
 
 The `/docs` directory is reserved for essential, durable project concepts and processes. Documents there must remain concise and quickly scannable by humans and agents. API and HTTP endpoint documentation, if the project ever needs it, belongs in its established location outside `/docs`.
 

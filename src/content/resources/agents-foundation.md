@@ -20,7 +20,7 @@ Before acting, determine whether the developer requested:
 - a review
 - an implementation or source-code change
 
-Do not modify files for an answer, investigation, planning-only, breakdown-only, or review-only request.
+Do not modify files for an answer, investigation, planning-only, breakdown-only, or review-only request, except for planning artifacts explicitly authorized by an invoked `plan` or `breakdown` command. That narrow exception does not authorize changes to implementation files, ordinary documentation, or Git state.
 
 Treat the developer's stated objective, constraints, exclusions, decisions, and acceptance criteria as the task contract. Do not silently reinterpret the request into a broader or different task.
 
@@ -214,30 +214,33 @@ When a command is invoked, follow its workflow instead of treating the invocatio
 When the developer invokes `plan`:
 
 1. Perform planning-only work for the concrete change under discussion.
-2. Inspect the relevant repository context without modifying files or Git state.
+2. Inspect the relevant repository context without modifying implementation files or Git state.
 3. Resolve material ambiguity before finalizing the plan.
 4. Describe current behavior and the evidence that establishes it.
 5. Define intended behavior, scope, exclusions, architecture, ownership, contracts, exact affected areas, ordered implementation steps, tests, verification, risks, and unresolved decisions.
 6. Identify superseded paths that the final implementation should remove, preserving compatibility only when repository evidence requires it.
-7. End with an explicit approval boundary.
+7. Create `coding-agent-planning/<unix-seconds>_<descriptive-slug>/plan.md` for a new plan. Use a fresh timestamp instead of overwriting an existing path.
+8. For a requested plan revision, reuse the same directory, reflect current repository state and completed work, and remove an existing `milestones.md` because the revised plan invalidates that breakdown.
+9. Report the repository-relative path, present a response body that matches `plan.md` exactly, and end both with `## Approval required`.
 
-Do not edit files, install dependencies, create artifacts, update tests, or begin implementation during `plan`. The command itself is not implementation approval.
+Do not edit source code, tests, configuration, dependencies, migrations, generated artifacts, ordinary project documentation, or Git state during `plan`. The developer decides whether `coding-agent-planning/` is tracked or ignored. If the plan cannot be persisted, present the complete plan and state that limitation. The command itself is not implementation approval.
 
 ### `breakdown`
 
 When the developer invokes `breakdown`:
 
-1. Require a current concrete plan.
+1. Require the exact current plan and planning directory established in the current discussion. Do not search historical planning directories or select a plan by timestamp.
 2. Preserve the plan's strategy, scope, exclusions, and acceptance criteria.
-3. Convert it into ordered implementation milestones without redesigning it.
-4. Make each milestone the smallest coherent, testable, verifiable, and reviewable finished slice.
-5. For every milestone, identify its objective, dependencies, owned files and contracts, implementation work, verification, acceptance criteria, and review checkpoint.
-6. Keep required tests, documentation, exports, migrations, and other correctness evidence with the behavior they support.
-7. End with an explicit approval boundary and do not begin implementation.
+3. Determine whether the plan contains at least two coherent implementation slices that can each be completed, verified, and reviewed as a meaningful finished state.
+4. If the plan is one coherent scope, do not create `milestones.md`. Remove an obsolete milestone file if one exists, explain that the plan should be implemented as one complete scope, and stop.
+5. When decomposition is useful, make each milestone the smallest coherent, testable, verifiable, and reviewable finished slice. Identify its objective, dependencies, owned files and contracts, implementation work, verification, acceptance criteria, and review checkpoint.
+6. Keep required tests, documentation, exports, migrations, and other correctness evidence with the behavior they support. Cover every plan deliverable, acceptance criterion, and verification requirement in the visible sequence.
+7. Write the complete sequence to `milestones.md` beside `plan.md`. Reuse that file for later revisions and preserve completed milestones unless the developer explicitly requires them to be revisited.
+8. Report the repository-relative path, present a response body that matches `milestones.md` exactly, end both with `## Approval required`, and do not begin implementation.
 
-If no current plan exists or the plan is materially stale, report the blocker instead of inventing a new strategy inside the breakdown.
+If no current plan exists, it cannot be identified safely, or it is materially stale, report the blocker instead of inventing a new strategy inside the breakdown. If the plan was presented but could not be persisted, use that exact plan without creating a new planning directory.
 
-The `breakdown` command does not approve the plan or authorize implementation. After approval, implement a milestone only when the developer explicitly authorizes that milestone, unless the same instruction clearly combines approval with milestone authorization.
+The `breakdown` command does not approve the plan, milestone sequence, or implementation. If the plan was not already approved, explicit approval after the current milestone sequence is presented approves both unless the developer limits it. When a milestone sequence exists, implement a milestone only when the developer explicitly authorizes that milestone, unless the same instruction clearly combines sequence approval with milestone authorization. When no milestone sequence is useful, the plan still requires explicit approval before implementation as one complete scope.
 
 ### `review` and `review <branch-name>`
 

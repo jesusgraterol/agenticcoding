@@ -2,9 +2,9 @@
 
 **Status:** Approved for implementation
 
-**Version:** 2.0.1
+**Version:** 3.0.0
 
-**Last updated:** 2026-08-22
+**Last updated:** 2026-08-24
 
 **Owner:** Jesus Graterol
 
@@ -191,7 +191,7 @@ Another required concept is:
 
 > **A dependency is not automatically a deliverable.**
 
-### 6.5 Plan → Breakdown → Execute → Review → Repeat
+### 6.5 Plan → Breakdown when useful → Execute → Review → Repeat
 
 This is the primary change-development loop taught by the project.
 
@@ -201,7 +201,7 @@ Investigate the problem and the existing system. Collaboratively establish the a
 
 **Breakdown**
 
-Convert the approved strategy into ordered, coherent milestones. Each milestone must be implementable, verifiable, and reviewable as a meaningful finished state.
+Evaluate whether the approved strategy contains at least two coherent implementation slices that can each be completed, verified, and reviewed as a meaningful finished state. Create ordered milestones only when those boundaries are useful. When the plan is one coherent slice, implement it as one complete scope after approval instead of manufacturing milestones.
 
 **Execute**
 
@@ -213,7 +213,7 @@ The coding agent must assume the implementation may contain mistakes and inspect
 
 **Repeat**
 
-Use what was learned to authorize the next milestone or revise the plan.
+Use what was learned to authorize the next milestone when one exists, revise the plan, or complete the workflow.
 
 ### 6.6 Clarity creates better delegation
 
@@ -240,7 +240,7 @@ The site must not advocate unrestricted autonomy.
 
 The desired system around the agent is:
 
-> **Context → Constraints → Plan → Breakdown → Execution → Agent-operated Evidence → Developer Judgment → Correction**
+> **Context → Constraints → Plan → Breakdown when useful → Execution → Agent-operated Evidence → Developer Judgment → Correction**
 
 A required message is:
 
@@ -329,7 +329,7 @@ The first production release MUST:
 3. present collaborative planning as a core capability
 4. teach developers to pave the way before broad delegation
 5. teach wide context and narrow authority
-6. present the Plan → Breakdown → Execute → Review loop
+6. present the Plan → Breakdown when useful → Execute → Review loop
 7. present the Demonstrate → Codify → Delegate → Verify loop
 8. explain why strong self-correcting mechanisms are necessary
 9. explain why the long-term opportunity is software quality
@@ -549,7 +549,7 @@ The interaction may use a fictional feature such as organization-level API keys,
 
 All text must exist in the static HTML. Animation may progressively reveal or highlight it, but must not be required to access it.
 
-### 13.6 Plan → Breakdown → Execute → Review
+### 13.6 Plan → Breakdown when useful → Execute → Review
 
 This is a signature visual and conceptual section.
 
@@ -567,12 +567,14 @@ The visualization MUST expose four selectable or focusable stages:
 #### Breakdown
 
 - use the current plan as the authoritative strategy
-- create ordered milestones
+- determine whether at least two meaningful implementation slices exist
+- create ordered milestones only when useful
+- keep one coherent plan as one complete implementation scope
 - do not redesign the solution
 - keep each milestone internally coherent
 - keep implementation with its required tests, documentation, contracts, exports, migrations, and verification
 - provide a review checkpoint
-- obtain approval for the milestone sequence
+- obtain approval for the milestone sequence when one is created
 
 #### Execute
 
@@ -629,7 +631,7 @@ The Verify stage MUST communicate that Evidence is agent-operated and developer-
 
 The visual treatment should differ enough from the primary change loop that users do not confuse them:
 
-- Plan → Breakdown → Execute → Review is a loop for an individual change
+- Plan → Breakdown when useful → Execute → Review is a loop for an individual change
 - Demonstrate → Codify → Delegate → Verify is a loop for improving the developer-agent-codebase relationship over time
 
 ### 13.9 Wide context, narrow authority
@@ -781,7 +783,7 @@ Before acting, determine whether the developer requested:
 - a review
 - an implementation
 
-Do not modify files for a planning-only or review-only request.
+Do not modify files for a planning-only or review-only request, except for planning artifacts explicitly authorized by an invoked `plan` or `breakdown` command.
 
 Treat the stated objective, constraints, exclusions, and acceptance criteria as the task contract.
 
@@ -912,24 +914,36 @@ When explicitly invoked:
 
 - perform planning-only work
 - inspect the relevant repository context
-- do not modify files or Git state
+- modify only the planning files authorized by the command and do not change Git state
 - produce an implementation-ready strategy
 - identify exact affected areas when evidence permits
 - include tests, verification, risks, and unresolved decisions
-- end with an approval boundary
+- create `coding-agent-planning/<unix-seconds>_<descriptive-slug>/plan.md` for a new plan without overwriting an existing path
+- reuse the same planning directory for revisions and remove `milestones.md` when the revised plan invalidates the previous breakdown
+- let the developer decide whether the planning directory is tracked or ignored
+- report the repository-relative path and present a response body that matches `plan.md` exactly
+- end both the file and response with an approval boundary
+- do not modify production code, tests, configuration, dependencies, migrations, generated artifacts, ordinary documentation, or Git state
 
 #### `breakdown`
 
 When explicitly invoked:
 
 - require a current concrete plan
+- use the exact plan and planning directory established in the current discussion instead of searching historical directories
 - preserve that plan's strategy and scope
 - do not redesign the solution
-- produce ordered implementation milestones
+- determine whether at least two coherent, independently verifiable and reviewable implementation slices exist
+- do not create `milestones.md` when the plan is one coherent scope, and remove an obsolete milestone file when necessary
+- produce ordered implementation milestones only when decomposition provides useful execution and review boundaries
 - make each milestone coherent, testable, verifiable, and reviewable
 - include objective, dependencies, owned scope, work, verification, acceptance criteria, and review checkpoint
 - keep supporting correctness work with the behavior
-- end with an approval boundary
+- cover every plan deliverable, acceptance criterion, and verification requirement in the visible milestone sequence
+- write the complete sequence to `milestones.md` beside `plan.md` and reuse that file for later breakdown revisions
+- preserve completed milestones during revisions unless the developer explicitly requires them to be revisited
+- present a response body that matches `milestones.md` exactly
+- end both the file and response with an approval boundary
 - do not begin implementation
 - state that breakdown does not approve the plan or authorize implementation
 - require explicit authorization for each milestone unless approval and milestone authorization are clearly combined
@@ -1232,10 +1246,10 @@ The cookbook MUST include these twelve recipes in intentional editorial order:
    - ask the agent to attack assumptions, alternatives, risks, and missing cases before implementation
 
 4. **Break down a plan**
-   - convert an approved strategy into coherent, reviewable milestones without redesigning it
+   - evaluate an approved strategy and create coherent, reviewable milestones only when useful, without redesigning it
 
 5. **Execute one milestone**
-   - authorize a bounded implementation slice and stop before later work
+   - when a milestone sequence exists, authorize one bounded implementation slice and stop before later work
 
 6. **Control scope**
    - give the agent enough context to understand dependencies without authorizing adjacent work
@@ -1640,6 +1654,10 @@ Do not create a large bespoke CSS framework.
 .
 ├── .github/
 │   └── workflows/
+├── coding-agent-planning/
+│   └── <unix-seconds>_<descriptive-slug>/
+│       ├── plan.md
+│       └── milestones.md
 ├── public/
 │   ├── favicon.svg
 │   ├── og/
@@ -1684,6 +1702,8 @@ Do not create a large bespoke CSS framework.
 ```
 
 This is a suggested ownership model, not permission to create meaningless directories or split trivial files. The coding agent must keep implementation units cohesive and follow the repository's final established conventions.
+
+Each directory under `coding-agent-planning/` owns one authoritative `plan.md` and, only when useful, one `milestones.md`. This repository keeps those planning artifacts under version control; they are workflow records rather than Astro source inputs or generated website content.
 
 ### 21.9 Central site configuration
 
@@ -2088,7 +2108,7 @@ The finished project should allow a developer to:
 1. understand why Agentic Coding is different from both manual coding and vibe coding
 2. understand that coding agents can be powerful planning partners
 3. understand why developers must pave the way before broad delegation
-4. adopt a practical Plan → Breakdown → Execute → Review workflow
+4. adopt a practical Plan → Breakdown when useful → Execute → Review workflow
 5. begin immediately with a ready-to-use `AGENTS.md`
 6. safely refine existing instructions through their own coding agent
 7. learn practical techniques from a concise cookbook

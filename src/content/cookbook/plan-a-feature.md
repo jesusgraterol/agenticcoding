@@ -4,7 +4,7 @@ description: Turn a desired outcome into a codebase-grounded implementation stra
 slug: plan-a-feature
 order: 2
 category: planning
-updatedAt: 2026-08-19
+updatedAt: 2026-08-24
 featured: true
 draft: false
 relatedSlugs:
@@ -12,7 +12,7 @@ relatedSlugs:
   - challenge-a-plan
   - break-down-a-plan
 prompt: |
-  Plan this change without modifying files or Git state:
+  plan
 
   [Describe the desired user or system outcome. Include known constraints and explicit exclusions.]
 
@@ -20,7 +20,9 @@ prompt: |
 
   Establish the current behavior with repository evidence. Surface only material questions the codebase cannot answer. Then recommend one authoritative implementation: ownership, data flow, exact modules and contracts, validation and failure behavior, security and data-integrity implications, tests, documentation, deployment or migration concerns, rollback, and verification commands. Identify superseded paths that the change should remove and compatibility paths that must remain.
 
-  Keep optional improvements outside the implementation scope. End with the exact proposed scope, assumptions, unresolved decisions, and acceptance criteria that require my approval. Do not begin implementation.
+  Keep optional improvements outside the implementation scope. Persist the complete plan to a new coding-agent-planning/<unix-seconds>_<descriptive-slug>/plan.md directory. This planning file is the only authorized write: do not modify source code, tests, configuration, ordinary documentation, dependencies, generated artifacts, or Git state.
+
+  Report the repository-relative path and present the exact plan.md body. End both the file and response with an Approval required section containing the exact proposed scope, assumptions, unresolved decisions, and acceptance criteria awaiting my approval. Do not begin implementation.
 ---
 
 ## Situation
@@ -39,11 +41,14 @@ An equally weak result is a generic plan that could describe any repository. “
 
 Use the agent as an investigative planning partner. Give it a concrete outcome and explicit exclusions, then let it trace the complete affected path. Ask for one recommendation grounded in current modules, contracts, and tests.
 
-Keep three boundaries visible throughout the conversation:
+Persisting the result gives later challenges, revisions, breakdowns, and implementation requests one authoritative plan instead of relying on a summary reconstructed from conversation history. A revision should update that same plan directory and invalidate an existing milestone sequence because its strategy may no longer match.
+
+Keep four boundaries visible throughout the conversation:
 
 1. **Context boundary:** what the agent may inspect to understand the system.
 2. **Change boundary:** what the proposed implementation would modify.
-3. **Approval boundary:** what remains undecided until you approve the final plan.
+3. **Planning artifact boundary:** the one directory the planning-only command may write.
+4. **Approval boundary:** what remains undecided until you approve the final plan.
 
 ## Before you send the prompt
 
@@ -83,6 +88,7 @@ The plan should not quietly add a generic export framework, redesign the audit p
 - focused tests plus broader regression and build commands
 - rollout, rollback, and operational considerations proportional to risk
 - assumptions and decisions that still require the developer
+- one repository-relative `plan.md` path whose content matches the presented plan
 - an explicit stop before implementation
 
 ## Useful follow-ups
@@ -107,6 +113,8 @@ If two designs remain plausible:
 - every inspected dependency becomes an editable deliverable
 - product ambiguity is silently converted into an implementation assumption
 - tests cover file changes instead of failure modes
+- planning changes appear outside the new timestamped planning directory
+- the response summarizes or differs from the persisted `plan.md`
 - implementation starts before approval
 
 ## Developer review responsibility
