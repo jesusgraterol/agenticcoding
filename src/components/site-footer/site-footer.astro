@@ -22,16 +22,24 @@ import BrandLogo from '../brand-logo/brand-logo.astro';
       <p class="mb-2 font-mono text-xs font-bold text-muted uppercase">Resources</p>
       {SITE_CONFIG.navigation.slice(1).map(({ href, label }) => <a href={href}>{label}</a>)}
     </nav>
-    <div class="grid content-start gap-2 text-sm text-muted lg:text-right">
+    <div class="grid min-w-52 content-start gap-2 text-sm text-muted">
       <p class="mb-2 font-mono text-xs font-bold uppercase">Project</p>
-      <a
-        href={SITE_CONFIG.repositoryUrl}
-        target="_blank"
-        rel="noreferrer"
-        >Source repository</a
+      <nav
+        class="grid gap-2 text-foreground"
+        aria-label="Project links"
       >
-      <span>{SITE_CONFIG.url.replace('https://', '')}</span>
-      <span>{SITE_CONFIG.license} License · © 2026</span>
+        <a
+          href={SITE_CONFIG.repositoryUrl}
+          target="_blank"
+          rel="noreferrer"
+          >Source repository</a
+        >
+        <a href="/llms.txt">llms.txt</a>
+      </nav>
+      <div class="mt-3 grid gap-1 border-t border-border pt-3 text-xs">
+        <span>{SITE_CONFIG.url.replace('https://', '')}</span>
+        <span>{SITE_CONFIG.license} License · © 2026</span>
+      </div>
     </div>
   </div>
 </footer>
