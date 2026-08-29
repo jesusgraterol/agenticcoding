@@ -10,6 +10,7 @@ import { loadResource } from '../utilities/resource-text/index.ts';
 const resourceId = RESOURCE_IDS.RefinementPrompt;
 const { text } = await loadResource(resourceId);
 const resourceConfig = RESOURCE_CONFIG[resourceId];
+const publishedAt = new Date(`${resourceConfig.publishedAt}T00:00:00.000Z`);
 const updatedAt = new Date(`${resourceConfig.updatedAt}T00:00:00.000Z`);
 ---
 
@@ -20,9 +21,14 @@ const updatedAt = new Date(`${resourceConfig.updatedAt}T00:00:00.000Z`);
     title: resourceConfig.fileName,
   }}
   articleSection="Coding instructions"
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Refine', path: '/refine/' },
+  ]}
   canonicalPath="/refine/"
   description="One canonical prompt for strengthening existing coding-agent instructions without erasing useful project guidance."
   eyebrow="Refine existing instructions"
+  publishedAt={publishedAt}
   structuredDataType="article"
   title="Preserve what the repository already knows."
   updatedAt={updatedAt}
@@ -32,7 +38,10 @@ const updatedAt = new Date(`${resourceConfig.updatedAt}T00:00:00.000Z`);
     class="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-2 font-mono text-xs font-bold text-muted"
   >
     <span>Version {resourceConfig.version}</span>
-    <span>Updated {resourceConfig.updatedAt}</span>
+    <span>
+      Published <time datetime={resourceConfig.publishedAt}>{resourceConfig.publishedAt}</time>
+    </span>
+    <span>Updated <time datetime={resourceConfig.updatedAt}>{resourceConfig.updatedAt}</time></span>
   </div>
 
   <section class="py-12 sm:py-16">

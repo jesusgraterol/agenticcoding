@@ -4,6 +4,7 @@ description: Authorize one complete implementation slice, then hand it to agent-
 slug: execute-one-milestone
 order: 5
 category: execution
+publishedAt: 2026-08-19
 updatedAt: 2026-08-22
 featured: true
 draft: false

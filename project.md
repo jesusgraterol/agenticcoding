@@ -1813,9 +1813,13 @@ The project MUST include:
 
 Cookbook recipes should use article-style structured metadata when it can be added accurately.
 
+Article pages should expose a truthful publication date and, when different, last-meaningful-update date in visible semantic markup, Open Graph article metadata, and structured data. Content metadata validation must reject an update date earlier than its publication date.
+
 The homepage should use website-level structured metadata.
 
 The cookbook index should use collection-page structured metadata. Public HTML pages should identify `/llms.txt` with `rel="describedby"`, and pages with canonical raw resources should expose them with `rel="alternate"` and an accurate media type.
+
+Every public content page below the homepage should expose a visible, navigable breadcrumb trail and matching `BreadcrumbList` structured data derived from the same route hierarchy.
 
 Do not add fabricated ratings, dates, organizations, or author profiles to structured data.
 

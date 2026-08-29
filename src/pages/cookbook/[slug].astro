@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight } from '@lucide/astro';
 import CopyControl from '../../components/copy-control/copy-control.astro';
 import ContentLayout from '../../layouts/content-layout.astro';
 import { calculateReadingTime, loadPublishedRecipes } from '../../utilities/cookbook/index.ts';
+import { formatIsoDate } from '../../utilities/seo/index.ts';
 
 interface Props {
   recipe: CollectionEntry<'cookbook'>;
@@ -28,17 +29,28 @@ const relatedRecipes = recipe.data.relatedSlugs.flatMap((relatedSlug) => {
   return relatedRecipe ? [relatedRecipe] : [];
 });
 const promptSourceId = `${recipe.data.slug}-prompt`;
-const formattedDate = new Intl.DateTimeFormat('en', {
+const dateFormatter = new Intl.DateTimeFormat('en', {
   dateStyle: 'long',
   timeZone: 'UTC',
-}).format(recipe.data.updatedAt);
+});
+const formattedPublishedAt = dateFormatter.format(recipe.data.publishedAt);
+const formattedUpdatedAt = dateFormatter.format(recipe.data.updatedAt);
+const publishedDate = formatIsoDate(recipe.data.publishedAt);
+const updatedDate = formatIsoDate(recipe.data.updatedAt);
+const hasBeenUpdated = recipe.data.updatedAt.getTime() !== recipe.data.publishedAt.getTime();
 ---
 
 <ContentLayout
   articleSection={`Cookbook: ${recipe.data.category}`}
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Cookbook', path: '/cookbook/' },
+    { name: recipe.data.title, path: `/cookbook/${recipe.data.slug}/` },
+  ]}
   canonicalPath={`/cookbook/${recipe.data.slug}/`}
   description={recipe.data.description}
   eyebrow={`Cookbook · ${recipe.data.category}`}
+  publishedAt={recipe.data.publishedAt}
   structuredDataType="article"
   title={recipe.data.title}
   updatedAt={recipe.data.updatedAt}
@@ -48,7 +60,16 @@ const formattedDate = new Intl.DateTimeFormat('en', {
     class="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-2 font-mono text-xs font-bold text-muted"
   >
     <span>{calculateReadingTime(recipe.body ?? '')} min read</span>
-    <span>Updated {formattedDate}</span>
+    <span>
+      Published <time datetime={publishedDate}>{formattedPublishedAt}</time>
+    </span>
+    {
+      hasBeenUpdated && (
+        <span>
+          Updated <time datetime={updatedDate}>{formattedUpdatedAt}</time>
+        </span>
+      )
+    }
   </div>
 
   <article class="py-12 sm:py-16">

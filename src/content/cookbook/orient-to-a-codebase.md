@@ -4,6 +4,7 @@ description: Build a verified working map of an unfamiliar repository before ask
 slug: orient-to-a-codebase
 order: 1
 category: planning
+publishedAt: 2026-08-19
 updatedAt: 2026-08-19
 featured: true
 draft: false

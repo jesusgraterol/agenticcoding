@@ -4,6 +4,7 @@ description: Attack a proposed strategy before implementation makes false assump
 slug: challenge-a-plan
 order: 3
 category: planning
+publishedAt: 2026-08-19
 updatedAt: 2026-08-19
 featured: true
 draft: false

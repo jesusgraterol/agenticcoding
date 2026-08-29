@@ -4,6 +4,7 @@ description: Have the agent assemble adversarial evidence for the developer's ac
 slug: review-a-change
 order: 11
 category: review
+publishedAt: 2026-08-19
 updatedAt: 2026-08-22
 featured: true
 draft: false

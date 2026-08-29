@@ -6,6 +6,7 @@ import { SITE_CONFIG } from '../src/site.config.ts';
 
 const repositoryRoot = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const DEFAULT_BUILD_DIRECTORY = resolve(repositoryRoot, 'dist');
+const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/u;
 const REQUIRED_BUILD_PATHS = [
   'index.html',
   '404.html',
@@ -30,6 +31,10 @@ const escapeRegularExpression = (input: string): string =>
 /** Checks whether an unknown JSON value is an object record. */
 const isRecord = (input: unknown): input is Record<string, unknown> =>
   typeof input === 'object' && input !== null && !Array.isArray(input);
+
+/** Checks whether an unknown JSON value is an array of object records. */
+const isRecordArray = (input: unknown): input is Record<string, unknown>[] =>
+  Array.isArray(input) && input.every(isRecord);
 
 /** Lists every file below a build directory using stable relative paths. */
 const listBuildFiles = async (
@@ -94,6 +99,22 @@ const parseStructuredData = (html: string, htmlPath: string): Record<string, unk
   }
 
   return structuredData;
+};
+
+/** Extracts validated entities from a standalone or graph-based JSON-LD document. */
+const extractStructuredDataEntities = (
+  structuredData: Record<string, unknown>,
+  htmlPath: string,
+): Record<string, unknown>[] => {
+  const graph = structuredData['@graph'];
+
+  if (graph === undefined) return [structuredData];
+
+  if (!Array.isArray(graph) || !graph.every(isRecord)) {
+    throw new Error(`Structured data graph is invalid in ${htmlPath}`);
+  }
+
+  return graph;
 };
 
 /**
@@ -210,25 +231,63 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
     }
 
     const structuredData = parseStructuredData(html, htmlPath);
+    const structuredDataEntities = extractStructuredDataEntities(structuredData, htmlPath);
+    const pageEntity = structuredDataEntities.find(
+      (entity) => entity['@type'] === expectedStructuredDataType,
+    );
 
     if (
-      structuredData['@type'] !== expectedStructuredDataType ||
-      structuredData['url'] !== canonicalUrl ||
-      typeof structuredData['description'] !== 'string'
+      !pageEntity ||
+      pageEntity['url'] !== canonicalUrl ||
+      typeof pageEntity['description'] !== 'string'
     ) {
       throw new Error(`Structured data does not match the canonical page in ${htmlPath}`);
     }
 
     if (expectedStructuredDataType === 'Article') {
-      const mainEntityOfPage = structuredData['mainEntityOfPage'];
+      const mainEntityOfPage = pageEntity['mainEntityOfPage'];
+      const datePublished = pageEntity['datePublished'];
+      const dateModified = pageEntity['dateModified'];
 
       if (
         !isRecord(mainEntityOfPage) ||
         mainEntityOfPage['@id'] !== canonicalUrl ||
-        typeof structuredData['headline'] !== 'string' ||
-        typeof structuredData['dateModified'] !== 'string'
+        typeof pageEntity['headline'] !== 'string' ||
+        typeof datePublished !== 'string' ||
+        typeof dateModified !== 'string' ||
+        !ISO_DATE_PATTERN.test(datePublished) ||
+        !ISO_DATE_PATTERN.test(dateModified) ||
+        'breadcrumb' in pageEntity ||
+        !html.includes(`<meta property="article:published_time" content="${datePublished}"`) ||
+        !html.includes(`<meta property="article:modified_time" content="${dateModified}"`) ||
+        !html.includes(`<time datetime="${datePublished}"`) ||
+        (dateModified !== datePublished && !html.includes(`<time datetime="${dateModified}"`))
       ) {
         throw new Error(`Article structured data is incomplete in ${htmlPath}`);
+      }
+    }
+
+    if (htmlPath !== 'index.html') {
+      const breadcrumbList = structuredDataEntities.find(
+        (entity) => entity['@type'] === 'BreadcrumbList',
+      );
+      const breadcrumbItems = breadcrumbList?.['itemListElement'];
+
+      if (
+        !breadcrumbList ||
+        !isRecordArray(breadcrumbItems) ||
+        breadcrumbItems.length < 2 ||
+        !breadcrumbItems.every(
+          (breadcrumbItem, index) =>
+            breadcrumbItem['@type'] === 'ListItem' &&
+            typeof breadcrumbItem['item'] === 'string' &&
+            typeof breadcrumbItem['name'] === 'string' &&
+            breadcrumbItem['position'] === index + 1,
+        ) ||
+        breadcrumbItems.at(-1)?.['item'] !== canonicalUrl ||
+        !html.includes('<nav aria-label="Breadcrumb">')
+      ) {
+        throw new Error(`Breadcrumb hierarchy is incomplete in ${htmlPath}`);
       }
     }
 

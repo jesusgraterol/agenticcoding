@@ -109,6 +109,19 @@ test.describe('production website', () => {
         'https://agenticcoding.jesusgraterol.dev/og/agentic-coding.png',
       );
       await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(1);
+
+      if (route !== '/') {
+        const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
+
+        await expect(breadcrumb).toBeVisible();
+        await expect(breadcrumb.locator('[aria-current="page"]')).toHaveCount(1);
+      }
+
+      if (route !== '/' && route !== '/cookbook/') {
+        await expect(page.locator('meta[property="article:published_time"]')).toHaveCount(1);
+        await expect(page.locator('meta[property="article:modified_time"]')).toHaveCount(1);
+        await expect(page.locator('time[datetime]')).not.toHaveCount(0);
+      }
     });
   }
 

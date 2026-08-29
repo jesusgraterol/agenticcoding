@@ -2,6 +2,7 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
+import { CookbookEntrySchema } from './content/index.ts';
 import { RESOURCE_IDS } from './site.config.ts';
 
 const resources = defineCollection({
@@ -15,18 +16,7 @@ const resources = defineCollection({
 
 const cookbook = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/cookbook' }),
-  schema: z.strictObject({
-    category: z.enum(['planning', 'execution', 'review', 'instructions']),
-    description: z.string().min(1),
-    draft: z.boolean(),
-    featured: z.boolean(),
-    order: z.number().int().positive(),
-    prompt: z.string().min(1),
-    relatedSlugs: z.array(z.string().min(1)),
-    slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
-    title: z.string().min(1),
-    updatedAt: z.coerce.date(),
-  }),
+  schema: CookbookEntrySchema,
 });
 
 export const collections = { cookbook, resources };

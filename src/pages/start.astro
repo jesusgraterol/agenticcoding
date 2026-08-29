@@ -7,6 +7,7 @@ import { loadResource } from '../utilities/resource-text/index.ts';
 const resourceId = RESOURCE_IDS.AgentsFoundation;
 const { text } = await loadResource(resourceId);
 const resourceConfig = RESOURCE_CONFIG[resourceId];
+const publishedAt = new Date(`${resourceConfig.publishedAt}T00:00:00.000Z`);
 const updatedAt = new Date(`${resourceConfig.updatedAt}T00:00:00.000Z`);
 ---
 
@@ -17,9 +18,14 @@ const updatedAt = new Date(`${resourceConfig.updatedAt}T00:00:00.000Z`);
     title: resourceConfig.fileName,
   }}
   articleSection="Coding instructions"
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Start', path: '/start/' },
+  ]}
   canonicalPath="/start/"
   description="A neutral, ready-to-use engineering foundation for coding agents in new or existing repositories."
   eyebrow="Start with the foundation"
+  publishedAt={publishedAt}
   structuredDataType="article"
   title="Give the agent a reliable way to work."
   updatedAt={updatedAt}
@@ -29,7 +35,10 @@ const updatedAt = new Date(`${resourceConfig.updatedAt}T00:00:00.000Z`);
     class="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-2 font-mono text-xs font-bold text-muted"
   >
     <span>Version {resourceConfig.version}</span>
-    <span>Updated {resourceConfig.updatedAt}</span>
+    <span>
+      Published <time datetime={resourceConfig.publishedAt}>{resourceConfig.publishedAt}</time>
+    </span>
+    <span>Updated <time datetime={resourceConfig.updatedAt}>{resourceConfig.updatedAt}</time></span>
   </div>
 
   <section class="py-12 sm:py-16">

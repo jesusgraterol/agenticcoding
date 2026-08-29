@@ -28,45 +28,114 @@ describe('buildStructuredData', () => {
     });
   });
 
-  test('describes an article with its visible title, section, author, and modified date', () => {
-    expect(
-      buildStructuredData({
-        articleSection: 'Planning',
-        canonicalUrl: 'https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/',
-        description: 'Turn a requirement into a grounded implementation strategy.',
-        title: 'Plan a feature',
-        type: 'article',
-        updatedAt: new Date('2026-08-19T00:00:00.000Z'),
-      }),
-    ).toMatchObject({
-      '@id': 'https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/#article',
-      '@type': 'Article',
+  test('describes an article with date-only metadata and a separate breadcrumb entity', () => {
+    const structuredData = buildStructuredData({
       articleSection: 'Planning',
-      dateModified: '2026-08-19T00:00:00.000Z',
-      headline: 'Plan a feature',
-      mainEntityOfPage: {
-        '@id': 'https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/',
-        '@type': 'WebPage',
-      },
+      breadcrumbs: [
+        { name: 'Home', path: '/' },
+        { name: 'Cookbook', path: '/cookbook/' },
+        { name: 'Plan a feature', path: '/cookbook/plan-a-feature/' },
+      ],
+      canonicalUrl: 'https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/',
+      description: 'Turn a requirement into a grounded implementation strategy.',
+      publishedAt: new Date('2026-08-19T00:00:00.000Z'),
+      title: 'Plan a feature',
+      type: 'article',
+      updatedAt: new Date('2026-08-19T00:00:00.000Z'),
+    });
+
+    expect(structuredData).toStrictEqual({
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@id': 'https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/#article',
+          '@type': 'Article',
+          articleSection: 'Planning',
+          author: {
+            '@type': 'Person',
+            name: 'Jesus Graterol',
+            url: 'https://jesusgraterol.dev/',
+          },
+          dateModified: '2026-08-19',
+          datePublished: '2026-08-19',
+          description: 'Turn a requirement into a grounded implementation strategy.',
+          headline: 'Plan a feature',
+          image: {
+            '@type': 'ImageObject',
+            height: 630,
+            url: 'https://agenticcoding.jesusgraterol.dev/og/agentic-coding.png',
+            width: 1200,
+          },
+          inLanguage: 'en',
+          isPartOf: {
+            '@id': 'https://agenticcoding.jesusgraterol.dev/#website',
+            '@type': 'WebSite',
+            name: 'Agentic Coding',
+            url: 'https://agenticcoding.jesusgraterol.dev/',
+          },
+          mainEntityOfPage: {
+            '@id': 'https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/',
+            '@type': 'WebPage',
+          },
+          url: 'https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/',
+        },
+        {
+          '@id': 'https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/#breadcrumb',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              item: 'https://agenticcoding.jesusgraterol.dev/',
+              name: 'Home',
+              position: 1,
+            },
+            {
+              '@type': 'ListItem',
+              item: 'https://agenticcoding.jesusgraterol.dev/cookbook/',
+              name: 'Cookbook',
+              position: 2,
+            },
+            {
+              '@type': 'ListItem',
+              item: 'https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/',
+              name: 'Plan a feature',
+              position: 3,
+            },
+          ],
+        },
+      ],
     });
   });
 
   test('describes a collection as part of the website', () => {
     expect(
       buildStructuredData({
+        breadcrumbs: [
+          { name: 'Home', path: '/' },
+          { name: 'Cookbook', path: '/cookbook/' },
+        ],
         canonicalUrl: 'https://agenticcoding.jesusgraterol.dev/cookbook/',
         description: 'Practical workflows for coding agents.',
         title: 'Techniques, not magic prompts.',
         type: 'collection',
       }),
     ).toMatchObject({
-      '@id': 'https://agenticcoding.jesusgraterol.dev/cookbook/#webpage',
-      '@type': 'CollectionPage',
-      isPartOf: {
-        '@id': 'https://agenticcoding.jesusgraterol.dev/#website',
-        '@type': 'WebSite',
-      },
-      name: 'Techniques, not magic prompts.',
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@id': 'https://agenticcoding.jesusgraterol.dev/cookbook/#webpage',
+          '@type': 'CollectionPage',
+          isPartOf: {
+            '@id': 'https://agenticcoding.jesusgraterol.dev/#website',
+            '@type': 'WebSite',
+          },
+          name: 'Techniques, not magic prompts.',
+        },
+        {
+          '@id': 'https://agenticcoding.jesusgraterol.dev/cookbook/#breadcrumb',
+          '@type': 'BreadcrumbList',
+        },
+      ],
     });
   });
 });

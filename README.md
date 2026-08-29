@@ -81,7 +81,7 @@ Cookbook recipes live in `src/content/cookbook/`. To add one:
 │   ├── content/
 │   │   ├── cookbook/        # recipe Markdown sources
 │   │   └── resources/       # canonical public instruction resources
-│   ├── layouts/             # shared document metadata, navigation, and content shells
+│   ├── layouts/             # shared metadata, breadcrumbs, navigation, and content shells
 │   ├── pages/               # static routes and raw text endpoints
 │   ├── styles/              # Tailwind entry point and branded semantic design tokens
 │   └── utilities/           # resource, recipe, LLM index, SEO, and theme behavior with focused tests
@@ -91,7 +91,7 @@ Cookbook recipes live in `src/content/cookbook/`. To add one:
 └── package.json             # exact runtime, tooling, and command contracts
 ```
 
-The root layouts own canonical URLs, search and social metadata, structured data, theme bootstrap behavior, the skip link, global navigation, and the footer. Page modules own page-specific hierarchy and content. Content collections own validated prose. Utilities own the small pieces of behavior that must remain identical across rendered and raw surfaces.
+The root layouts own canonical URLs, search and social metadata, structured data, visible breadcrumb hierarchy, article publication and update dates, theme bootstrap behavior, the skip link, global navigation, and the footer. Page modules own page-specific hierarchy and content. Content collections own validated prose and require publication dates that do not follow their update dates. Utilities own the small pieces of behavior that must remain identical across rendered and raw surfaces.
 
 Each timestamped directory under `coding-agent-planning/` contains one authoritative implementation plan and, when useful, its milestone sequence. These planning artifacts are intentionally version-controlled in this repository and are not Astro source inputs.
 
@@ -112,7 +112,7 @@ The quality pipeline checks:
 - application-owned text normalization, reading-time, sorting, and theme preference behavior
 - TypeScript and Astro diagnostics
 - ESLint and Prettier conformance
-- production generation, sitemap output, internal links, LLM discovery, SEO metadata, structured data, and raw resource fidelity
+- production generation, sitemap output, internal links, LLM discovery, SEO metadata, article dates, breadcrumb structured data, and raw resource fidelity
 - browser accessibility, navigation progress, copy controls, raw routes, theme persistence, reduced motion, keyboard navigation, and layouts down to 320 pixels
 
 Run the complete pipeline before publishing:
