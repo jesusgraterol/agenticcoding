@@ -39,7 +39,7 @@ const tracks = [
   {
     category: 'execution',
     description:
-      'Implement bounded outcomes, preserve scope, and recover cleanly when work wanders.',
+      'Implement bounded outcomes, preserve scope, and publish accepted work only under separate authority.',
     label: 'Execute with control',
   },
   {
@@ -56,8 +56,12 @@ const tracks = [
 ---
 
 <ContentLayout
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Cookbook', path: '/cookbook/' },
+  ]}
   canonicalPath="/cookbook/"
-  description="A field guide for planning, executing, agent-operated evidence, developer acceptance, and recovery with coding agents."
+  description="A field guide for planning, challenge, execution, evidence, correction, developer acceptance, and governed publication with coding agents."
   eyebrow="Agentic Coding cookbook"
   structuredDataType="collection"
   title="Choose the conversation your work needs."

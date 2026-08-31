@@ -4,6 +4,7 @@ description: Evaluate a current strategy and create outcome-based milestones onl
 slug: break-down-a-plan
 order: 4
 category: planning
+publishedAt: 2026-08-19
 updatedAt: 2026-08-24
 featured: true
 draft: false

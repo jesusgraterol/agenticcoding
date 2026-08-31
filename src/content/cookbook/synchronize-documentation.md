@@ -4,6 +4,7 @@ description: Update durable documentation from the implemented behavior without 
 slug: synchronize-documentation
 order: 7
 category: execution
+publishedAt: 2026-08-19
 updatedAt: 2026-08-19
 featured: false
 draft: false

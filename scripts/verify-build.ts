@@ -6,6 +6,26 @@ import { SITE_CONFIG } from '../src/site.config.ts';
 
 const repositoryRoot = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const DEFAULT_BUILD_DIRECTORY = resolve(repositoryRoot, 'dist');
+const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/u;
+// stable messages for intentional build-verification failures.
+const VERIFY_BUILD_ERROR_MESSAGES = {
+  ArticleStructuredDataIncomplete: 'Article structured data is incomplete',
+  BreadcrumbHierarchyIncomplete: 'Breadcrumb hierarchy is incomplete',
+  BrokenInternalLink: 'Broken internal link',
+  BrokenInternalLlmsTextLink: 'Broken internal llms.txt link',
+  CanonicalUrlMissingFromSitemap: 'Canonical URL is missing from the sitemap',
+  InvalidStructuredData: 'Invalid structured data',
+  InvalidStructuredDataGraph: 'Structured data graph is invalid',
+  InvalidLlmsTextStructure: 'llms.txt does not follow the required project index structure.',
+  MissingOrDuplicatePageDescription: 'Missing or duplicate page description',
+  MissingOrDuplicatePageTitle: 'Missing or duplicate page title',
+  MissingRequiredMetadata: 'Missing required metadata',
+  MissingStructuredData: 'Missing structured data',
+  NonObjectStructuredData: 'Structured data is not an object',
+  ProductionBuildContainsTestFile: 'Production build contains a test file',
+  SearchIndexableNotFoundPage: 'The custom 404 page must remain excluded from search indexes.',
+  StructuredDataDoesNotMatchPage: 'Structured data does not match the canonical page',
+} as const;
 const REQUIRED_BUILD_PATHS = [
   'index.html',
   '404.html',
@@ -30,6 +50,10 @@ const escapeRegularExpression = (input: string): string =>
 /** Checks whether an unknown JSON value is an object record. */
 const isRecord = (input: unknown): input is Record<string, unknown> =>
   typeof input === 'object' && input !== null && !Array.isArray(input);
+
+/** Checks whether an unknown JSON value is an array of object records. */
+const isRecordArray = (input: unknown): input is Record<string, unknown>[] =>
+  Array.isArray(input) && input.every(isRecord);
 
 /** Lists every file below a build directory using stable relative paths. */
 const listBuildFiles = async (
@@ -71,14 +95,20 @@ const resolveCanonicalUrl = (htmlPath: string): string => {
   return new URL(routePath, SITE_CONFIG.url).toString();
 };
 
-/** Parses the single page-level JSON-LD object from generated HTML. */
+/**
+ * Parses the single page-level JSON-LD object from generated HTML.
+ * @throws
+ * - Missing structured data
+ * - Invalid structured data
+ * - Structured data is not an object
+ */
 const parseStructuredData = (html: string, htmlPath: string): Record<string, unknown> => {
   const serializedStructuredData = html.match(
     /<script type="application\/ld\+json">([^<]+)<\/script>/u,
   )?.[1];
 
   if (!serializedStructuredData) {
-    throw new Error(`Missing structured data in ${htmlPath}`);
+    throw new Error(`${VERIFY_BUILD_ERROR_MESSAGES.MissingStructuredData} in ${htmlPath}`);
   }
 
   let structuredData: unknown;
@@ -86,14 +116,36 @@ const parseStructuredData = (html: string, htmlPath: string): Record<string, unk
   try {
     structuredData = JSON.parse(serializedStructuredData);
   } catch (error) {
-    throw new Error(`Invalid structured data in ${htmlPath}`, { cause: error });
+    throw new Error(`${VERIFY_BUILD_ERROR_MESSAGES.InvalidStructuredData} in ${htmlPath}`, {
+      cause: error,
+    });
   }
 
   if (!isRecord(structuredData)) {
-    throw new Error(`Structured data is not an object in ${htmlPath}`);
+    throw new Error(`${VERIFY_BUILD_ERROR_MESSAGES.NonObjectStructuredData} in ${htmlPath}`);
   }
 
   return structuredData;
+};
+
+/**
+ * Extracts validated entities from a standalone or graph-based JSON-LD document.
+ * @throws
+ * - Structured data graph is invalid
+ */
+const extractStructuredDataEntities = (
+  structuredData: Record<string, unknown>,
+  htmlPath: string,
+): Record<string, unknown>[] => {
+  const graph = structuredData['@graph'];
+
+  if (graph === undefined) return [structuredData];
+
+  if (!Array.isArray(graph) || !graph.every(isRecord)) {
+    throw new Error(`${VERIFY_BUILD_ERROR_MESSAGES.InvalidStructuredDataGraph} in ${htmlPath}`);
+  }
+
+  return graph;
 };
 
 /**
@@ -101,7 +153,22 @@ const parseStructuredData = (html: string, htmlPath: string): Record<string, unk
  * @param buildDirectory The static artifact directory to inspect.
  * @returns A promise that resolves when the artifact satisfies the project contract.
  * @throws
- * - If a required file, metadata contract, internal link target, or build exclusion is invalid
+ * - Missing structured data
+ * - Invalid structured data
+ * - Structured data is not an object
+ * - Structured data graph is invalid
+ * - Production build contains a test file
+ * - Missing required metadata
+ * - Missing or duplicate page description
+ * - Missing or duplicate page title
+ * - Canonical URL is missing from the sitemap
+ * - Structured data does not match the canonical page
+ * - Article structured data is incomplete
+ * - Breadcrumb hierarchy is incomplete
+ * - Broken internal link
+ * - The custom 404 page must remain excluded from search indexes.
+ * - llms.txt does not follow the required project index structure.
+ * - Broken internal llms.txt link
  */
 export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Promise<void> => {
   const buildFiles = await listBuildFiles(buildDirectory);
@@ -115,7 +182,9 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
   );
 
   if (emittedTestFile) {
-    throw new Error(`Production build contains a test file: ${emittedTestFile}`);
+    throw new Error(
+      `${VERIFY_BUILD_ERROR_MESSAGES.ProductionBuildContainsTestFile}: ${emittedTestFile}`,
+    );
   }
 
   const htmlFiles = buildFiles.filter((filePath) => filePath.endsWith('.html'));
@@ -187,7 +256,9 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
 
     for (const pattern of requiredPatterns) {
       if (!pattern.test(html)) {
-        throw new Error(`Missing required metadata in ${htmlPath}: ${pattern.source}`);
+        throw new Error(
+          `${VERIFY_BUILD_ERROR_MESSAGES.MissingRequiredMetadata} in ${htmlPath}: ${pattern.source}`,
+        );
       }
     }
 
@@ -195,40 +266,88 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
     const title = html.match(/<title>([^<]+)<\/title>/u)?.[1];
 
     if (!description || descriptions.has(description)) {
-      throw new Error(`Missing or duplicate page description in ${htmlPath}`);
+      throw new Error(
+        `${VERIFY_BUILD_ERROR_MESSAGES.MissingOrDuplicatePageDescription} in ${htmlPath}`,
+      );
     }
 
     if (!title || titles.has(title)) {
-      throw new Error(`Missing or duplicate page title in ${htmlPath}`);
+      throw new Error(`${VERIFY_BUILD_ERROR_MESSAGES.MissingOrDuplicatePageTitle} in ${htmlPath}`);
     }
 
     descriptions.add(description);
     titles.add(title);
 
     if (!sitemap.includes(`<loc>${canonicalUrl}</loc>`)) {
-      throw new Error(`Canonical URL is missing from the sitemap: ${canonicalUrl}`);
+      throw new Error(
+        `${VERIFY_BUILD_ERROR_MESSAGES.CanonicalUrlMissingFromSitemap}: ${canonicalUrl}`,
+      );
     }
 
     const structuredData = parseStructuredData(html, htmlPath);
+    const structuredDataEntities = extractStructuredDataEntities(structuredData, htmlPath);
+    const pageEntity = structuredDataEntities.find(
+      (entity) => entity['@type'] === expectedStructuredDataType,
+    );
 
     if (
-      structuredData['@type'] !== expectedStructuredDataType ||
-      structuredData['url'] !== canonicalUrl ||
-      typeof structuredData['description'] !== 'string'
+      !pageEntity ||
+      pageEntity['url'] !== canonicalUrl ||
+      typeof pageEntity['description'] !== 'string'
     ) {
-      throw new Error(`Structured data does not match the canonical page in ${htmlPath}`);
+      throw new Error(
+        `${VERIFY_BUILD_ERROR_MESSAGES.StructuredDataDoesNotMatchPage} in ${htmlPath}`,
+      );
     }
 
     if (expectedStructuredDataType === 'Article') {
-      const mainEntityOfPage = structuredData['mainEntityOfPage'];
+      const mainEntityOfPage = pageEntity['mainEntityOfPage'];
+      const datePublished = pageEntity['datePublished'];
+      const dateModified = pageEntity['dateModified'];
 
       if (
         !isRecord(mainEntityOfPage) ||
         mainEntityOfPage['@id'] !== canonicalUrl ||
-        typeof structuredData['headline'] !== 'string' ||
-        typeof structuredData['dateModified'] !== 'string'
+        typeof pageEntity['headline'] !== 'string' ||
+        typeof datePublished !== 'string' ||
+        typeof dateModified !== 'string' ||
+        !ISO_DATE_PATTERN.test(datePublished) ||
+        !ISO_DATE_PATTERN.test(dateModified) ||
+        'breadcrumb' in pageEntity ||
+        !html.includes(`<meta property="article:published_time" content="${datePublished}"`) ||
+        !html.includes(`<meta property="article:modified_time" content="${dateModified}"`) ||
+        !html.includes(`<time datetime="${datePublished}"`) ||
+        (dateModified !== datePublished && !html.includes(`<time datetime="${dateModified}"`))
       ) {
-        throw new Error(`Article structured data is incomplete in ${htmlPath}`);
+        throw new Error(
+          `${VERIFY_BUILD_ERROR_MESSAGES.ArticleStructuredDataIncomplete} in ${htmlPath}`,
+        );
+      }
+    }
+
+    if (htmlPath !== 'index.html') {
+      const breadcrumbList = structuredDataEntities.find(
+        (entity) => entity['@type'] === 'BreadcrumbList',
+      );
+      const breadcrumbItems = breadcrumbList?.['itemListElement'];
+
+      if (
+        !breadcrumbList ||
+        !isRecordArray(breadcrumbItems) ||
+        breadcrumbItems.length < 2 ||
+        !breadcrumbItems.every(
+          (breadcrumbItem, index) =>
+            breadcrumbItem['@type'] === 'ListItem' &&
+            typeof breadcrumbItem['item'] === 'string' &&
+            typeof breadcrumbItem['name'] === 'string' &&
+            breadcrumbItem['position'] === index + 1,
+        ) ||
+        breadcrumbItems.at(-1)?.['item'] !== canonicalUrl ||
+        !html.includes('<nav aria-label="Breadcrumb">')
+      ) {
+        throw new Error(
+          `${VERIFY_BUILD_ERROR_MESSAGES.BreadcrumbHierarchyIncomplete} in ${htmlPath}`,
+        );
       }
     }
 
@@ -242,7 +361,9 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
       const artifactPath = resolveInternalArtifact(href);
 
       if (!buildFiles.includes(artifactPath)) {
-        throw new Error(`Broken internal link in ${htmlPath}: ${href} -> ${artifactPath}`);
+        throw new Error(
+          `${VERIFY_BUILD_ERROR_MESSAGES.BrokenInternalLink} in ${htmlPath}: ${href} -> ${artifactPath}`,
+        );
       }
     }
   }
@@ -250,7 +371,7 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
   const notFoundHtml = await readFile(resolve(buildDirectory, '404.html'), 'utf8');
 
   if (!notFoundHtml.includes('<meta name="robots" content="noindex, follow">')) {
-    throw new Error('The custom 404 page must remain excluded from search indexes.');
+    throw new Error(VERIFY_BUILD_ERROR_MESSAGES.SearchIndexableNotFoundPage);
   }
 
   const llmsText = await readFile(resolve(buildDirectory, 'llms.txt'), 'utf8');
@@ -260,7 +381,7 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
     !llmsText.includes('\n## Core resources\n') ||
     !llmsText.includes('\n## Cookbook recipes\n')
   ) {
-    throw new Error('llms.txt does not follow the required project index structure.');
+    throw new Error(VERIFY_BUILD_ERROR_MESSAGES.InvalidLlmsTextStructure);
   }
 
   const llmsLinks = [...llmsText.matchAll(/\[[^\]]+\]\((https:\/\/[^)]+)\)/gu)].map(
@@ -277,7 +398,9 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
     const artifactPath = resolveInternalArtifact(url.pathname);
 
     if (!buildFiles.includes(artifactPath)) {
-      throw new Error(`Broken internal llms.txt link: ${link} -> ${artifactPath}`);
+      throw new Error(
+        `${VERIFY_BUILD_ERROR_MESSAGES.BrokenInternalLlmsTextLink}: ${link} -> ${artifactPath}`,
+      );
     }
   }
 };

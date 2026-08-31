@@ -4,6 +4,7 @@ description: Design tests around realistic defects and integration boundaries in
 slug: deepen-a-test-strategy
 order: 10
 category: review
+publishedAt: 2026-08-19
 updatedAt: 2026-08-22
 featured: true
 draft: false

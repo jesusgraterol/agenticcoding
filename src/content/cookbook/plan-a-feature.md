@@ -4,6 +4,7 @@ description: Turn a desired outcome into a codebase-grounded implementation stra
 slug: plan-a-feature
 order: 2
 category: planning
+publishedAt: 2026-08-19
 updatedAt: 2026-08-24
 featured: true
 draft: false

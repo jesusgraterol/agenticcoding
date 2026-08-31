@@ -4,7 +4,8 @@ description: Authorize one complete implementation slice, then hand it to agent-
 slug: execute-one-milestone
 order: 5
 category: execution
-updatedAt: 2026-08-22
+publishedAt: 2026-08-19
+updatedAt: 2026-08-30
 featured: true
 draft: false
 relatedSlugs:
@@ -12,6 +13,7 @@ relatedSlugs:
   - control-scope
   - review-a-change
   - synchronize-documentation
+  - publish-an-authorized-change
 prompt: |
   Implement only [milestone number and name] from the approved plan and breakdown. Treat the approved plan, breakdown, and the following amendments as the complete task contract:
 
@@ -21,7 +23,7 @@ prompt: |
 
   Complete the milestone's production behavior together with its contracts, validation, error handling, tests, documentation, migrations, compatibility work, and verification. Inspect each logical step and the final diff. If new evidence requires crossing the milestone boundary or materially changing the approved strategy, stop before doing so and explain the required deviation.
 
-  Report files changed, behavior delivered, tests and checks actually run, skipped checks and limitations, migration or deployment state, documentation synchronization, and remaining risks. Stop so the developer can invoke `review` or `review <branch-name>` for the agent evidence package, evaluate whether it justifies acceptance, and decide whether a deeper audit is required. Do not scaffold or begin a later milestone, commit, push, deploy, or perform another external action unless separately authorized.
+  Report files changed, behavior delivered, tests and checks actually run, skipped checks and limitations, migration or deployment state, documentation synchronization, and remaining risks. Stop so the developer can invoke `review` or `review <target-branch>` for the agent evidence package, evaluate whether it justifies acceptance, and decide whether a deeper audit is required. Do not scaffold or begin a later milestone, commit, push, deploy, or perform another external action unless separately authorized.
 ---
 
 ## Situation
@@ -47,7 +49,7 @@ Execution should follow a tight loop:
 3. Inspect the step and run the narrowest useful check.
 4. Reconfirm that remaining work still belongs to the milestone.
 5. Run the complete milestone verification and inspect the final diff.
-6. After implementation stops, invoke `review` or `review <branch-name>` for the agent evidence package, then make the developer acceptance decision.
+6. After implementation stops, invoke `review` or `review <target-branch>` for the agent evidence package, then make the developer acceptance decision.
 
 ## Before you send the prompt
 
@@ -101,6 +103,10 @@ Before accepting completion:
 
 > Compare the final diff with the milestone contract line by line. Identify any change that is not required for the milestone or any acceptance criterion without evidence.
 
+After acceptance, when publication is also intended:
+
+> Use the Publish an authorized change workflow as a separate authorization. Re-establish the exact repository state and destination before committing or pushing.
+
 ## Warning signs
 
 - later-milestone types, configuration, or scaffolding appear in the diff
@@ -112,4 +118,4 @@ Before accepting completion:
 
 ## Developer review responsibility
 
-After the agent review, challenge the milestone evidence at the promised checkpoint. Inspect code when risk, novelty, or weak evidence warrants it. Decide whether new discoveries change the remaining plan, and authorize the next milestone only when the repository is coherent and the evidence justifies acceptance.
+After the agent review, challenge the milestone evidence at the promised checkpoint. Inspect code when risk, novelty, or weak evidence warrants it. Decide whether new discoveries change the remaining plan, and authorize the next milestone only when the repository is coherent and the evidence justifies acceptance. Acceptance does not authorize publication.

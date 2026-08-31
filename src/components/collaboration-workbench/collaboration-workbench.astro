@@ -21,9 +21,16 @@ const dialogue = [
 
 const stages = [
   ['Plan', 'Establish the intended final state.'],
-  ['Breakdown', 'Create coherent reviewable slices when useful.'],
+  ['Challenge', 'Attack material assumptions before approval.'],
+  ['Breakdown', 'Create coherent slices only when useful.'],
   ['Execute', 'Implement only the authorized scope.'],
-  ['Review', 'Agent builds the evidence; developer judges whether it is enough.'],
+  ['Review', 'Build the evidence for a developer decision.'],
+] as const;
+
+const reviewOutcomes = [
+  ['Correct', 'Resolve a defect or weak proof, then review the new state.'],
+  ['Continue', 'Authorize the next bounded milestone.'],
+  ['Complete', 'Accept the requested engineering outcome.'],
 ] as const;
 ---
 
@@ -91,7 +98,7 @@ const stages = [
       </div>
     </div>
   </div>
-  <ol class="grid gap-px border-t border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+  <ol class="grid gap-px border-t border-border bg-border sm:grid-cols-2 lg:grid-cols-5">
     {
       stages.map(([name, summary], index) => (
         <li class="bg-secondary/70 p-5">
@@ -104,4 +111,25 @@ const stages = [
       ))
     }
   </ol>
+  <div class="grid border-t border-border lg:grid-cols-[1fr_18rem]">
+    <div class="bg-background p-5 sm:p-6">
+      <p class="font-mono text-xs font-bold text-muted uppercase">Review outcomes</p>
+      <dl class="mt-4 grid gap-4 sm:grid-cols-3">
+        {
+          reviewOutcomes.map(([name, summary]) => (
+            <div>
+              <dt class="font-semibold">{name}</dt>
+              <dd class="mt-1 text-sm leading-6 text-muted">{summary}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+    <aside
+      class="border-t border-border bg-primary p-5 text-primary-foreground sm:p-6 lg:border-t-0 lg:border-l"
+    >
+      <p class="font-mono text-xs font-bold text-white/55 uppercase">Separate gate</p>
+      <p class="mt-3 font-semibold">Publish only when explicitly authorized.</p>
+    </aside>
+  </div>
 </div>

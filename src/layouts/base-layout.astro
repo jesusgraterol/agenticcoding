@@ -7,7 +7,9 @@ import SiteNavigation from '../components/site-navigation/site-navigation.astro'
 import { SITE_CONFIG } from '../site.config.ts';
 import {
   buildStructuredData,
+  formatIsoDate,
   type IAlternateDocument,
+  type IBreadcrumbItem,
   type IStructuredDataType,
 } from '../utilities/seo/index.ts';
 import { THEME_STORAGE_KEY } from '../utilities/theme-preference/index.ts';
@@ -16,10 +18,12 @@ import '../styles/global.css';
 interface Props {
   alternateDocument?: IAlternateDocument | undefined;
   articleSection?: string | undefined;
+  breadcrumbs?: readonly IBreadcrumbItem[] | undefined;
   canonicalPath: string;
   description: string;
   title: string;
   noIndex?: boolean | undefined;
+  publishedAt?: Date | undefined;
   structuredDataTitle?: string | undefined;
   structuredDataType?: IStructuredDataType | undefined;
   updatedAt?: Date | undefined;
@@ -28,9 +32,11 @@ interface Props {
 const {
   alternateDocument,
   articleSection,
+  breadcrumbs,
   canonicalPath,
   description,
   noIndex = false,
+  publishedAt,
   structuredDataType,
   title,
   structuredDataTitle = title,
@@ -42,11 +48,15 @@ const alternateDocumentUrl = alternateDocument
   : undefined;
 const llmsTextUrl = new URL('/llms.txt', SITE_CONFIG.url).toString();
 const openGraphImageUrl = new URL(SITE_CONFIG.openGraph.image, SITE_CONFIG.url).toString();
+const publishedDate = publishedAt ? formatIsoDate(publishedAt) : undefined;
+const updatedDate = updatedAt ? formatIsoDate(updatedAt) : undefined;
 const structuredData = structuredDataType
   ? buildStructuredData({
       articleSection,
+      breadcrumbs,
       canonicalUrl,
       description,
+      publishedAt,
       title: structuredDataTitle,
       type: structuredDataType,
       updatedAt,
@@ -180,10 +190,18 @@ const serializedStructuredData = structuredData
       )
     }
     {
-      updatedAt && (
+      structuredDataType === 'article' && publishedDate && (
+        <meta
+          property="article:published_time"
+          content={publishedDate}
+        />
+      )
+    }
+    {
+      structuredDataType === 'article' && updatedDate && (
         <meta
           property="article:modified_time"
-          content={updatedAt.toISOString()}
+          content={updatedDate}
         />
       )
     }

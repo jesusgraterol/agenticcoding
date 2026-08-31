@@ -4,6 +4,7 @@ description: Stop a wandering implementation, preserve useful work, and re-estab
 slug: recover-from-agent-drift
 order: 8
 category: execution
+publishedAt: 2026-08-19
 updatedAt: 2026-08-19
 featured: false
 draft: false

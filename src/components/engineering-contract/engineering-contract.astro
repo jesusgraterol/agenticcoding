@@ -1,0 +1,59 @@
+---
+const contractLayers = [
+  {
+    name: 'Authority',
+    question: 'who may act',
+    text: 'Dispatch explicit commands before ordinary intent, then preserve the developer’s stated objective, constraints, and acceptance criteria.',
+  },
+  {
+    name: 'Evidence',
+    question: 'what is true',
+    text: 'Inspect the relevant repository first and resolve decisions through safety, current contracts, local patterns, and installed tooling.',
+  },
+  {
+    name: 'Ownership',
+    question: 'where work belongs',
+    text: 'Extend the module that already owns the behavior, reuse established boundaries, and avoid parallel public contracts.',
+  },
+  {
+    name: 'Coherence',
+    question: 'what stays aligned',
+    text: 'Deliver production behavior with its validation, tests, errors, documentation, migrations, and verification in one consistent state.',
+  },
+  {
+    name: 'Judgment',
+    question: 'what proves readiness',
+    text: 'Challenge plans before execution, attack the evidence after it, and let the developer decide whether the result is acceptable.',
+  },
+  {
+    name: 'Publication',
+    question: 'what may leave',
+    text: 'Treat commits, pushes, deployments, releases, and other external actions as separate authority boundaries.',
+  },
+] as const;
+---
+
+<figure class="mt-12 border-y border-border bg-surface sm:overflow-hidden sm:rounded-xl sm:border">
+  <figcaption
+    class="flex flex-wrap items-center justify-between gap-3 border-b border-border py-4 font-mono text-xs text-muted sm:px-6"
+  >
+    <span>engineering-contract.layers</span>
+    <span>one coherent state</span>
+  </figcaption>
+  <ol class="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">
+    {
+      contractLayers.map(({ name, question, text }, index) => (
+        <li class="bg-background py-6 sm:p-6">
+          <div class="flex items-baseline justify-between gap-4">
+            <span class="font-mono text-xs font-bold text-accent">
+              LAYER {String(index + 1).padStart(2, '0')}
+            </span>
+            <span class="font-mono text-xs text-muted">{question}</span>
+          </div>
+          <h3 class="mt-8 text-xl font-semibold tracking-tight">{name}</h3>
+          <p class="mt-3 text-sm leading-6 text-muted">{text}</p>
+        </li>
+      ))
+    }
+  </ol>
+</figure>

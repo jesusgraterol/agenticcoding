@@ -7,6 +7,7 @@ const ACCESSIBILITY_ROUTES = [
   '/refine/',
   '/cookbook/',
   '/cookbook/plan-a-feature/',
+  '/cookbook/publish-an-authorized-change/',
 ] as const;
 
 const DARK_ACCESSIBILITY_ROUTES = [
@@ -33,6 +34,7 @@ const REQUIRED_ROUTES = [
   '/cookbook/deepen-a-test-strategy/',
   '/cookbook/review-a-change/',
   '/cookbook/refine-coding-instructions/',
+  '/cookbook/publish-an-authorized-change/',
 ] as const;
 
 /** Converts an OKLCH token to clipped linear-sRGB relative luminance. */
@@ -109,6 +111,19 @@ test.describe('production website', () => {
         'https://agenticcoding.jesusgraterol.dev/og/agentic-coding.png',
       );
       await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(1);
+
+      if (route !== '/') {
+        const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
+
+        await expect(breadcrumb).toBeVisible();
+        await expect(breadcrumb.locator('[aria-current="page"]')).toHaveCount(1);
+      }
+
+      if (route !== '/' && route !== '/cookbook/') {
+        await expect(page.locator('meta[property="article:published_time"]')).toHaveCount(1);
+        await expect(page.locator('meta[property="article:modified_time"]')).toHaveCount(1);
+        await expect(page.locator('time[datetime]')).not.toHaveCount(0);
+      }
     });
   }
 
@@ -148,7 +163,12 @@ test.describe('production website', () => {
       page.getByRole('heading', { name: 'The difference is control, not line count.' }),
     ).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: 'Plan together. Execute in bounded slices.' }),
+      page.getByRole('heading', { name: 'Reliable delegation has layers.' }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', {
+        name: 'Plan together. Challenge assumptions. Execute in bounded slices.',
+      }),
     ).toBeVisible();
     await expect(
       page.getByRole('heading', { name: 'Clear systems earn wider delegation.' }),
@@ -173,6 +193,13 @@ test.describe('production website', () => {
     );
     await expect(page.getByText('controlled execution', { exact: true })).toBeVisible();
     await expect(page.getByText(/Agent-operated\. Developer-governed\./u)).toBeVisible();
+    await expect(page.getByText('engineering-contract.layers', { exact: true })).toBeVisible();
+    await expect(page.getByText(/^LAYER \d{2}$/u)).toHaveCount(6);
+    await expect(page.getByRole('heading', { name: 'Challenge', exact: true })).toBeVisible();
+    await expect(page.getByText('Correct', { exact: true })).toBeVisible();
+    await expect(page.getByText('Continue', { exact: true })).toBeVisible();
+    await expect(page.getByText('Complete', { exact: true })).toBeVisible();
+    await expect(page.getByText('Publish only when explicitly authorized.')).toBeVisible();
     await expect(page.getByText('repository-maturity.system', { exact: true })).toBeVisible();
     await expect(
       page.getByRole('heading', {
@@ -180,6 +207,18 @@ test.describe('production website', () => {
       }),
     ).toBeVisible();
     await expect(page.getByText('scope-map', { exact: true })).toBeVisible();
+  });
+
+  test('start page publishes the current foundation version and command contract', async ({
+    page,
+  }) => {
+    await page.goto('/start/');
+
+    await expect(page.getByText('Version 3.1.0', { exact: true })).toBeVisible();
+    await expect(page.locator('time[datetime="2026-08-30"]')).toBeVisible();
+    await expect(page.locator('#agents-foundation-source')).toContainText(
+      'challenge plan [<plan-path-or-identifier>]',
+    );
   });
 
   test('cookbook routes developers from a live situation to an actionable recipe', async ({
@@ -218,6 +257,23 @@ test.describe('production website', () => {
         await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
       ).toBe(true);
     }
+  });
+
+  test('engineering contract preserves its ordered layers at 320 pixels', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 900 });
+    await page.goto('/');
+
+    const engineeringContract = page
+      .getByText('engineering-contract.layers', {
+        exact: true,
+      })
+      .locator('..');
+    const contractFigure = engineeringContract.locator('..');
+
+    await expect(contractFigure.locator('ol > li')).toHaveCount(6);
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+    ).toBe(true);
   });
 
   for (const viewportWidth of [320, 768, 1440] as const) {
@@ -659,6 +715,87 @@ test.describe('production website', () => {
         calculateContrastRatio(colors.foregroundToken, colors.backgroundToken),
       ).toBeGreaterThanOrEqual(3);
       await expect(indicator).toHaveCSS('background-color', colors.pageForeground);
+    }
+  });
+
+  test('keeps text selection visible on page and primary surfaces in both themes', async ({
+    page,
+  }) => {
+    await page.goto('/');
+
+    for (const theme of ['light', 'dark'] as const) {
+      await page.locator('html').evaluate((root, activeTheme) => {
+        root.classList.remove('light', 'dark');
+        root.classList.add(activeTheme);
+      }, theme);
+
+      const colors = await page.evaluate(() => {
+        const primaryText = document.querySelector<HTMLElement>('.bg-primary p');
+        const colorProbe = document.createElement('span');
+
+        if (primaryText === null) {
+          throw new Error('Primary-surface text is unavailable for selection verification.');
+        }
+
+        const primarySurface = primaryText.closest<HTMLElement>('.bg-primary');
+
+        if (primarySurface === null) {
+          throw new Error('A primary surface is unavailable for selection verification.');
+        }
+
+        colorProbe.style.backgroundColor = 'var(--accent)';
+        colorProbe.style.color = 'var(--accent-foreground)';
+        document.body.append(colorProbe);
+
+        const rootStyles = getComputedStyle(document.documentElement);
+        const primarySelectionStyles = getComputedStyle(primaryText, '::selection');
+        const selectionStyles = getComputedStyle(document.documentElement, '::selection');
+        const probeStyles = getComputedStyle(colorProbe);
+        const result = {
+          accentForegroundToken: rootStyles.getPropertyValue('--accent-foreground'),
+          accentToken: rootStyles.getPropertyValue('--accent'),
+          pageBackground: getComputedStyle(document.body).backgroundColor,
+          pageBackgroundToken: rootStyles.getPropertyValue('--background'),
+          primaryBackground: getComputedStyle(primarySurface).backgroundColor,
+          primarySelectionBackground: primarySelectionStyles.backgroundColor,
+          primarySelectionForeground: primarySelectionStyles.color,
+          primaryToken: rootStyles.getPropertyValue('--primary'),
+          selectionBackground: selectionStyles.backgroundColor,
+          selectionForeground: selectionStyles.color,
+          tokenBackground: probeStyles.backgroundColor,
+          tokenForeground: probeStyles.color,
+        };
+
+        colorProbe.remove();
+
+        return result;
+      });
+
+      expect(colors.selectionBackground).toBe(colors.tokenBackground);
+      expect(colors.selectionForeground).toBe(colors.tokenForeground);
+      expect(colors.selectionBackground).not.toBe(colors.pageBackground);
+      expect(colors.selectionBackground).not.toBe(colors.primaryBackground);
+      expect(colors.primarySelectionBackground).toBe(colors.tokenBackground);
+      expect(colors.primarySelectionForeground).toBe(colors.tokenForeground);
+      expect(colors.primarySelectionBackground).not.toBe(colors.primaryBackground);
+      expect(
+        calculateContrastRatio(colors.accentToken, colors.pageBackgroundToken),
+      ).toBeGreaterThanOrEqual(3);
+      expect(
+        calculateContrastRatio(colors.accentToken, colors.primaryToken),
+      ).toBeGreaterThanOrEqual(3);
+      expect(
+        calculateContrastRatio(colors.accentToken, colors.accentForegroundToken),
+      ).toBeGreaterThanOrEqual(4.5);
+      expect(
+        calculateContrastRatio(colors.primarySelectionBackground, colors.primaryBackground),
+      ).toBeGreaterThanOrEqual(3);
+      expect(
+        calculateContrastRatio(
+          colors.primarySelectionBackground,
+          colors.primarySelectionForeground,
+        ),
+      ).toBeGreaterThanOrEqual(4.5);
     }
   });
 

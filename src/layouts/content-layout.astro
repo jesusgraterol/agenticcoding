@@ -1,14 +1,22 @@
 ---
-import type { IAlternateDocument, IStructuredDataType } from '../utilities/seo/index.ts';
+import { ChevronRight } from '@lucide/astro';
+
+import type {
+  IAlternateDocument,
+  IBreadcrumbItem,
+  IStructuredDataType,
+} from '../utilities/seo/index.ts';
 
 import BaseLayout from './base-layout.astro';
 
 interface Props {
   alternateDocument?: IAlternateDocument | undefined;
   articleSection?: string | undefined;
+  breadcrumbs: readonly IBreadcrumbItem[];
   canonicalPath: string;
   description: string;
   eyebrow: string;
+  publishedAt?: Date | undefined;
   structuredDataType: Exclude<IStructuredDataType, 'website'>;
   title: string;
   updatedAt?: Date | undefined;
@@ -17,9 +25,11 @@ interface Props {
 const {
   alternateDocument,
   articleSection,
+  breadcrumbs,
   canonicalPath,
   description,
   eyebrow,
+  publishedAt,
   structuredDataType,
   title,
   updatedAt,
@@ -29,8 +39,10 @@ const {
 <BaseLayout
   alternateDocument={alternateDocument}
   articleSection={articleSection}
+  breadcrumbs={breadcrumbs}
   canonicalPath={canonicalPath}
   description={description}
+  publishedAt={publishedAt}
   title={`${title} | Agentic Coding`}
   structuredDataTitle={title}
   structuredDataType={structuredDataType}
@@ -38,7 +50,44 @@ const {
 >
   <header class="border-b border-border py-16 sm:py-20">
     <div class="prose-shell text-center">
-      <p class="eyebrow">{eyebrow}</p>
+      <nav aria-label="Breadcrumb">
+        <ol
+          class="flex flex-wrap items-center justify-center gap-1.5 font-mono text-xs font-bold text-muted"
+        >
+          {
+            breadcrumbs.map(({ name, path }, index) => {
+              const isCurrentPage = index === breadcrumbs.length - 1;
+
+              return (
+                <li class="flex min-w-0 items-center gap-1.5">
+                  {index > 0 && (
+                    <ChevronRight
+                      class="size-3.5 shrink-0"
+                      aria-hidden="true"
+                    />
+                  )}
+                  {isCurrentPage ? (
+                    <span
+                      class="truncate text-foreground"
+                      aria-current="page"
+                    >
+                      {name}
+                    </span>
+                  ) : (
+                    <a
+                      class="underline-offset-4 hover:text-foreground hover:underline"
+                      href={path}
+                    >
+                      {name}
+                    </a>
+                  )}
+                </li>
+              );
+            })
+          }
+        </ol>
+      </nav>
+      <p class="eyebrow mt-4">{eyebrow}</p>
       <h1
         class="mx-auto mt-4 max-w-4xl text-[clamp(2.75rem,6vw,4rem)] leading-[1.02] font-semibold tracking-[-0.045em] text-balance"
       >

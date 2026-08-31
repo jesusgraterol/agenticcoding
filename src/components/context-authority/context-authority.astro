@@ -15,14 +15,15 @@ const paths = [
 ] as const;
 
 const reliabilityStages = [
-  'Context',
-  'Constraints',
+  'Task contract',
+  'Repository evidence',
   'Plan',
+  'Challenge',
   'Breakdown when useful',
   'Execution',
   'Agent-operated evidence',
   'Developer judgment',
-  'Correction',
+  'Correct, continue, or complete',
 ] as const;
 ---
 
@@ -105,6 +106,12 @@ const reliabilityStages = [
             ))
           }
         </ol>
+      </div>
+      <div class="mt-6 border-t border-white/15 pt-6">
+        <p class="font-mono text-xs text-white/50 uppercase">External action</p>
+        <p class="mt-3 text-sm leading-6 text-white/65">
+          Acceptance does not authorize commit, push, deployment, release, or communication.
+        </p>
       </div>
     </aside>
   </div>

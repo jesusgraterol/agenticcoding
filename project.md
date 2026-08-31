@@ -2,9 +2,9 @@
 
 **Status:** Approved for implementation
 
-**Version:** 3.0.0
+**Version:** 3.1.0
 
-**Last updated:** 2026-08-24
+**Last updated:** 2026-08-30
 
 **Owner:** Jesus Graterol
 
@@ -51,10 +51,11 @@ AI has accelerated the rate at which software can be produced. The greater oppor
 
 Coding agents can participate meaningfully in:
 
+- classifying the requested authority before acting
 - understanding a codebase
 - investigating a problem
 - planning a solution
-- challenging assumptions
+- challenging a proposed plan before approval
 - comparing architectural approaches
 - decomposing work
 - implementing code
@@ -63,18 +64,21 @@ Coding agents can participate meaningfully in:
 - finding regressions
 - synchronizing documentation
 - correcting their own work
+- preparing publication only when separately authorized
 
 The developer should not treat the agent only as an implementation engine. The agent is an active engineering collaborator across the lifecycle.
 
 The developer nevertheless remains accountable for:
 
 - the real objective
+- the authority granted for the current action
 - product and domain knowledge
 - important constraints
 - architecture and tradeoff approval
 - the authority granted to the agent
 - the final quality bar
 - whether a change belongs in the system
+- whether an accepted change should be published
 
 The central position of the project is:
 
@@ -96,7 +100,7 @@ The distinguishing question is:
 
 > **Who controls the engineering decisions, scope, evidence, and quality?**
 
-An Agentic Coding workflow may delegate a very large amount of implementation to an agent. It remains Agentic Coding when the work is grounded in explicit context, bounded authority, collaborative decisions, coherent execution units, meaningful verification, transparent reporting, and developer accountability.
+An Agentic Coding workflow may delegate a very large amount of implementation to an agent. It remains Agentic Coding when the work is grounded in an explicit task contract, current repository evidence, established ownership, bounded authority, collaborative decisions, coherent execution units, meaningful verification, synchronized state, transparent reporting, and developer accountability.
 
 ## 5. The three modes of coding
 
@@ -120,21 +124,34 @@ Vibe coding can be appropriate for experimentation, disposable prototypes, learn
 
 The developer and agent collaborate on the problem and the solution.
 
-The agent may inspect, plan, propose, challenge, decompose, implement, test, perform adversarial review, and assemble the evidence for acceptance. The developer actively shapes the process, approves material decisions, controls scope, supervises the evidence, invests in independent verification, and decides whether the resulting system deserves to exist.
+The agent may inspect, plan, propose, challenge, decompose, implement, test, perform adversarial review, assemble the evidence for acceptance, and publish when that external action is separately authorized. The developer actively shapes the process, approves material decisions, controls scope, supervises the evidence, invests in independent verification, accepts or rejects the resulting state, and decides whether it should be published.
 
 The site MUST make clear that Agentic Coding is not merely a compromise between writing code manually and delegating code blindly. It is a distinct engineering discipline.
 
 ## 6. Product principles
 
-### 6.1 Collaborate on the plan
+### 6.1 Dispatch commands before classifying ordinary intent
+
+An explicit agent command selects an executable workflow before the agent classifies the request as an ordinary explanation, investigation, plan, review, or implementation task.
+
+The agent MUST:
+
+- recognize a command only when the developer clearly invokes its name as an instruction
+- follow the command's authority, write limits, stopping conditions, and output contract through completion
+- classify ordinary task intent only when no command is invoked
+- keep implementation, review, publication, deployment, and other external actions under separate authority
+
+Command dispatch is part of the reliability system because the same words can authorize materially different actions depending on whether they invoke a defined workflow.
+
+### 6.2 Collaborate on the plan
 
 Planning is one of the strongest uses of a coding agent.
 
 A good planning session is interactive. The developer brings intent, domain context, priorities, and judgment. The agent brings codebase inspection, breadth of analysis, consequence tracing, alternative proposals, and the ability to identify details that may have been overlooked.
 
-The agent is not expected to wait passively for a fully formed architecture. It should help create and challenge the architecture.
+The agent is not expected to wait passively for a fully formed architecture. It should help create the architecture, then challenge material assumptions before approval while changing course is still inexpensive.
 
-### 6.2 Pave the way before delegating broadly
+### 6.3 Pave the way before delegating broadly
 
 Coding agents are highly capable, but ambiguous environments force them to solve too many adjacent decisions while trying to complete the requested task.
 
@@ -152,7 +169,7 @@ Before giving an agent broad implementation authority, the developer should esta
 
 The developer is not teaching the agent how to program. The developer is teaching it how engineering is done in this system.
 
-### 6.3 Demonstrate → Codify → Delegate → Verify
+### 6.4 Demonstrate → Codify → Delegate → Verify
 
 This loop describes how a project becomes increasingly safe and effective for agentic development.
 
@@ -172,7 +189,7 @@ Grant the agent progressively larger and more complete tasks as the surrounding 
 
 Make the agent responsible for most verification and evidence assembly. The developer challenges the evidence, improves the verification system, and decides whether additional testing or code inspection is required before acceptance.
 
-### 6.4 Wide context, narrow authority
+### 6.5 Wide context, narrow authority
 
 A coding agent should inspect enough surrounding code to understand the complete affected path.
 
@@ -191,15 +208,19 @@ Another required concept is:
 
 > **A dependency is not automatically a deliverable.**
 
-### 6.5 Plan → Breakdown when useful → Execute → Review → Repeat
+### 6.6 Plan → Challenge → Breakdown when useful → Execute → Review
 
-This is the primary change-development loop taught by the project.
+This is the primary change-development sequence taught by the project.
 
 **Plan**
 
-Investigate the problem and the existing system. Collaboratively establish the architecture, scope, affected contracts, risks, tests, and intended final state.
+Investigate the problem and current repository state. Collaboratively establish the task contract, architecture, ownership, affected contracts, risks, tests, verification, and intended final state.
 
-**Breakdown**
+**Challenge**
+
+Treat the plan as an untrusted proposal. Verify its material claims, expose unsupported assumptions, missing work, hidden blast radius, unnecessary complexity, weak rollback or compatibility paths, and tests that could pass while important behavior remains wrong. Challenge is read-only, advisory, and stale as soon as the plan changes.
+
+**Breakdown when useful**
 
 Evaluate whether the approved strategy contains at least two coherent implementation slices that can each be completed, verified, and reviewed as a meaningful finished state. Create ordered milestones only when those boundaries are useful. When the plan is one coherent slice, implement it as one complete scope after approval instead of manufacturing milestones.
 
@@ -209,13 +230,11 @@ Implement only the currently authorized scope. Keep required production changes 
 
 **Review**
 
-The coding agent must assume the implementation may contain mistakes and inspect correctness, regressions, architecture, duplication, security, edge cases, test adequacy, maintainability, and documentation. It must run applicable checks, identify uncertainty, and produce reproducible evidence tied to the exact reviewed state. The developer then challenges the evidence and its interpretation of product intent, strengthens independent tests or oracles where needed, and decides whether the evidence justifies acceptance. The developer inspects code when the change's risk, novelty, or evidence quality warrants it.
+The coding agent must assume the implementation may contain mistakes and inspect correctness, regressions, architecture, duplication, security, edge cases, test adequacy, maintainability, and documentation. It must run applicable checks, identify uncertainty, and produce reproducible evidence tied to the exact reviewed state. The developer then challenges the evidence and its interpretation of product intent, strengthens independent tests or oracles where needed, and decides whether to correct the current work, continue with another authorized slice, or complete the change. The developer inspects code when the change's risk, novelty, or evidence quality warrants it.
 
-**Repeat**
+Publication is not a sixth lifecycle stage. An accepted state may enter a separate publication gate only when the developer explicitly authorizes that external action under the repository's own staging, signing, destination, and safety policy.
 
-Use what was learned to authorize the next milestone when one exists, revise the plan, or complete the workflow.
-
-### 6.6 Clarity creates better delegation
+### 6.7 Clarity creates better delegation
 
 Every important decision the agent does not have to reinvent is attention it can spend solving the actual problem.
 
@@ -232,7 +251,7 @@ Clear goals, constraints, examples, architecture, ownership boundaries, and revi
 - unreviewable changes
 - technically correct but misplaced implementations
 
-### 6.7 Capability needs a reliability system
+### 6.8 Capability needs a reliability system
 
 Coding agents are capable enough to build large systems and capable enough to build the wrong system convincingly.
 
@@ -240,13 +259,15 @@ The site must not advocate unrestricted autonomy.
 
 The desired system around the agent is:
 
-> **Context → Constraints → Plan → Breakdown when useful → Execution → Agent-operated Evidence → Developer Judgment → Correction**
+> **Task Contract → Repository Evidence → Plan → Challenge → Breakdown when useful → Execution → Agent-operated Evidence → Developer Judgment → Correct, Continue, or Complete**
+
+Publication must be shown separately from that system as an explicit post-acceptance authority.
 
 A required message is:
 
 > **The agent provides capability. The engineering process provides reliability.**
 
-### 6.8 Quality is the lasting opportunity
+### 6.9 Quality is the lasting opportunity
 
 Speed is the most visible benefit of coding agents.
 
@@ -268,7 +289,7 @@ A required editorial idea is:
 
 > **The first benefit is speed. The lasting benefit should be better software.**
 
-### 6.9 Evidence matures beyond routine code inspection
+### 6.10 Evidence matures beyond routine code inspection
 
 Agent-generated implementation and agent-generated tests can share the same mistaken assumption. A green suite is therefore not automatically independent evidence.
 
@@ -329,18 +350,20 @@ The first production release MUST:
 3. present collaborative planning as a core capability
 4. teach developers to pave the way before broad delegation
 5. teach wide context and narrow authority
-6. present the Plan → Breakdown when useful → Execute → Review loop
-7. present the Demonstrate → Codify → Delegate → Verify loop
-8. explain why strong self-correcting mechanisms are necessary
-9. explain why the long-term opportunity is software quality
-10. provide a neutral, ready-to-use `AGENTS.md`
-11. provide one canonical, preservation-first refinement prompt
-12. provide a useful cookbook with practical workflows
-13. work fully as a static GitHub Pages site
-14. be beautiful, modern, responsive, accessible, fast, and shareable
-15. support Jesus Graterol's professional reputation in an understated way
-16. remain free and usable without an account, backend, or AI API
-17. ground the discipline in an understated example from the real project work behind it
+6. present command-before-intent dispatch and the six-layer engineering contract
+7. present the Plan → Challenge → Breakdown when useful → Execute → Review sequence with Correct, Continue, or Complete outcomes
+8. present publication as a separate post-acceptance authority
+9. present the Demonstrate → Codify → Delegate → Verify loop
+10. explain why strong self-correcting mechanisms are necessary
+11. explain why the long-term opportunity is software quality
+12. provide a neutral, ready-to-use `AGENTS.md`
+13. provide one canonical, preservation-first refinement prompt
+14. provide a useful cookbook with practical workflows
+15. work fully as a static GitHub Pages site
+16. be beautiful, modern, responsive, accessible, fast, and shareable
+17. support Jesus Graterol's professional reputation in an understated way
+18. remain free and usable without an account, backend, or AI API
+19. ground the discipline in an understated example from the real project work behind it
 
 ## 9. Non-goals
 
@@ -506,6 +529,7 @@ The comparison should cover at least:
 - context
 - verification
 - review
+- publication and other external action authority
 - developer responsibility
 - primary goal
 
@@ -530,7 +554,20 @@ A featured line should be:
 
 > **Do not delegate engineering to the agent. Engineer with the agent.**
 
-### 13.5 Interactive planning
+### 13.5 Engineering contract
+
+The homepage MUST compress the operating instructions into a static six-layer visual between the operating-model definition and the per-change workflow:
+
+1. command dispatch, task intent, and authority
+2. repository evidence and decision precedence
+3. ownership, reuse, and public contracts
+4. coherent implementation and synchronized state
+5. adversarial evidence and developer acceptance
+6. separately authorized publication and external action
+
+The visual must remain concise enough to function as a manifesto rather than an instruction manual. It must use semantic HTML, preserve an ordered reading sequence, communicate meaning without relying on color, flatten unnecessary containers on mobile, work from 320px through large desktop widths, support light and dark themes through existing tokens, and require no JavaScript or animation.
+
+### 13.6 Interactive planning
 
 This section MUST correct the idea that the developer plans alone and the agent only implements.
 
@@ -549,11 +586,11 @@ The interaction may use a fictional feature such as organization-level API keys,
 
 All text must exist in the static HTML. Animation may progressively reveal or highlight it, but must not be required to access it.
 
-### 13.6 Plan → Breakdown when useful → Execute → Review
+### 13.7 Plan → Challenge → Breakdown when useful → Execute → Review
 
 This is a signature visual and conceptual section.
 
-The visualization MUST expose four selectable or focusable stages:
+The visualization MUST expose five ordered stages:
 
 #### Plan
 
@@ -564,7 +601,16 @@ The visualization MUST expose four selectable or focusable stages:
 - identify risks, tests, and verification
 - obtain developer approval before implementation
 
-#### Breakdown
+#### Challenge
+
+- require one exact current plan
+- identify the plan with a complete content hash
+- treat the plan as untrusted and verify material claims against repository evidence
+- expose scope mismatch, unsupported assumptions, hidden blast radius, unnecessary complexity, weak compatibility or rollback, and tests that could miss important defects
+- report material findings and unresolved decisions through a deterministic recommendation
+- remain read-only, advisory, and stale after plan revision
+
+#### Breakdown when useful
 
 - use the current plan as the authoritative strategy
 - determine whether at least two meaningful implementation slices exist
@@ -587,7 +633,7 @@ The visualization MUST expose four selectable or focusable stages:
 #### Review
 
 - make the agent the primary evidence operator and the developer the acceptance authority
-- recommend `review` for uncommitted work and `review <branch-name>` for a branch
+- recommend `review` for uncommitted work and `review <target-branch>` for a branch
 - require the agent to report findings before praise or summary
 - inspect correctness and regressions
 - inspect scope and duplication
@@ -597,11 +643,17 @@ The visualization MUST expose four selectable or focusable stages:
 - produce a clear readiness verdict
 - require the developer to challenge the evidence, strengthen independent oracles where needed, and decide whether risk warrants code inspection
 
-The loop should visually return to planning or the next milestone.
+Review must lead to one of three explicit outcomes:
+
+- **Correct** when evidence exposes a defect, stale contract, or material uncertainty
+- **Continue** when an accepted milestone is complete and another authorized slice remains
+- **Complete** when the accepted state satisfies the task contract and no implementation work remains
+
+Publication MUST appear beside, but outside, this sequence as an unnumbered post-acceptance gate. It requires an accepted state plus separate explicit authority and must not appear to follow automatically from Review, plan approval, implementation authority, or milestone completion.
 
 A reduced-motion presentation must preserve the same content without animated movement.
 
-### 13.7 Pave the way
+### 13.8 Pave the way
 
 This section explains why agents can be messy when the environment is unclear.
 
@@ -621,20 +673,20 @@ A featured line should be:
 
 > **Before you delegate broadly, establish the path you want the agent to follow.**
 
-### 13.8 Demonstrate → Codify → Delegate → Verify
+### 13.9 Demonstrate → Codify → Delegate → Verify
 
 This section is the second signature loop.
 
-It MUST explain each stage using the definitions in section 6.3.
+It MUST explain each stage using the definitions in section 6.4.
 
 The Verify stage MUST communicate that Evidence is agent-operated and developer-governed. It must separate verification workload from acceptance authority and show the maturity progression from direct code-and-evidence inspection toward evidence-led acceptance with risk-triggered code audits.
 
 The visual treatment should differ enough from the primary change loop that users do not confuse them:
 
-- Plan → Breakdown when useful → Execute → Review is a loop for an individual change
+- Plan → Challenge → Breakdown when useful → Execute → Review is the sequence for an individual change
 - Demonstrate → Codify → Delegate → Verify is a loop for improving the developer-agent-codebase relationship over time
 
-### 13.9 Wide context, narrow authority
+### 13.10 Wide context, narrow authority
 
 This section MUST visually demonstrate:
 
@@ -650,7 +702,7 @@ Required phrases:
 
 The visual should work without animation and must not rely on color alone to show editable versus inspect-only areas.
 
-### 13.10 Why going back feels impossible
+### 13.11 Why going back feels impossible
 
 This section explains why a disciplined coding-agent workflow can make fully manual development feel unnecessarily limiting.
 
@@ -673,7 +725,7 @@ The section should frame the benefit as:
 - more quality checks can be afforded
 - developers can spend more effort on judgment, system design, independent test oracles, and verification systems
 
-### 13.11 Capability without free rein
+### 13.12 Capability without free rein
 
 This section provides the project's caution.
 
@@ -691,7 +743,7 @@ It should explain that agents can:
 
 The solution presented by the site is not less capable agents. It is stronger context, boundaries, transparency, independent evidence, risk-triggered auditing, and developer control.
 
-### 13.12 Applied in practice
+### 13.13 Applied in practice
 
 The homepage MUST identify `moldea` as the real project work through which Agentic Coding was shaped.
 
@@ -705,7 +757,7 @@ The section must:
 
 The section MUST NOT claim customer adoption, general availability, or outcomes that the current Moldea project does not establish. It must not invent a Moldea tagline or use an under-construction product screenshot as evidence.
 
-### 13.13 Practical resources
+### 13.14 Practical resources
 
 The homepage MUST conclude the main narrative with three clear destinations:
 
@@ -713,7 +765,7 @@ The homepage MUST conclude the main narrative with three clear destinations:
 - **Refine existing instructions** → `/refine`
 - **Practice the workflow** → `/cookbook`
 
-### 13.14 Author section and footer
+### 13.15 Author section and footer
 
 The footer MUST include:
 
@@ -773,9 +825,17 @@ Optimize for:
 
 Do not optimize for cleverness or maximum change volume.
 
-#### Task intent
+#### Command dispatch, task intent, and authority
 
-Before acting, determine whether the developer requested:
+Before ordinary task-intent classification, determine whether the developer clearly invoked a command defined by the foundation. A command mention inside a question, example, quotation, explanation, or planning discussion does not invoke it.
+
+When a command is invoked:
+
+- follow that command's executable workflow instead of reclassifying it as an ordinary request
+- respect its write limits, authorization boundaries, stopping conditions, and output contract
+- do not ask for confirmation before actions the command already authorizes
+
+Only when no command is invoked, determine whether the developer requested:
 
 - an explanation or investigation
 - a plan
@@ -862,7 +922,7 @@ For substantial work:
 
 #### Review
 
-- require the agent to review the complete scoped change, preferably through `review` or `review <branch-name>`
+- require the agent to review the complete scoped change, preferably through `review` or `review <target-branch>`
 - report findings first
 - inspect correctness, regressions, architecture, scope, reuse, tests, security, maintainability, and documentation
 - assemble reproducible evidence tied to the exact reviewed state
@@ -908,6 +968,8 @@ Coding-instruction files MUST be treated as governance files. Agents must not cr
 
 The public foundation MUST include neutral versions of the following commands.
 
+It MUST state that command dispatch precedes ordinary task-intent classification.
+
 #### `plan`
 
 When explicitly invoked:
@@ -948,28 +1010,50 @@ When explicitly invoked:
 - state that breakdown does not approve the plan or authorize implementation
 - require explicit authorization for each milestone unless approval and milestone authorization are clearly combined
 
-#### `review` and `review <branch-name>`
+#### `challenge plan [<plan-path-or-identifier>]`
+
+When explicitly invoked:
+
+- require one exact current plan and challenge the identified plan rather than searching historical planning directories
+- read the complete plan, the independently established task contract, and applicable developer amendments
+- identify the plan by repository-relative path or supplied identifier and SHA-256 hash of its complete contents
+- verify the hash again immediately before reporting and stop if the plan changed
+- treat the plan as an untrusted proposal even when the same agent created it
+- perform only the smallest read-only inspection needed to verify material uncertainty, staleness, or high-impact claims
+- compare the planned final result with the developer's objective, constraints, exclusions, acceptance criteria, and amendments
+- challenge material architecture, ownership, data, public-contract, security, concurrency, dependency, migration, compatibility, rollback, removal, and verification decisions when applicable
+- report only decision-relevant material findings, smallest corrections, and unresolved developer decisions
+- use exactly `Plan at a glance`, `Material impact`, `Challenges`, `Developer decisions required`, and `Recommendation` sections
+- end with exactly one of `No material concerns`, `Plan revision required before proceeding`, or `Developer decision required before proceeding`
+- remain at or below 1,000 words
+- remain read-only, advisory, and specific to the exact hashed plan version
+- state through its behavior that challenge does not edit, approve, reject, break down, or implement the plan
+
+#### `review` and `review <target-branch>`
 
 When either command is explicitly invoked:
 
 - make `review` inspect the complete uncommitted worktree against `HEAD`, including staged, unstaged, untracked, deleted, and renamed paths
 - exclude existing commits from `review`
-- make `review <branch-name>` require an active branch, resolve the local or remote-tracking target unambiguously, and inspect the commits and cumulative diff from the merge base through the active branch
+- make `review <target-branch>` require an active branch, resolve the local or remote-tracking target unambiguously, and inspect the commits and cumulative diff from the merge base through the active branch
 - refresh the relevant remote-tracking ref when available, otherwise report the target commit and any material freshness limitation
 - account for target-side changes after the merge base and assess the prospective merge result
-- exclude uncommitted changes from `review <branch-name>` and report them separately
+- exclude uncommitted changes from `review <target-branch>` and report them separately
 - perform review-only work
 - do not edit the reviewed change
 - inspect the complete requested scope
 - run relevant non-writing checks when available
 - report findings in severity order
 - report checks run and checks not run
-- provide `Ready to commit` for `review`, `Ready to merge into <branch-name>` for branch review, or a clear not-ready or incomplete verdict
+- require a staging-insensitive fingerprint of the complete state that `git add -A` would stage for uncommitted review, or exact effective-target and merge-base commits for branch review
+- evaluate focused test adequacy independently from the affected broader regression suite and ask whether a material defect could survive all focused tests
+- require a `Review incomplete` verdict when exact scope, target freshness, mergeability, material test adequacy, or required verification cannot be established confidently
+- provide `Ready to commit` for `review`, `Ready to merge into <target-branch>` for branch review, or a clear not-ready or incomplete verdict
 - avoid a ready verdict when material uncertainty remains
 - state that the agent verdict informs but does not authorize developer acceptance
 - state that the developer must evaluate evidence and use code inspection as a risk-triggered escalation rather than a universal requirement
 
-The neutral foundation SHOULD NOT include a `repo push` command in v1 because commit signing, staging, remote selection, and publication policy vary significantly across repositories.
+The neutral foundation SHOULD NOT include a `repo push` command because commit signing, staging, remote selection, and publication policy vary significantly across repositories. It MUST instead state that publication is a distinct external authority governed by repository-specific policy.
 
 ### 14.5 Foundation page behavior
 
@@ -1234,7 +1318,7 @@ Each recipe MUST explain:
 
 ### 16.2 Initial recipes
 
-The cookbook MUST include these twelve recipes in intentional editorial order:
+The cookbook MUST include these thirteen recipes in intentional editorial order:
 
 1. **Orient to a codebase**
    - build a verified working map of an unfamiliar repository before planning changes
@@ -1267,10 +1351,13 @@ The cookbook MUST include these twelve recipes in intentional editorial order:
     - design correctness evidence around realistic defects and meaningful integration boundaries
 
 11. **Review a change**
-    - use `review` or `review <branch-name>` for the agent's findings-first evidence package, then require a developer to challenge the evidence and decide whether acceptance or a deeper audit is justified
+    - use `review` or `review <target-branch>` for the agent's findings-first evidence package, then require a developer to challenge the evidence and decide whether acceptance or a deeper audit is justified
 
 12. **Refine coding instructions**
-   - use the canonical refinement process to strengthen an existing `AGENTS.md`
+    - use the canonical refinement process to strengthen an existing `AGENTS.md`
+
+13. **Publish an authorized change**
+    - publish only an accepted state under separate explicit authority, exact destination resolution, complete state and unpublished-history inspection, repository signing policy, and an explicit one-branch refspec
 
 A later version MAY add recipes only when they cover a distinct, recurring engineering situation that the current playbook does not already handle.
 
@@ -1813,9 +1900,13 @@ The project MUST include:
 
 Cookbook recipes should use article-style structured metadata when it can be added accurately.
 
+Article pages should expose a truthful publication date and, when different, last-meaningful-update date in visible semantic markup, Open Graph article metadata, and structured data. Content metadata validation must reject an update date earlier than its publication date.
+
 The homepage should use website-level structured metadata.
 
 The cookbook index should use collection-page structured metadata. Public HTML pages should identify `/llms.txt` with `rel="describedby"`, and pages with canonical raw resources should expose them with `rel="alternate"` and an accurate media type.
+
+Every public content page below the homepage should expose a visible, navigable breadcrumb trail and matching `BreadcrumbList` structured data derived from the same route hierarchy.
 
 Do not add fabricated ratings, dates, organizations, or author profiles to structured data.
 
@@ -1885,6 +1976,7 @@ Add focused unit tests where they provide value, including:
 - theme preference parsing and resolution
 - copy-state logic if extracted into a reusable utility
 - any non-trivial workflow interaction logic
+- durable public command and cookbook contracts, including command-first dispatch, challenge identity and recommendations, review evidence, and publication authority
 
 Do not test Astro, Tailwind, or browser behavior already guaranteed by those tools unless project integration adds meaningful risk.
 
@@ -1893,8 +1985,10 @@ Do not test Astro, Tailwind, or browser behavior already guaranteed by those too
 Use browser-level tests for important user-visible flows:
 
 - homepage loads and exposes all required major sections
+- homepage exposes the engineering-contract layers, Challenge stage, Correct/Continue/Complete outcomes, and separate publication gate
 - direct navigation to every public route succeeds
 - a cookbook deep link works when loaded directly
+- the publication recipe works when loaded directly
 - `/AGENTS.md` returns the canonical foundation
 - `/refine.txt` returns the canonical prompt
 - copied resource text matches the canonical source
@@ -1920,6 +2014,8 @@ The build or test suite MUST verify:
 - cookbook slugs are unique
 - required route metadata exists
 - internal links are valid
+- the publication recipe appears in the sitemap and generated `llms.txt`
+- the foundation version, challenge command, review terminology, and publication exclusion remain synchronized
 
 ### 26.5 Required checks
 
@@ -1955,7 +2051,10 @@ Before the first release, inspect:
 - reduced motion
 - long prompt and code blocks
 - comparison readability
-- both signature loops
+- the engineering-contract visual
+- the per-change sequence and its three Review outcomes
+- the separate publication gate
+- the project-maturity loop
 - Open Graph preview
 - GitHub Pages direct-route behavior
 - custom-domain HTTPS
@@ -2017,12 +2116,16 @@ Do not add restrictive terms that undermine copying and adaptation of the practi
 When changing the project's philosophy or practical resources:
 
 - preserve the distinction between planning collaboration and implementation
+- preserve command-before-intent dispatch
+- preserve adversarial plan challenge before approval
 - preserve developer accountability
 - preserve agent-operated Evidence and developer-governed acceptance
 - preserve risk-triggered access to code inspection without making it universally mandatory
 - preserve the need for independent evidence that can challenge correlated implementation and test assumptions
 - preserve the warning against unrestricted authority
 - preserve wide context and narrow authority
+- preserve Correct, Continue, or Complete as explicit Review outcomes
+- preserve publication as a separate post-acceptance authority
 - preserve the role of self-correcting mechanisms
 - keep Agentic Coding stack- and vendor-agnostic
 - keep the public foundation neutral with respect to implementation technologies
@@ -2041,7 +2144,7 @@ The first production release is complete only when all of the following are true
 - the homepage communicates the complete Agentic Coding thesis
 - collaborative planning is clearly represented
 - paving the way before delegation is clearly represented
-- both signature loops are present
+- the engineering-contract visual, per-change sequence, and project-maturity loop are present
 - wide context and narrow authority are clearly represented
 - the quality-over-speed thesis is present
 - the caution against free rein is present
@@ -2049,10 +2152,11 @@ The first production release is complete only when all of the following are true
 - Evidence is consistently shown as agent-operated and developer-governed
 - developer accountability remains explicit while code inspection is proportional and risk-triggered
 - the maturity path from direct code review to evidence-led acceptance is present
-- both `review` and `review <branch-name>` are documented with their distinct scopes
+- `challenge plan` is documented as read-only, advisory, and specific to one hashed plan version
+- both `review` and `review <target-branch>` are documented with their distinct scopes
 - the ready-to-use foundation is complete
 - the refinement prompt is complete
-- all twelve initial cookbook recipes are published
+- all thirteen cookbook recipes are published
 - author attribution and source links are present
 
 ### 31.2 Functional
@@ -2108,10 +2212,11 @@ The finished project should allow a developer to:
 1. understand why Agentic Coding is different from both manual coding and vibe coding
 2. understand that coding agents can be powerful planning partners
 3. understand why developers must pave the way before broad delegation
-4. adopt a practical Plan → Breakdown when useful → Execute → Review workflow
-5. begin immediately with a ready-to-use `AGENTS.md`
-6. safely refine existing instructions through their own coding agent
-7. learn practical techniques from a concise cookbook
+4. adopt a practical Plan → Challenge → Breakdown when useful → Execute → Review workflow
+5. distinguish Correct, Continue, or Complete from separately authorized publication
+6. begin immediately with a ready-to-use `AGENTS.md`
+7. safely refine existing instructions through their own coding agent
+8. learn practical techniques from a concise cookbook
 
 The experience should leave the visitor with one clear conclusion:
 

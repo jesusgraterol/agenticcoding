@@ -4,6 +4,7 @@ description: Establish intended behavior before changing production code, expect
 slug: investigate-a-failing-test
 order: 9
 category: review
+publishedAt: 2026-08-19
 updatedAt: 2026-08-19
 featured: false
 draft: false
