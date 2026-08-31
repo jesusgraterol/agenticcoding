@@ -3,22 +3,22 @@ const workItems = [
   {
     label: 'Intent',
     owner: 'Developer',
-    text: 'Add organization-owned API-key rotation without creating a parallel credential system.',
+    text: 'Add organization-owned API-key rotation within the existing credential system.',
   },
   {
     label: 'Plan + Challenge',
     owner: 'Together',
-    text: 'Extend the existing credential boundary, then attack the plan before approval.',
+    text: 'Extend the existing credential boundary, then attack its assumptions before approval.',
   },
   {
     label: 'Execute',
     owner: 'Agent',
-    text: 'Implement the approved slice with ownership checks and focused tests.',
+    text: 'Implement the approved slice with ownership checks and focused regression tests.',
   },
   {
     label: 'Evidence',
     owner: 'Agent-operated',
-    text: 'The agent builds and attacks the evidence. The developer governs the proving system and decides.',
+    text: 'Build and attack the evidence. The developer governs the proving system and decides.',
   },
 ] as const;
 ---
@@ -32,7 +32,7 @@ const workItems = [
     <span>change/organization-api-keys</span>
     <span>controlled execution</span>
   </figcaption>
-  <ol class="grid gap-px bg-white/15 md:grid-cols-2 lg:grid-cols-4">
+  <ol class="grid gap-px bg-white/15 md:grid-cols-2 xl:grid-cols-4">
     {
       workItems.map(({ label, owner, text }, index) => (
         <li class="flex min-h-52 flex-col bg-primary p-5 sm:p-6">
