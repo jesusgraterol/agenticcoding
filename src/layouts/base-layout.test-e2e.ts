@@ -7,6 +7,7 @@ const ACCESSIBILITY_ROUTES = [
   '/refine/',
   '/cookbook/',
   '/cookbook/plan-a-feature/',
+  '/cookbook/publish-an-authorized-change/',
 ] as const;
 
 const DARK_ACCESSIBILITY_ROUTES = [
@@ -33,6 +34,7 @@ const REQUIRED_ROUTES = [
   '/cookbook/deepen-a-test-strategy/',
   '/cookbook/review-a-change/',
   '/cookbook/refine-coding-instructions/',
+  '/cookbook/publish-an-authorized-change/',
 ] as const;
 
 /** Converts an OKLCH token to clipped linear-sRGB relative luminance. */
@@ -161,7 +163,12 @@ test.describe('production website', () => {
       page.getByRole('heading', { name: 'The difference is control, not line count.' }),
     ).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: 'Plan together. Execute in bounded slices.' }),
+      page.getByRole('heading', { name: 'Reliable delegation has layers.' }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', {
+        name: 'Plan together. Challenge assumptions. Execute in bounded slices.',
+      }),
     ).toBeVisible();
     await expect(
       page.getByRole('heading', { name: 'Clear systems earn wider delegation.' }),
@@ -186,6 +193,13 @@ test.describe('production website', () => {
     );
     await expect(page.getByText('controlled execution', { exact: true })).toBeVisible();
     await expect(page.getByText(/Agent-operated\. Developer-governed\./u)).toBeVisible();
+    await expect(page.getByText('engineering-contract.layers', { exact: true })).toBeVisible();
+    await expect(page.getByText(/^LAYER \d{2}$/u)).toHaveCount(6);
+    await expect(page.getByRole('heading', { name: 'Challenge', exact: true })).toBeVisible();
+    await expect(page.getByText('Correct', { exact: true })).toBeVisible();
+    await expect(page.getByText('Continue', { exact: true })).toBeVisible();
+    await expect(page.getByText('Complete', { exact: true })).toBeVisible();
+    await expect(page.getByText('Publish only when explicitly authorized.')).toBeVisible();
     await expect(page.getByText('repository-maturity.system', { exact: true })).toBeVisible();
     await expect(
       page.getByRole('heading', {
@@ -193,6 +207,18 @@ test.describe('production website', () => {
       }),
     ).toBeVisible();
     await expect(page.getByText('scope-map', { exact: true })).toBeVisible();
+  });
+
+  test('start page publishes the current foundation version and command contract', async ({
+    page,
+  }) => {
+    await page.goto('/start/');
+
+    await expect(page.getByText('Version 3.1.0', { exact: true })).toBeVisible();
+    await expect(page.locator('time[datetime="2026-08-30"]')).toBeVisible();
+    await expect(page.locator('#agents-foundation-source')).toContainText(
+      'challenge plan [<plan-path-or-identifier>]',
+    );
   });
 
   test('cookbook routes developers from a live situation to an actionable recipe', async ({
@@ -231,6 +257,23 @@ test.describe('production website', () => {
         await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
       ).toBe(true);
     }
+  });
+
+  test('engineering contract preserves its ordered layers at 320 pixels', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 900 });
+    await page.goto('/');
+
+    const engineeringContract = page
+      .getByText('engineering-contract.layers', {
+        exact: true,
+      })
+      .locator('..');
+    const contractFigure = engineeringContract.locator('..');
+
+    await expect(contractFigure.locator('ol > li')).toHaveCount(6);
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+    ).toBe(true);
   });
 
   for (const viewportWidth of [320, 768, 1440] as const) {

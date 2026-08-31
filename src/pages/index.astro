@@ -5,6 +5,7 @@ import CodingAgentStrip from '../components/coding-agent-strip/coding-agent-stri
 import CodingModesComparison from '../components/coding-modes-comparison/coding-modes-comparison.astro';
 import CollaborationWorkbench from '../components/collaboration-workbench/collaboration-workbench.astro';
 import ContextAuthority from '../components/context-authority/context-authority.astro';
+import EngineeringContract from '../components/engineering-contract/engineering-contract.astro';
 import HeroWorkbench from '../components/hero-workbench/hero-workbench.astro';
 import MaturitySystem from '../components/maturity-system/maturity-system.astro';
 import MoldeaProof from '../components/moldea-proof/moldea-proof.astro';
@@ -51,9 +52,9 @@ const leverageItems = [
           <span class="block text-accent">with coding agents.</span>
         </h1>
         <p class="lede mx-auto mt-7">
-          Use coding agents across planning, implementation, and agent-operated evidence. Developers
-          supervise the proof, direct deeper audits when risk demands them, and own final
-          acceptance.
+          Use coding agents across planning, challenge, implementation, and agent-operated evidence.
+          Developers supervise the proof, direct deeper audits when risk demands them, and own
+          acceptance and publication as separate decisions.
         </p>
         <div class="mt-8 flex flex-wrap justify-center gap-3">
           <a
@@ -124,7 +125,9 @@ const leverageItems = [
         <dl class="grid gap-px overflow-hidden rounded-lg border border-border bg-border">
           <div class="bg-background p-4">
             <dt class="font-mono text-xs font-bold text-accent uppercase">Across the lifecycle</dt>
-            <dd class="mt-2 text-sm leading-6 text-muted">Plan, implement, verify, and correct.</dd>
+            <dd class="mt-2 text-sm leading-6 text-muted">
+              Plan, challenge, implement, verify, and correct.
+            </dd>
           </div>
           <div class="bg-background p-4">
             <dt class="font-mono text-xs font-bold text-accent uppercase">Under direction</dt>
@@ -144,23 +147,46 @@ const leverageItems = [
   </section>
 
   <section
+    class="section-space border-b border-border"
+    aria-labelledby="engineering-contract-title"
+  >
+    <div class="page-shell">
+      <div class="mx-auto max-w-3xl text-center">
+        <p class="eyebrow">02 / Engineer the contract</p>
+        <h2
+          id="engineering-contract-title"
+          class="section-title mx-auto mt-4"
+        >
+          Reliable delegation has layers.
+        </h2>
+        <p class="lede mx-auto mt-6 text-base sm:text-lg">
+          Strong coding instructions do more than describe style. They connect authority, repository
+          evidence, ownership, coherent implementation, adversarial proof, and external action into
+          one engineering contract.
+        </p>
+      </div>
+      <EngineeringContract />
+    </div>
+  </section>
+
+  <section
     class="section-space border-b border-border bg-secondary/35"
     aria-labelledby="collaboration-title"
   >
     <div class="page-shell">
       <div class="mx-auto max-w-3xl text-center">
-        <p class="eyebrow">02 / Collaborate on the work</p>
+        <p class="eyebrow">03 / Collaborate on the work</p>
         <h2
           id="collaboration-title"
           class="section-title mx-auto mt-4"
         >
-          Plan together. Execute in bounded slices.
+          Plan together. Challenge assumptions. Execute in bounded slices.
         </h2>
         <p class="lede mx-auto mt-6 text-base sm:text-lg">
           The agent can inspect the system, challenge an approach, and help converge on a stronger
           strategy before production code is written. After implementation, use <code>review</code>
-          for the worktree or <code>review &lt;branch-name&gt;</code> for a branch. The agent produces
-          the findings and verification; the developer challenges the evidence and decides.
+          for the worktree or <code>review &lt;target-branch&gt;</code> for a branch. The agent produces
+          the findings and verification; the developer chooses whether to correct, continue, or complete.
         </p>
       </div>
       <CollaborationWorkbench />
@@ -173,7 +199,7 @@ const leverageItems = [
   >
     <div class="page-shell">
       <div class="mx-auto max-w-3xl text-center">
-        <p class="eyebrow">03 / Mature the project</p>
+        <p class="eyebrow">04 / Mature the project</p>
         <h2
           id="maturity-title"
           class="section-title mx-auto mt-4"
@@ -195,7 +221,7 @@ const leverageItems = [
   >
     <div class="page-shell">
       <div class="mx-auto max-w-3xl text-center">
-        <p class="eyebrow">04 / Bound the authority</p>
+        <p class="eyebrow">05 / Bound the authority</p>
         <h2
           id="authority-title"
           class="section-title mx-auto mt-4"
@@ -217,7 +243,7 @@ const leverageItems = [
   >
     <div class="page-shell">
       <div class="mx-auto max-w-3xl text-center">
-        <p class="eyebrow">05 / Use the leverage</p>
+        <p class="eyebrow">06 / Use the leverage</p>
         <h2
           id="leverage-title"
           class="section-title section-title-long mx-auto mt-4"
@@ -258,7 +284,7 @@ const leverageItems = [
   >
     <div class="page-shell">
       <div class="mx-auto max-w-3xl text-center">
-        <p class="eyebrow">06 / Applied in practice</p>
+        <p class="eyebrow">07 / Applied in practice</p>
         <h2
           id="moldea-proof-title"
           class="section-title mx-auto mt-4"
@@ -281,7 +307,7 @@ const leverageItems = [
   >
     <div class="page-shell">
       <div class="mx-auto max-w-3xl text-center">
-        <p class="eyebrow">07 / Put it into practice</p>
+        <p class="eyebrow">08 / Put it into practice</p>
         <h2
           id="resources-title"
           class="section-title mx-auto mt-4"

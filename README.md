@@ -1,17 +1,17 @@
 # Agentic Coding
 
-[Agentic Coding](https://agenticcoding.jesusgraterol.dev) is a disciplined approach to planning, building, verifying, and reviewing software with coding agents while developers retain final engineering judgment.
+[Agentic Coding](https://agenticcoding.jesusgraterol.dev) is a disciplined approach to planning, challenging, building, verifying, reviewing, and publishing software with coding agents while developers retain final engineering judgment and external-action authority.
 
 The website turns that approach into four practical resources:
 
-- a concise explanation of the operating model and its maturity path
+- a concise explanation of the command-first operating model, engineering contract, and maturity path
 - a neutral `AGENTS.md` foundation for new or existing repositories
 - a preservation-first prompt for refining instructions that already contain useful project knowledge
-- a field guide of reusable conversations, worked examples, and recovery techniques for planning, execution, investigation, agent-operated evidence, and developer acceptance
+- a field guide of reusable conversations, worked examples, and recovery techniques for planning, plan challenge, execution, investigation, agent-operated evidence, developer acceptance, and separately authorized publication
 
 The landing page also identifies [`moldea`](https://moldea.ai/) as the real project work through which these principles were developed and tested.
 
-Evidence is agent-operated and developer-governed. The coding agent carries the verification workload through findings-first review, tests, checks, failure investigation, and reproducible reporting. The developer builds the proving system, challenges whether the evidence is independent and sufficient, decides when risk warrants code inspection, and owns the acceptance decision.
+Evidence is agent-operated and developer-governed. The coding agent carries the verification workload through findings-first review, tests, checks, failure investigation, and reproducible reporting tied to an exact repository state. The developer builds the proving system, challenges whether the evidence is independent and sufficient, decides when risk warrants code inspection, and owns acceptance and publication as separate decisions.
 
 The site is statically generated with Astro and Tailwind CSS. It uses the same Ubuntu Sans typography and core color palette as the Moldea projects while establishing a minimal technical product-documentation visual language. Client-routed navigation provides an accessible progress indicator while the next page is loading.
 
@@ -58,7 +58,7 @@ The two downloadable resources have one canonical Markdown source each:
 
 Rendered code blocks and copy controls use the same normalized text as the raw routes, preventing the displayed, copied, and downloaded versions from drifting apart. The root repository `AGENTS.md`, when present in a development environment, is a protected coding-instruction file and is not the public template source.
 
-The root `/llms.txt` endpoint is generated from the site configuration and published cookbook collection. It gives coding agents a concise project summary, direct links to the raw instruction resources, the complete ordered recipe index, and optional project context. Every public HTML page identifies it through `rel="describedby"`; `/start/` and `/refine/` also identify their canonical raw documents through `rel="alternate"`.
+The root `/llms.txt` endpoint is generated from the site configuration and published cookbook collection. It gives coding agents a concise project summary, direct links to the raw instruction resources, the complete ordered recipe index, and optional project context. The cookbook covers the full `Plan -> Challenge -> Breakdown when useful -> Execute -> Review` workflow and keeps publication under a distinct authorization recipe. Every public HTML page identifies the index through `rel="describedby"`; `/start/` and `/refine/` also identify their canonical raw documents through `rel="alternate"`.
 
 Cookbook recipes live in `src/content/cookbook/`. To add one:
 

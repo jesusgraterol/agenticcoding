@@ -52,6 +52,7 @@ describe('static build artifact', () => {
       'deepen-a-test-strategy',
       'review-a-change',
       'refine-coding-instructions',
+      'publish-an-authorized-change',
     ];
 
     for (const slug of expectedSlugs) {
@@ -74,6 +75,7 @@ describe('static build artifact', () => {
       'deepen-a-test-strategy',
       'review-a-change',
       'refine-coding-instructions',
+      'publish-an-authorized-change',
     ];
 
     expect(llmsText).toContain(
