@@ -718,6 +718,87 @@ test.describe('production website', () => {
     }
   });
 
+  test('keeps text selection visible on page and primary surfaces in both themes', async ({
+    page,
+  }) => {
+    await page.goto('/');
+
+    for (const theme of ['light', 'dark'] as const) {
+      await page.locator('html').evaluate((root, activeTheme) => {
+        root.classList.remove('light', 'dark');
+        root.classList.add(activeTheme);
+      }, theme);
+
+      const colors = await page.evaluate(() => {
+        const primaryText = document.querySelector<HTMLElement>('.bg-primary p');
+        const colorProbe = document.createElement('span');
+
+        if (primaryText === null) {
+          throw new Error('Primary-surface text is unavailable for selection verification.');
+        }
+
+        const primarySurface = primaryText.closest<HTMLElement>('.bg-primary');
+
+        if (primarySurface === null) {
+          throw new Error('A primary surface is unavailable for selection verification.');
+        }
+
+        colorProbe.style.backgroundColor = 'var(--accent)';
+        colorProbe.style.color = 'var(--accent-foreground)';
+        document.body.append(colorProbe);
+
+        const rootStyles = getComputedStyle(document.documentElement);
+        const primarySelectionStyles = getComputedStyle(primaryText, '::selection');
+        const selectionStyles = getComputedStyle(document.documentElement, '::selection');
+        const probeStyles = getComputedStyle(colorProbe);
+        const result = {
+          accentForegroundToken: rootStyles.getPropertyValue('--accent-foreground'),
+          accentToken: rootStyles.getPropertyValue('--accent'),
+          pageBackground: getComputedStyle(document.body).backgroundColor,
+          pageBackgroundToken: rootStyles.getPropertyValue('--background'),
+          primaryBackground: getComputedStyle(primarySurface).backgroundColor,
+          primarySelectionBackground: primarySelectionStyles.backgroundColor,
+          primarySelectionForeground: primarySelectionStyles.color,
+          primaryToken: rootStyles.getPropertyValue('--primary'),
+          selectionBackground: selectionStyles.backgroundColor,
+          selectionForeground: selectionStyles.color,
+          tokenBackground: probeStyles.backgroundColor,
+          tokenForeground: probeStyles.color,
+        };
+
+        colorProbe.remove();
+
+        return result;
+      });
+
+      expect(colors.selectionBackground).toBe(colors.tokenBackground);
+      expect(colors.selectionForeground).toBe(colors.tokenForeground);
+      expect(colors.selectionBackground).not.toBe(colors.pageBackground);
+      expect(colors.selectionBackground).not.toBe(colors.primaryBackground);
+      expect(colors.primarySelectionBackground).toBe(colors.tokenBackground);
+      expect(colors.primarySelectionForeground).toBe(colors.tokenForeground);
+      expect(colors.primarySelectionBackground).not.toBe(colors.primaryBackground);
+      expect(
+        calculateContrastRatio(colors.accentToken, colors.pageBackgroundToken),
+      ).toBeGreaterThanOrEqual(3);
+      expect(
+        calculateContrastRatio(colors.accentToken, colors.primaryToken),
+      ).toBeGreaterThanOrEqual(3);
+      expect(
+        calculateContrastRatio(colors.accentToken, colors.accentForegroundToken),
+      ).toBeGreaterThanOrEqual(4.5);
+      expect(
+        calculateContrastRatio(colors.primarySelectionBackground, colors.primaryBackground),
+      ).toBeGreaterThanOrEqual(3);
+      expect(
+        calculateContrastRatio(
+          colors.primarySelectionBackground,
+          colors.primarySelectionForeground,
+        ),
+      ).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+
   test('shows a static navigation segment when reduced motion is preferred', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/');
