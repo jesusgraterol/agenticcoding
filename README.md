@@ -2,12 +2,15 @@
 
 [Agentic Coding](https://agenticcoding.jesusgraterol.dev) is a disciplined approach to planning, challenging, building, verifying, reviewing, and publishing software with coding agents while developers retain final engineering judgment and external-action authority.
 
-The website turns that approach into four practical resources:
+The website is organized around one idea: `AGENTS.md` sets the standards, skills run the workflow, and the developer decides how much to delegate. It offers five practical resources:
 
 - a concise explanation of the operating model, engineering contract, and maturity path
 - a neutral `AGENTS.md` foundation for new or existing repositories
 - a preservation-first prompt for refining instructions that already contain useful project knowledge
-- a field guide of reusable conversations, worked examples, and recovery techniques for planning, plan challenge, execution, investigation, agent-operated evidence, developer acceptance, and separately authorized publication
+- a workflow walkthrough that shows each step of a change run through an explicit [jg-skills](https://jg-skills.jesusgraterol.dev) skill, with example output
+- a cookbook of techniques for recurring situations that no skill runs, such as orienting in a new codebase or recovering from drift
+
+jg-skills is a separate project that owns the installable skills and their full instructions. This site links to it and never duplicates the skill text.
 
 The landing page also identifies [`moldea`](https://moldea.ai/) as the real project work through which these principles were developed and tested.
 
@@ -58,7 +61,11 @@ The two downloadable resources have one canonical Markdown source each:
 
 Rendered code blocks and copy controls use the same normalized text as the raw routes, preventing the displayed, copied, and downloaded versions from drifting apart. The root repository `AGENTS.md`, when present in a development environment, is a protected coding-instruction file and is not the public template source.
 
-The root `/llms.txt` endpoint is generated from the site configuration and published cookbook collection. It gives coding agents a concise project summary, direct links to the raw instruction resources, the complete ordered recipe index, and optional project context. The cookbook covers the full `Plan -> Challenge -> Breakdown when useful -> Execute -> Review` workflow and keeps publication under a distinct authorization recipe. Every public HTML page identifies the index through `rel="describedby"`; `/start/` and `/refine/` also identify their canonical raw documents through `rel="alternate"`.
+The `/workflow/` page shows the `Plan -> Challenge -> Breakdown when useful -> Execute -> Review` sequence as nine steps, each run through a jg skill and anchored by the skill name, such as `/workflow/#jg-plan`. `WORKFLOW_STEPS` and `SUPPORTING_SKILLS` in `src/site.config.ts` hold each skill's one-line purpose and what it may change; keep them in sync with the jg-skills README whenever a skill is added, removed, renamed, or changes what it may change. The example transcripts live in `src/components/workflow-guide/constants.ts`.
+
+Seven former recipes moved to workflow steps. `MOVED_COOKBOOK_RECIPES` in `src/site.config.ts` maps each old slug to its step, and `astro.config.ts` turns that map into Astro `redirects`: static pages that refresh to the step's anchor, are marked `noindex`, and stay out of the sitemap and `llms.txt`.
+
+The root `/llms.txt` endpoint is generated from the site configuration and published cookbook collection. It gives coding agents a concise project summary, direct links to the raw instruction resources, the workflow page, the jg-skills index, the complete ordered recipe index, and optional project context. Every public HTML page identifies the index through `rel="describedby"`; `/start/` and `/refine/` also identify their canonical raw documents through `rel="alternate"`.
 
 Cookbook recipes live in `src/content/cookbook/`. To add one:
 
@@ -112,8 +119,8 @@ The quality pipeline checks:
 - application-owned text normalization, reading-time, sorting, and theme preference behavior
 - TypeScript and Astro diagnostics
 - ESLint and Prettier conformance
-- production generation, sitemap output, internal links, LLM discovery, SEO metadata, article dates, breadcrumb structured data, and raw resource fidelity
-- browser accessibility, navigation progress, copy controls, raw routes, theme persistence, reduced motion, keyboard navigation, and layouts down to 320 pixels
+- production generation, sitemap output, internal links and their anchors, LLM discovery, SEO metadata, article dates, breadcrumb structured data, raw resource fidelity, and the redirect pages for moved recipes
+- browser accessibility, navigation progress, copy controls, raw routes, redirects to workflow steps, the workflow mode toggle, theme persistence, reduced motion, keyboard navigation, and layouts down to 320 pixels
 
 Run the complete pipeline before publishing:
 

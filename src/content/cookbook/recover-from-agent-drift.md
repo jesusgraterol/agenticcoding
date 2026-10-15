@@ -10,8 +10,6 @@ featured: false
 draft: false
 relatedSlugs:
   - control-scope
-  - investigate-a-failing-test
-  - review-a-change
 prompt: |
   Stop implementation and audit the current work against the latest approved task contract. Do not edit, reset, revert, clean, stash, commit, or discard anything during this audit.
 

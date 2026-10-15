@@ -23,6 +23,8 @@ describe('buildLlmsText', () => {
     expect(text).toContain(
       '- [AGENTS.md foundation](https://agenticcoding.jesusgraterol.dev/AGENTS.md)',
     );
+    expect(text).toContain('- [Workflow](https://agenticcoding.jesusgraterol.dev/workflow/)');
+    expect(text).toContain('- [jg-skills index](https://jg-skills.jesusgraterol.dev/llms.txt)');
     expect(text).toContain(
       '- [Plan a \\[feature\\]](https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/): Plan a grounded implementation. Keep authority narrow.',
     );

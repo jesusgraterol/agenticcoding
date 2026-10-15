@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, expect, test } from 'vitest';
 
-import { CookbookEntrySchema } from './types.ts';
+import { CookbookEntrySchema, TranscriptMessageSchema } from './types.ts';
 
 const BASE_ENTRY = {
   category: 'planning',
@@ -41,6 +41,28 @@ describe('CookbookEntrySchema', () => {
         message: 'updatedAt must not precede publishedAt',
         path: ['updatedAt'],
       },
+    ]);
+  });
+});
+
+describe('TranscriptMessageSchema', () => {
+  test.each([
+    ['an invocation', { invocation: 'jg-plan' }],
+    ['text', { text: 'Plan saved. Approve it to start.' }],
+    ['an artifact', { artifact: { lines: [{ kind: 'text', text: 'Done' }], title: 'Report' } }],
+  ])('TranscriptMessageSchema.safeParse(message with only %s) -> success', (_content, message) => {
+    expect(TranscriptMessageSchema.safeParse({ speaker: 'agent', ...message }).success).toBe(true);
+  });
+
+  test('rejects a message with no content', () => {
+    const result = TranscriptMessageSchema.safeParse({ speaker: 'developer' });
+
+    expect(result.success).toBe(false);
+
+    if (result.success) return;
+
+    expect(result.error.issues.map(({ message }) => message)).toStrictEqual([
+      'A transcript message needs an artifact, an invocation, or text',
     ]);
   });
 });

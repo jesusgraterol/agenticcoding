@@ -1,4 +1,5 @@
 ---
+import InstallCommand from '../components/install-command/install-command.astro';
 import ResourceDocument from '../components/resource-document/resource-document.astro';
 import ContentLayout from '../layouts/content-layout.astro';
 import { RESOURCE_CONFIG, RESOURCE_IDS } from '../site.config.ts';
@@ -9,6 +10,15 @@ const { text } = await loadResource(resourceId);
 const resourceConfig = RESOURCE_CONFIG[resourceId];
 const publishedAt = new Date(`${resourceConfig.publishedAt}T00:00:00.000Z`);
 const updatedAt = new Date(`${resourceConfig.updatedAt}T00:00:00.000Z`);
+
+// 3.x commands and the skills that replaced them in 4.0.0
+const REPLACED_COMMANDS = [
+  { command: 'plan', skill: 'jg-plan' },
+  { command: 'challenge plan', skill: 'jg-challenge-plan' },
+  { command: 'breakdown', skill: 'jg-breakdown' },
+  { command: 'review', skill: 'jg-review' },
+  { command: 'review <target-branch>', skill: 'jg-review <target-branch>' },
+] as const;
 ---
 
 <ContentLayout
@@ -62,6 +72,80 @@ const updatedAt = new Date(`${resourceConfig.updatedAt}T00:00:00.000Z`);
             >preservation-first refinement workflow</a
           > instead of replacing them.
         </p>
+      </div>
+      <div class="mb-10 grid gap-5">
+        <section
+          class="grid gap-4 rounded-xl border border-border p-5 sm:p-7"
+          aria-labelledby="pair-skills-title"
+        >
+          <h2
+            id="pair-skills-title"
+            class="text-xl font-semibold tracking-tight"
+          >
+            Pair it with skills
+          </h2>
+          <p class="text-sm leading-6 text-muted">
+            This file sets the standards. The jg-skills collection runs the workflow on top of them:
+            plan, challenge, build, review, and push, each only when you invoke it. <a
+              class="font-semibold text-foreground underline underline-offset-4"
+              href="/workflow/"
+              >See every step</a
+            >.
+          </p>
+          <InstallCommand id="start-install-command" />
+        </section>
+        <section
+          class="grid gap-4 rounded-xl border border-border p-5 sm:p-7"
+          aria-labelledby="foundation-changes-title"
+        >
+          <h2
+            id="foundation-changes-title"
+            class="text-xl font-semibold tracking-tight"
+          >
+            What changed in 4.0.0
+          </h2>
+          <p class="text-sm leading-6 text-muted">
+            The commands that 3.x defined inside this file now live in skills, so the file only sets
+            standards.
+          </p>
+          <table class="w-full text-left text-sm">
+            <thead class="font-mono text-xs text-muted uppercase">
+              <tr class="border-b border-border">
+                <th
+                  class="py-2 pr-4 font-bold"
+                  scope="col"
+                  >3.x command</th
+                >
+                <th
+                  class="py-2 font-bold"
+                  scope="col"
+                  >4.0.0 skill</th
+                >
+              </tr>
+            </thead>
+            <tbody>
+              {
+                REPLACED_COMMANDS.map(({ command, skill }) => (
+                  <tr class="border-b border-border last:border-b-0">
+                    <td class="py-2 pr-4 align-top">
+                      <code class="wrap-anywhere">{command}</code>
+                    </td>
+                    <td class="py-2 align-top">
+                      <code class="wrap-anywhere text-accent">{skill}</code>
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+          <p class="text-sm leading-6 text-muted">
+            Publication now runs through <code class="text-accent">jg-push</code> for one change or{
+              ' '
+            }
+            <code class="text-accent">jg-execute autonomous</code> for a whole run. The file also adds
+            retained planning records, root-cause pattern searches, and failing-test-first bug fixes.
+          </p>
+        </section>
       </div>
       <ResourceDocument
         allowDownload

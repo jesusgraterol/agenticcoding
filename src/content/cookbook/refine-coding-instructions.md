@@ -10,7 +10,6 @@ featured: false
 draft: false
 relatedSlugs:
   - orient-to-a-codebase
-  - plan-a-feature
   - control-scope
   - synchronize-documentation
 prompt: |

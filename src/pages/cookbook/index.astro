@@ -13,14 +13,14 @@ const startingPoints = [
     label: 'The codebase is new to me',
   },
   {
-    description: 'Turn an outcome into one grounded, approval-ready strategy.',
-    href: '/cookbook/plan-a-feature/',
+    description: 'Turn an outcome into one grounded, approval-ready plan with jg-plan.',
+    href: '/workflow/#jg-plan',
     label: 'I need a plan',
   },
   {
-    description: 'Test assumptions while changing course is still inexpensive.',
-    href: '/cookbook/challenge-a-plan/',
-    label: 'The plan feels too easy',
+    description: 'Reproduce it, find the cause, and fix it with a test that fails first.',
+    href: '/workflow/#jg-debug',
+    label: 'Something is broken',
   },
   {
     description: 'Audit the current state and recover without discarding useful work.',
@@ -39,12 +39,12 @@ const tracks = [
   {
     category: 'execution',
     description:
-      'Implement bounded outcomes, preserve scope, and publish accepted work only under separate authority.',
+      'Keep implementation inside its scope, keep documentation current, and recover when work drifts.',
     label: 'Execute with control',
   },
   {
     category: 'review',
-    description: 'Investigate failures and demand evidence that matches the real production risks.',
+    description: 'Demand test evidence that matches the real production risks.',
     label: 'Verify and correct',
   },
   {

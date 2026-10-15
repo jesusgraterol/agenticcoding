@@ -1,0 +1,67 @@
+---
+import { Bot, UserRound } from '@lucide/astro';
+
+import type { ITranscriptMessage } from '../../content/index.ts';
+import ArtifactPanel from '../artifact-panel/artifact-panel.astro';
+
+interface Props {
+  label: string;
+  messages: readonly ITranscriptMessage[];
+}
+
+// visible speaker labels; examples stay free of coding-agent branding
+const SPEAKER_LABELS = {
+  agent: 'Coding agent',
+  developer: 'You',
+} as const satisfies Record<ITranscriptMessage['speaker'], string>;
+
+const { label, messages } = Astro.props;
+---
+
+<ol
+  class="grid min-w-0 gap-4"
+  aria-label={label}
+>
+  {
+    messages.map(({ artifact, invocation, speaker, text }) => (
+      <li class="group relative flex min-w-0 items-start gap-3">
+        {/* the rail joining each avatar to the next one; narrow screens drop the avatar column */}
+        <span
+          class="absolute top-10 -bottom-4 left-4 hidden w-px bg-border group-last:hidden sm:block"
+          aria-hidden="true"
+        />
+        <span
+          class:list={[
+            'relative hidden size-8 shrink-0 items-center justify-center rounded-lg sm:inline-flex',
+            speaker === 'developer'
+              ? 'bg-primary text-primary-foreground'
+              : 'border border-border bg-secondary text-accent',
+          ]}
+          aria-hidden="true"
+        >
+          {speaker === 'developer' ? <UserRound class="size-4" /> : <Bot class="size-4" />}
+        </span>
+        <div
+          class:list={[
+            'grid min-w-0 flex-1 gap-2 rounded-2xl rounded-tl-sm border border-border px-3 py-2.5 sm:px-4 sm:py-3',
+            speaker === 'developer' ? 'bg-background' : 'bg-surface',
+          ]}
+        >
+          <p class="text-xs font-semibold text-muted">{SPEAKER_LABELS[speaker]}</p>
+          {(invocation !== undefined || text !== undefined) && (
+            <p class="text-sm leading-6 wrap-anywhere">
+              {invocation && (
+                <code class="rounded-md bg-code px-1.5 py-0.5 font-semibold text-accent">
+                  {invocation}
+                </code>
+              )}
+              {invocation && text && ' '}
+              {text}
+            </p>
+          )}
+          {artifact && <ArtifactPanel artifact={artifact} />}
+        </div>
+      </li>
+    ))
+  }
+</ol>

@@ -8,10 +8,7 @@ publishedAt: 2026-08-19
 updatedAt: 2026-08-22
 featured: true
 draft: false
-relatedSlugs:
-  - challenge-a-plan
-  - investigate-a-failing-test
-  - review-a-change
+relatedSlugs: []
 prompt: |
   Review the test strategy for this behavior without modifying files:
 

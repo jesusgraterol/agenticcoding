@@ -2,7 +2,7 @@ import { access, readFile, readdir } from 'node:fs/promises';
 import { extname, join, relative, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import { SITE_CONFIG } from '../src/site.config.ts';
+import { MOVED_COOKBOOK_RECIPES, SITE_CONFIG } from '../src/site.config.ts';
 
 const repositoryRoot = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const DEFAULT_BUILD_DIRECTORY = resolve(repositoryRoot, 'dist');
@@ -11,18 +11,22 @@ const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/u;
 const VERIFY_BUILD_ERROR_MESSAGES = {
   ArticleStructuredDataIncomplete: 'Article structured data is incomplete',
   BreadcrumbHierarchyIncomplete: 'Breadcrumb hierarchy is incomplete',
+  BrokenInternalAnchor: 'Broken internal anchor',
   BrokenInternalLink: 'Broken internal link',
   BrokenInternalLlmsTextLink: 'Broken internal llms.txt link',
   CanonicalUrlMissingFromSitemap: 'Canonical URL is missing from the sitemap',
+  IncompleteRedirectPage: 'Redirect page is incomplete',
   InvalidStructuredData: 'Invalid structured data',
   InvalidStructuredDataGraph: 'Structured data graph is invalid',
   InvalidLlmsTextStructure: 'llms.txt does not follow the required project index structure.',
   MissingOrDuplicatePageDescription: 'Missing or duplicate page description',
   MissingOrDuplicatePageTitle: 'Missing or duplicate page title',
+  MissingRedirectPage: 'Redirect page is missing',
   MissingRequiredMetadata: 'Missing required metadata',
   MissingStructuredData: 'Missing structured data',
   NonObjectStructuredData: 'Structured data is not an object',
   ProductionBuildContainsTestFile: 'Production build contains a test file',
+  RedirectPageInSitemap: 'Redirect page is listed in the sitemap',
   SearchIndexableNotFoundPage: 'The custom 404 page must remain excluded from search indexes.',
   StructuredDataDoesNotMatchPage: 'Structured data does not match the canonical page',
 } as const;
@@ -33,6 +37,7 @@ const REQUIRED_BUILD_PATHS = [
   'refine.txt',
   'start/index.html',
   'refine/index.html',
+  'workflow/index.html',
   'cookbook/index.html',
   'favicon.svg',
   'llms.txt',
@@ -42,6 +47,11 @@ const REQUIRED_BUILD_PATHS = [
   'robots.txt',
   'sitemap-index.xml',
 ] as const;
+// static refresh pages that keep former recipe URLs pointing at their workflow steps
+const REDIRECT_PAGES = Object.entries(MOVED_COOKBOOK_RECIPES).map(([slug, skill]) => ({
+  htmlPath: `cookbook/${slug}/index.html`,
+  target: `/workflow/#${skill}`,
+}));
 
 /** Escapes a literal value before interpolating it into a regular expression. */
 const escapeRegularExpression = (input: string): string =>
@@ -83,6 +93,19 @@ const resolveInternalArtifact = (href: string): string => {
 
   return `${path.replace(/^\//u, '').replace(/\/$/u, '')}/index.html`;
 };
+
+/** Splits an internal link into its path and fragment; a same-page link has an empty path. */
+const splitInternalLink = (href: string): { fragment: string; path: string } => {
+  const fragmentIndex = href.indexOf('#');
+
+  return fragmentIndex < 0
+    ? { fragment: '', path: href }
+    : { fragment: href.slice(fragmentIndex + 1), path: href.slice(0, fragmentIndex) };
+};
+
+/** Checks whether generated HTML declares an element with the given id. */
+const hasElementId = (html: string, id: string): boolean =>
+  new RegExp(`\\sid="${escapeRegularExpression(id)}"`, 'u').test(html);
 
 /** Resolves a generated HTML artifact to its canonical public URL. */
 const resolveCanonicalUrl = (htmlPath: string): string => {
@@ -166,6 +189,10 @@ const extractStructuredDataEntities = (
  * - Article structured data is incomplete
  * - Breadcrumb hierarchy is incomplete
  * - Broken internal link
+ * - Broken internal anchor
+ * - Redirect page is missing
+ * - Redirect page is incomplete
+ * - Redirect page is listed in the sitemap
  * - The custom 404 page must remain excluded from search indexes.
  * - llms.txt does not follow the required project index structure.
  * - Broken internal llms.txt link
@@ -188,7 +215,11 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
   }
 
   const htmlFiles = buildFiles.filter((filePath) => filePath.endsWith('.html'));
-  const publicHtmlFiles = htmlFiles.filter((filePath) => filePath !== '404.html');
+  const redirectHtmlPaths = new Set(REDIRECT_PAGES.map(({ htmlPath }) => htmlPath));
+  const publicHtmlFiles = htmlFiles.filter(
+    (filePath) => filePath !== '404.html' && !redirectHtmlPaths.has(filePath),
+  );
+  const htmlByPath = new Map<string, string>();
   const descriptions = new Set<string>();
   const titles = new Set<string>();
   const sitemapFiles = buildFiles.filter((filePath) => /^sitemap-\d+\.xml$/u.test(filePath));
@@ -202,8 +233,72 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
     )
   ).join('\n');
 
-  for (const htmlPath of publicHtmlFiles) {
+  /** Reads one generated HTML artifact once, reusing it for later anchor checks. */
+  const readBuildHtml = async (htmlPath: string): Promise<string> => {
+    const cachedHtml = htmlByPath.get(htmlPath);
+
+    if (cachedHtml !== undefined) return cachedHtml;
+
     const html = await readFile(resolve(buildDirectory, htmlPath), 'utf8');
+
+    htmlByPath.set(htmlPath, html);
+
+    return html;
+  };
+
+  /**
+   * Verifies that an internal link resolves to a generated artifact and, when it names a
+   * fragment, to an element with that id.
+   * @throws
+   * - Broken internal link
+   * - Broken internal anchor
+   */
+  const verifyInternalLink = async (href: string, htmlPath: string): Promise<void> => {
+    const { fragment, path } = splitInternalLink(href);
+    const artifactPath = path === '' ? htmlPath : resolveInternalArtifact(path);
+
+    if (!buildFiles.includes(artifactPath)) {
+      throw new Error(
+        `${VERIFY_BUILD_ERROR_MESSAGES.BrokenInternalLink} in ${htmlPath}: ${href} -> ${artifactPath}`,
+      );
+    }
+
+    if (
+      fragment !== '' &&
+      artifactPath.endsWith('.html') &&
+      !hasElementId(await readBuildHtml(artifactPath), fragment)
+    ) {
+      throw new Error(
+        `${VERIFY_BUILD_ERROR_MESSAGES.BrokenInternalAnchor} in ${htmlPath}: ${href}`,
+      );
+    }
+  };
+
+  for (const { htmlPath, target } of REDIRECT_PAGES) {
+    if (!buildFiles.includes(htmlPath)) {
+      throw new Error(`${VERIFY_BUILD_ERROR_MESSAGES.MissingRedirectPage}: ${htmlPath}`);
+    }
+
+    const html = await readBuildHtml(htmlPath);
+
+    if (
+      !html.includes('<meta name="robots" content="noindex">') ||
+      !html.includes(`<meta http-equiv="refresh" content="0;url=${target}">`)
+    ) {
+      throw new Error(`${VERIFY_BUILD_ERROR_MESSAGES.IncompleteRedirectPage}: ${htmlPath}`);
+    }
+
+    const redirectUrl = resolveCanonicalUrl(htmlPath);
+
+    if (sitemap.includes(`<loc>${redirectUrl}</loc>`)) {
+      throw new Error(`${VERIFY_BUILD_ERROR_MESSAGES.RedirectPageInSitemap}: ${redirectUrl}`);
+    }
+
+    await verifyInternalLink(target, htmlPath);
+  }
+
+  for (const htmlPath of publicHtmlFiles) {
+    const html = await readBuildHtml(htmlPath);
     const canonicalUrl = resolveCanonicalUrl(htmlPath);
     const expectedStructuredDataType =
       htmlPath === 'index.html'
@@ -351,20 +446,13 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
       }
     }
 
-    const internalLinks = [...html.matchAll(/href="(\/(?!\/)[^"]*)"/gu)].map(
+    // root-relative and same-page links; external and protocol-relative links are out of scope
+    const internalLinks = [...html.matchAll(/href="((?:\/(?!\/)|#)[^"]*)"/gu)].map(
       (match) => match[1] ?? '/',
     );
 
     for (const href of internalLinks) {
-      if (href.startsWith('/#')) continue;
-
-      const artifactPath = resolveInternalArtifact(href);
-
-      if (!buildFiles.includes(artifactPath)) {
-        throw new Error(
-          `${VERIFY_BUILD_ERROR_MESSAGES.BrokenInternalLink} in ${htmlPath}: ${href} -> ${artifactPath}`,
-        );
-      }
+      await verifyInternalLink(href, htmlPath);
     }
   }
 

@@ -1,2 +1,10 @@
 // schemas
-export { CookbookEntrySchema } from './types.ts';
+export {
+  ArtifactLineSchema,
+  ArtifactSchema,
+  CookbookEntrySchema,
+  TranscriptMessageSchema,
+} from './types.ts';
+
+// types
+export type { IArtifact, IArtifactLine, ITranscriptMessage } from './types.ts';

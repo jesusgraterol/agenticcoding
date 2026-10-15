@@ -9,8 +9,6 @@ updatedAt: 2026-08-19
 featured: false
 draft: false
 relatedSlugs:
-  - execute-one-milestone
-  - review-a-change
   - refine-coding-instructions
 prompt: |
   Synchronize state-bearing documentation for the current implementation change. First inspect the complete diff, the repository's documentation ownership and generation workflows, and every current-state document directly affected by the changed behavior.

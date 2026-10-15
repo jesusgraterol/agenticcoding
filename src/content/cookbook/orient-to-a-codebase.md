@@ -9,7 +9,6 @@ updatedAt: 2026-08-19
 featured: true
 draft: false
 relatedSlugs:
-  - plan-a-feature
   - control-scope
   - refine-coding-instructions
 prompt: |

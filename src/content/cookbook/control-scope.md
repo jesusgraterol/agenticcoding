@@ -10,7 +10,6 @@ featured: false
 draft: false
 relatedSlugs:
   - orient-to-a-codebase
-  - execute-one-milestone
   - recover-from-agent-drift
 prompt: |
   Work on this bounded deliverable:

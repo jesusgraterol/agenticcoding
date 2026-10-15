@@ -5,36 +5,42 @@ const ACCESSIBILITY_ROUTES = [
   '/',
   '/start/',
   '/refine/',
+  '/workflow/',
   '/cookbook/',
-  '/cookbook/plan-a-feature/',
-  '/cookbook/publish-an-authorized-change/',
+  '/cookbook/control-scope/',
 ] as const;
 
 const DARK_ACCESSIBILITY_ROUTES = [
   '/',
   '/start/',
   '/refine/',
-  '/cookbook/plan-a-feature/',
+  '/workflow/',
+  '/cookbook/control-scope/',
 ] as const;
 
 const REQUIRED_ROUTES = [
   '/',
   '/start/',
   '/refine/',
+  '/workflow/',
   '/cookbook/',
   '/cookbook/orient-to-a-codebase/',
-  '/cookbook/plan-a-feature/',
-  '/cookbook/challenge-a-plan/',
-  '/cookbook/break-down-a-plan/',
-  '/cookbook/execute-one-milestone/',
   '/cookbook/control-scope/',
   '/cookbook/synchronize-documentation/',
   '/cookbook/recover-from-agent-drift/',
-  '/cookbook/investigate-a-failing-test/',
   '/cookbook/deepen-a-test-strategy/',
-  '/cookbook/review-a-change/',
   '/cookbook/refine-coding-instructions/',
-  '/cookbook/publish-an-authorized-change/',
+] as const;
+
+// former recipe routes and the workflow step each one now redirects to
+const MOVED_RECIPE_ROUTES = [
+  ['/cookbook/plan-a-feature/', 'jg-plan'],
+  ['/cookbook/challenge-a-plan/', 'jg-challenge-plan'],
+  ['/cookbook/break-down-a-plan/', 'jg-breakdown'],
+  ['/cookbook/execute-one-milestone/', 'jg-execute'],
+  ['/cookbook/investigate-a-failing-test/', 'jg-debug'],
+  ['/cookbook/review-a-change/', 'jg-review'],
+  ['/cookbook/publish-an-authorized-change/', 'jg-push'],
 ] as const;
 
 /** Converts an OKLCH token to clipped linear-sRGB relative luminance. */
@@ -150,6 +156,21 @@ test.describe('production website', () => {
     });
   }
 
+  for (const [movedRoute, skill] of MOVED_RECIPE_ROUTES) {
+    test(`${movedRoute} redirects to the ${skill} workflow step`, async ({ page, request }) => {
+      const redirectDocument = await (await request.get(movedRoute)).text();
+
+      expect(redirectDocument).toContain('<meta name="robots" content="noindex">');
+
+      await page.goto(movedRoute);
+
+      await expect(page).toHaveURL(`/workflow/#${skill}`);
+      await expect(
+        page.getByRole('heading', { level: 3, name: skill, exact: true }),
+      ).toBeInViewport();
+    });
+  }
+
   test('homepage communicates the full operating model', async ({ page }) => {
     await page.goto('/');
 
@@ -249,18 +270,32 @@ test.describe('production website', () => {
       '/cookbook/recover-from-agent-drift/',
     );
 
-    await page.getByRole('link', { name: /I need a plan/u }).click();
+    await expect(page.getByRole('link', { name: /I need a plan/u })).toHaveAttribute(
+      'href',
+      '/workflow/#jg-plan',
+    );
+    await expect(page.getByRole('link', { name: /Something is broken/u })).toHaveAttribute(
+      'href',
+      '/workflow/#jg-debug',
+    );
 
-    await expect(page).toHaveURL('/cookbook/plan-a-feature/');
+    await page.getByRole('link', { name: /The agent has drifted/u }).click();
+
+    await expect(page).toHaveURL('/cookbook/recover-from-agent-drift/');
     await expect(page.getByRole('heading', { name: 'Working prompt' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Worked example' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Useful follow-ups' })).toBeVisible();
   });
 
-  test('cookbook index and working prompt do not overflow at 320 pixels', async ({ page }) => {
+  test('content pages do not overflow at 320 pixels', async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 900 });
 
-    for (const route of ['/cookbook/', '/cookbook/plan-a-feature/'] as const) {
+    for (const route of [
+      '/cookbook/',
+      '/cookbook/control-scope/',
+      '/workflow/',
+      '/start/',
+    ] as const) {
       await page.goto(route);
 
       expect(
@@ -362,8 +397,9 @@ test.describe('production website', () => {
     expect(llmsText).toContain(
       '[AGENTS.md foundation](https://agenticcoding.jesusgraterol.dev/AGENTS.md)',
     );
+    expect(llmsText).toContain('[Workflow](https://agenticcoding.jesusgraterol.dev/workflow/)');
     expect(llmsText).toContain(
-      '[Plan a feature](https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/)',
+      '[Control scope](https://agenticcoding.jesusgraterol.dev/cookbook/control-scope/)',
     );
 
     await page.goto('/start/');
@@ -389,7 +425,8 @@ test.describe('production website', () => {
 
     for (const copySource of [
       { pagePath: '/start/', sourceId: 'agents-foundation-source' },
-      { pagePath: '/cookbook/plan-a-feature/', sourceId: 'plan-a-feature-prompt' },
+      { pagePath: '/cookbook/control-scope/', sourceId: 'control-scope-prompt' },
+      { pagePath: '/workflow/', sourceId: 'workflow-install-command' },
     ] as const) {
       await page.goto(copySource.pagePath);
 
@@ -457,9 +494,10 @@ test.describe('production website', () => {
       {
         currentLinkName: 'Cookbook',
         inactiveLinkName: 'Refine',
-        route: '/cookbook/plan-a-feature/',
+        route: '/cookbook/control-scope/',
       },
       { currentLinkName: 'Start', inactiveLinkName: 'Refine', route: '/start/' },
+      { currentLinkName: 'Workflow', inactiveLinkName: 'Start', route: '/workflow/' },
     ] as const;
 
     for (const routeCase of routeCases) {
@@ -469,9 +507,13 @@ test.describe('production website', () => {
 
       expect(await primaryNavigation.locator('a[href^="/"]').allTextContents()).toStrictEqual([
         'Start',
+        'Workflow',
         'Refine',
         'Cookbook',
       ]);
+      await expect(
+        primaryNavigation.getByRole('link', { name: 'Skills (opens in a new tab)' }),
+      ).toHaveAttribute('href', 'https://jg-skills.jesusgraterol.dev/');
 
       const currentLink = primaryNavigation.getByRole('link', {
         name: routeCase.currentLinkName,
@@ -546,11 +588,17 @@ test.describe('production website', () => {
 
     await expect(mobileNavigation).toBeVisible();
     await expect(mobileNavigation.getByRole('link', { name: 'Start', exact: true })).toBeVisible();
+    await expect(
+      mobileNavigation.getByRole('link', { name: 'Workflow', exact: true }),
+    ).toBeVisible();
+    await expect(
+      mobileNavigation.getByRole('link', { name: 'Skills (opens in a new tab)' }),
+    ).toHaveAttribute('href', 'https://jg-skills.jesusgraterol.dev/');
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     ).toBe(true);
 
-    await page.goto('/cookbook/plan-a-feature/');
+    await page.goto('/cookbook/control-scope/');
     await page.getByLabel('Open navigation menu').click();
 
     const currentCookbookLink = page
