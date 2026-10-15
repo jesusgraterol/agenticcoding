@@ -12,7 +12,7 @@ The website is organized around one idea: `AGENTS.md` sets the standards, skills
 
 jg-skills is a separate project that owns the installable skills and their full instructions. This site links to it and never duplicates the skill text.
 
-The landing page also identifies [`moldea`](https://skill.moldea.ai/), Git-native project context for coding agents, as the real project work through which these principles were developed and tested.
+The landing page also identifies [`moldea`](https://github.com/moldea-ai), Git-native project context for coding agents, as the real project work through which these principles were developed and tested.
 
 Evidence is agent-operated and developer-governed. The coding agent carries the verification workload through findings-first review, tests, checks, failure investigation, and reproducible reporting tied to an exact repository state. The developer builds the proving system, challenges whether the evidence is independent and sufficient, decides when risk warrants code inspection, and grants publication explicitly, either per change or for an autonomous run.
 
@@ -62,8 +62,6 @@ The two downloadable resources have one canonical Markdown source each:
 Rendered code blocks and copy controls use the same normalized text as the raw routes, preventing the displayed, copied, and downloaded versions from drifting apart. The root repository `AGENTS.md`, when present in a development environment, is a protected coding-instruction file and is not the public template source.
 
 The `/workflow/` page shows the `Plan -> Challenge -> Breakdown when useful -> Execute -> Review` sequence as nine steps, each run through a jg skill and anchored by the skill name, such as `/workflow/#jg-plan`. `WORKFLOW_STEPS` and `SUPPORTING_SKILLS` in `src/site.config.ts` hold each skill's one-line purpose and what it may change; keep them in sync with the jg-skills README whenever a skill is added, removed, renamed, or changes what it may change. The example transcripts live in `src/components/workflow-guide/constants.ts`.
-
-Seven former recipes moved to workflow steps. `MOVED_COOKBOOK_RECIPES` in `src/site.config.ts` maps each old slug to its step, and `astro.config.ts` turns that map into Astro `redirects`: static pages that refresh to the step's anchor, are marked `noindex`, and stay out of the sitemap and `llms.txt`.
 
 The root `/llms.txt` endpoint is generated from the site configuration and published cookbook collection. It gives coding agents a concise project summary, direct links to the raw instruction resources, the workflow page, the jg-skills index, the complete ordered recipe index, and optional project context. Every public HTML page identifies the index through `rel="describedby"`; `/start/` and `/refine/` also identify their canonical raw documents through `rel="alternate"`.
 
@@ -120,8 +118,8 @@ The quality pipeline checks:
 - application-owned text normalization, reading-time, sorting, and theme preference behavior
 - TypeScript and Astro diagnostics
 - ESLint and Prettier conformance
-- production generation, sitemap output, internal links and their anchors, LLM discovery, SEO metadata, article dates, breadcrumb structured data, raw resource fidelity, and the redirect pages for moved recipes
-- browser accessibility, navigation progress, copy controls, raw routes, redirects to workflow steps, the workflow mode toggle, theme persistence, reduced motion, keyboard navigation, and layouts down to 320 pixels
+- production generation, sitemap output, internal links and their anchors, LLM discovery, SEO metadata, article dates, breadcrumb structured data, and raw resource fidelity
+- browser accessibility, navigation progress, copy controls, raw routes, the workflow mode toggle, theme persistence, reduced motion, keyboard navigation, and layouts down to 320 pixels
 
 Run the complete pipeline before publishing:
 

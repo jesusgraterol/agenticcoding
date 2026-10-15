@@ -2,7 +2,7 @@
 
 **Status:** Approved for implementation
 
-**Version:** 4.0.0
+**Version:** 1.0.0
 
 **Last updated:** 2026-10-15
 
@@ -483,20 +483,6 @@ All public content routes MUST be statically generated.
 
 The site MAY use section anchors on `/`, but every primary practical resource must have a stable route.
 
-Seven former cookbook routes redirect to the workflow step that replaced them:
-
-| Former route | Target |
-| --- | --- |
-| `/cookbook/plan-a-feature/` | `/workflow/#jg-plan` |
-| `/cookbook/challenge-a-plan/` | `/workflow/#jg-challenge-plan` |
-| `/cookbook/break-down-a-plan/` | `/workflow/#jg-breakdown` |
-| `/cookbook/execute-one-milestone/` | `/workflow/#jg-execute` |
-| `/cookbook/investigate-a-failing-test/` | `/workflow/#jg-debug` |
-| `/cookbook/review-a-change/` | `/workflow/#jg-review` |
-| `/cookbook/publish-an-authorized-change/` | `/workflow/#jg-push` |
-
-Astro's `redirects` configuration generates these pages from one site-configuration map. Each uses a zero-delay refresh to its target anchor and a visible link, is marked `noindex`, and is excluded from the sitemap and `llms.txt`. No internal link may point at a redirect page.
-
 The route structure must not depend on client-side routing to work. Direct navigation, browser refresh, external linking, and GitHub Pages static serving must work for every route.
 
 ## 12. Global navigation
@@ -800,8 +786,9 @@ The section must:
 - keep the brand name lowercase
 - use the approved light- and dark-theme Moldea lockups without modifying their artwork
 - describe `moldea` with its own canonical category and promise: "Git-native project context for coding agents" and "Keep project knowledge in Git. Bring relevant context into coding-agent work."
-- connect the project to project knowledge in Git, task-relevant context for coding agents, and deterministic checks
-- link to a live `moldea` destination; while `https://moldea.ai/` is under construction, link to the Agent Skill documentation at `https://skill.moldea.ai/`
+- present the project as a whole: project knowledge in Git under `/moldea/`, the open-source Agent Skill, the open-source packages, and the hosted platform
+- describe the hosted platform as in development until it is publicly available
+- link only to live destinations: the project on GitHub, `https://skill.moldea.ai/`, and `https://packages.moldea.ai/`; link `https://moldea.ai/` once it is no longer under construction
 - remain an understated evidence section rather than a product advertisement
 
 The section MUST NOT claim customer adoption, general availability, hosted-platform availability, or outcomes that the current Moldea project does not establish. It must not invent a Moldea tagline or use an under-construction product screenshot as evidence.
@@ -875,6 +862,14 @@ Optimize for:
 - alignment with the existing codebase
 
 Do not optimize for cleverness or maximum change volume.
+
+#### Independent judgment and candor
+
+- assess claims and proposals on evidence, including the developer's and the agent's own earlier work
+- state plainly what is wrong, why it matters, and the smallest correction
+- separate verified facts from assumptions and correct the agent's own mistakes directly
+- avoid flattery, unsupported reassurance, and invented objections
+- never treat candor as authority to expand scope or skip approvals
 
 #### Skill dispatch, task intent, and authority
 
@@ -958,6 +953,25 @@ For substantial work:
 - place new behavior with the module that owns it
 - prefer the smallest correct solution consistent with the codebase
 
+#### Proportional rigor and tradeoffs
+
+- match complexity and safeguards to the consequences of failure, not the size of the change
+- give critical behavior the strongest practical design and lower-risk behavior the simplest correct one
+- when viable approaches differ materially and the task does not decide between them, present at most three options with their guarantees, limitations, costs, and failure consequences, recommend one, and ask the developer to choose
+
+#### Error handling
+
+- fail loudly when an assumption is violated, using the project's established error types
+- let errors propagate unless they can be recovered from or translated at a boundary
+- keep the original error as the cause when translating, and never swallow errors
+- keep documented error contracts synchronized with the implementation
+
+#### Resource efficiency
+
+- consider how cost grows with input size, frequency, and concurrency
+- make operations efficient before caching them, and cache only with a defined source of truth, keys, isolation, freshness, invalidation, and size limits
+- bound or paginate growth-capable collections at the source, preferring cursor-based pagination for new database-backed lists
+
 #### Coherent execution
 
 - execute approved work in small logical steps
@@ -1009,12 +1023,25 @@ For substantial work:
 - do not reset, clean, stash, revert, or overwrite unrelated changes to simplify the worktree
 - do not hide failures
 
+#### Task cleanup
+
+- stop the processes the task started and delete its scratch output once it is no longer needed
+- preserve deliverables, planning records, failure evidence, and anything the task did not create
+- never clean up broadly, and report anything that could not be cleaned up
+
 #### Safety
 
 - do not expose secrets
 - avoid destructive actions without explicit authorization
 - validate security-sensitive and data-integrity-sensitive paths
 - do not make high-blast-radius contract, dependency, schema, deployment, or infrastructure changes casually
+
+#### Portable paths and scripts
+
+- assume Windows, macOS, and Linux unless the repository documents otherwise
+- use portable file names and the runtime's path APIs
+- treat user-supplied paths as untrusted and keep resolved paths inside their intended root
+- prefer scripts in the project's main language, start processes without a shell, and never interpolate untrusted values into shell commands
 
 #### Conditional production safeguards
 
@@ -1035,8 +1062,6 @@ Coding-instruction files MUST be treated as governance files. Agents must not cr
 
 The public foundation MUST NOT define agent commands or skill workflows. Executable workflows for planning, plan challenge, breakdown, execution, debugging, review, and publication live in skills that the repository installs. The foundation states only how an invoked skill relates to the rest of the instructions.
 
-Version 4.0.0 removed the `plan`, `breakdown`, `challenge plan`, `review`, and `review <target-branch>` commands defined by 3.x. The `/start` page, outside the copyable file, maps each one to its replacement: `jg-plan`, `jg-breakdown`, `jg-challenge-plan`, `jg-review`, and `jg-review <target-branch>`. It also notes that publication now runs through `jg-push` or `jg-execute autonomous`.
-
 ### 14.5 Foundation page behavior
 
 The `/start` page MUST include:
@@ -1051,7 +1076,6 @@ The `/start` page MUST include:
 - a concise statement of what the foundation deliberately does not prescribe
 - a link to the refinement workflow for repositories with existing instructions
 - a pairing block, outside the copyable file, that recommends jg-skills with the install command, the explicit-only verification note, and a link to `/workflow`
-- a short "What changed in 4.0.0" note, outside the copyable file, that maps the removed commands to skills
 
 The copied, downloaded, raw, and rendered content must come from the same canonical source.
 
@@ -1321,8 +1345,6 @@ The cookbook MUST include these six recipes in intentional editorial order:
 
 6. **Refine coding instructions**
    - use the canonical refinement process to strengthen an existing `AGENTS.md`
-
-Seven former recipes moved to `/workflow` steps and keep their URLs as redirects (section 11): plan a feature, challenge a plan, break down a plan, execute one milestone, investigate a failing test, review a change, and publish an authorized change.
 
 A later version MAY add recipes only when they cover a distinct, recurring situation that neither the cookbook nor a skill already handles.
 
@@ -1790,7 +1812,6 @@ Use one typed configuration module for:
 - resource versions
 - the jg-skills URL, install command, and explicit-only verification note
 - the workflow step catalog
-- moved cookbook recipes and their redirect targets
 
 Do not duplicate these values across layouts and pages.
 
@@ -1894,7 +1915,7 @@ The cookbook index should use collection-page structured metadata. Public HTML p
 
 Every public content page below the homepage should expose a visible, navigable breadcrumb trail and matching `BreadcrumbList` structured data derived from the same route hierarchy.
 
-Redirect pages for moved recipes MUST be `noindex`, MUST be excluded from the sitemap and `llms.txt`, and MUST refresh to an anchor that exists on the target page. Every internal link with a fragment MUST point to an existing `id`.
+Every internal link with a fragment MUST point to an existing `id`.
 
 Do not add fabricated ratings, dates, organizations, or author profiles to structured data.
 
@@ -1976,7 +1997,6 @@ Use browser-level tests for important user-visible flows:
 - homepage exposes the engineering-contract layers, Challenge stage, Correct/Continue/Complete outcomes, and the supervised/autonomous publication toggle
 - direct navigation to every public route succeeds
 - a cookbook deep link works when loaded directly
-- each moved recipe URL lands on its workflow step
 - the workflow page exposes nine skill steps with their jg-skills links and a working install-command copy control
 - `/AGENTS.md` returns the canonical foundation
 - `/refine.txt` returns the canonical prompt
@@ -2003,7 +2023,7 @@ The build or test suite MUST verify:
 - cookbook slugs are unique
 - required route metadata exists
 - internal links are valid
-- redirect pages are absent from the sitemap and generated `llms.txt`, and every internal fragment link and redirect target matches an existing anchor
+- every internal fragment link matches an existing anchor
 - the foundation version, skill dispatch, review terminology, and publication authority remain synchronized
 
 ### 26.5 Required checks
@@ -2147,7 +2167,7 @@ The first production release is complete only when all of the following are true
 - publication is shown as an explicit grant, per change or per autonomous run, with the limits of autonomous runs
 - the ready-to-use foundation is complete
 - the refinement prompt is complete
-- the six cookbook recipes are published, and the seven moved recipe URLs redirect to their workflow steps
+- the six cookbook recipes are published
 - author attribution and source links are present
 
 ### 31.2 Functional

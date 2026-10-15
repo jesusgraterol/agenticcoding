@@ -32,17 +32,6 @@ const REQUIRED_ROUTES = [
   '/cookbook/refine-coding-instructions/',
 ] as const;
 
-// former recipe routes and the workflow step each one now redirects to
-const MOVED_RECIPE_ROUTES = [
-  ['/cookbook/plan-a-feature/', 'jg-plan'],
-  ['/cookbook/challenge-a-plan/', 'jg-challenge-plan'],
-  ['/cookbook/break-down-a-plan/', 'jg-breakdown'],
-  ['/cookbook/execute-one-milestone/', 'jg-execute'],
-  ['/cookbook/investigate-a-failing-test/', 'jg-debug'],
-  ['/cookbook/review-a-change/', 'jg-review'],
-  ['/cookbook/publish-an-authorized-change/', 'jg-push'],
-] as const;
-
 /** Converts an OKLCH token to clipped linear-sRGB relative luminance. */
 const calculateRelativeLuminance = (color: string): number => {
   const match = /^oklch\(\s*([\d.]+)(%)?\s+([\d.]+)\s+([\d.]+)(?:deg)?(?:\s*\/[^)]+)?\s*\)$/u.exec(
@@ -156,21 +145,6 @@ test.describe('production website', () => {
     });
   }
 
-  for (const [movedRoute, skill] of MOVED_RECIPE_ROUTES) {
-    test(`${movedRoute} redirects to the ${skill} workflow step`, async ({ page, request }) => {
-      const redirectDocument = await (await request.get(movedRoute)).text();
-
-      expect(redirectDocument).toContain('<meta name="robots" content="noindex">');
-
-      await page.goto(movedRoute);
-
-      await expect(page).toHaveURL(`/workflow/#${skill}`);
-      await expect(
-        page.getByRole('heading', { level: 3, name: skill, exact: true }),
-      ).toBeInViewport();
-    });
-  }
-
   test('homepage communicates the full operating model', async ({ page }) => {
     await page.goto('/');
 
@@ -209,8 +183,15 @@ test.describe('production website', () => {
       page.getByRole('heading', { name: 'Give the work a stronger operating system.' }),
     ).toBeVisible();
     await expect(
-      page.getByRole('link', { name: 'Explore the moldea Agent Skill (opens in a new tab)' }),
+      page.getByRole('link', { name: 'moldea on GitHub (opens in a new tab)' }),
+    ).toHaveAttribute('href', 'https://github.com/moldea-ai');
+    await expect(
+      page.getByRole('link', { name: 'Agent Skill documentation (opens in a new tab)' }),
     ).toHaveAttribute('href', 'https://skill.moldea.ai/');
+    await expect(
+      page.getByRole('link', { name: 'Packages documentation (opens in a new tab)' }),
+    ).toHaveAttribute('href', 'https://packages.moldea.ai/');
+    await expect(page.getByText('In development', { exact: true })).toBeVisible();
     await expect(page.getByText('Git-native project context for coding agents.')).toBeVisible();
     await expect(page.getByText(/Skills run\s+the workflow\./u)).toBeVisible();
 
@@ -220,7 +201,7 @@ test.describe('production website', () => {
 
     await expect(heroSession).toContainText('jg-brainstorm');
     await expect(heroSession).toContainText('Ready to commit');
-    await expect(heroSession).toContainText('Signed commit 7d03b18 pushed');
+    await expect(heroSession).toContainText('Signed commit 5b2e9a4 pushed');
     await expect(page.getByText('engineering-contract.layers', { exact: true })).toBeVisible();
     await expect(page.getByText(/^LAYER \d{2}$/u)).toHaveCount(6);
 
@@ -255,18 +236,17 @@ test.describe('production website', () => {
   }) => {
     await page.goto('/start/');
 
-    await expect(page.getByText('Version 4.0.0', { exact: true })).toBeVisible();
+    await expect(page.getByText('Version 1.0.0', { exact: true })).toBeVisible();
     await expect(page.locator('time[datetime="2026-10-15"]').first()).toBeVisible();
     await expect(page.locator('#agents-foundation-source')).toContainText(
       'determine whether the developer invoked a skill',
     );
-    await expect(page.locator('#agents-foundation-source')).not.toContainText('## Agent commands');
   });
 
   test('refine page publishes the current refinement prompt version', async ({ page }) => {
     await page.goto('/refine/');
 
-    await expect(page.getByText('Version 2.0.0', { exact: true })).toBeVisible();
+    await expect(page.getByText('Version 1.0.0', { exact: true })).toBeVisible();
     await expect(page.locator('#refinement-prompt-source')).toContainText(
       'installed agent skills that define workflows',
     );

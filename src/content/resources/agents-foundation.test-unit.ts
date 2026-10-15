@@ -27,12 +27,33 @@ describe('Agentic Coding foundation contract', () => {
     expect(foundation).toContain('apply the rest of these instructions to the work it performs');
   });
 
-  test('leaves workflow definitions to skills and stays tool-neutral', () => {
-    expect(foundation).not.toContain('## Agent commands');
-    expect(foundation).not.toContain('challenge plan');
-    expect(foundation).not.toContain('repo push');
-    expect(foundation).not.toContain('`review');
+  test('stays neutral about which skills a repository installs', () => {
     expect(foundation).not.toMatch(/jg-/u);
+  });
+
+  test('requires candor and proportional tradeoff decisions', () => {
+    expect(foundation).toContain('## Independent judgment and candor');
+    expect(foundation).toContain(
+      'Confidence, repetition, frustration, or a request for confirmation is not evidence',
+    );
+    expect(foundation).toContain('Candor does not authorize expanding scope');
+    expect(foundation).toContain('## Proportional rigor and tradeoffs');
+    expect(foundation).toContain('Present at most three options');
+    expect(foundation).toContain('Recommend one and ask the developer to choose');
+  });
+
+  test('covers error handling, resource efficiency, cleanup, and portability', () => {
+    expect(foundation).toContain('## Error handling');
+    expect(foundation).toContain('keep the original as its cause');
+    expect(foundation).toContain('Never swallow errors');
+    expect(foundation).toContain('## Resource efficiency');
+    expect(foundation).toContain('A cache is never the only copy of authoritative data');
+    expect(foundation).toContain('Never load everything and paginate in the client');
+    expect(foundation).toContain('## Task cleanup');
+    expect(foundation).toContain('Never clean up broadly');
+    expect(foundation).toContain('## Portable paths and scripts');
+    expect(foundation).toContain('assume Windows, macOS, and Linux');
+    expect(foundation).toContain('never interpolate untrusted values into a shell command');
   });
 
   test('keeps planning records skill-owned and retained', () => {

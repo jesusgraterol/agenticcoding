@@ -13,14 +13,14 @@ export const RESOURCE_CONFIG = {
     publishedAt: '2026-08-19',
     rawPath: '/AGENTS.md',
     updatedAt: '2026-10-15',
-    version: '4.0.0',
+    version: '1.0.0',
   },
   [RESOURCE_IDS.RefinementPrompt]: {
     fileName: 'refine.txt',
     publishedAt: '2026-08-19',
     rawPath: '/refine.txt',
     updatedAt: '2026-10-15',
-    version: '2.0.0',
+    version: '1.0.0',
   },
 } as const satisfies Record<
   IResourceId,
@@ -43,8 +43,12 @@ export const SITE_CONFIG = {
     'Plan, challenge, build, and review production software with coding agents while developers retain acceptance and publication authority.',
   language: 'en',
   license: 'MIT',
-  // the live moldea destination; moldea.ai itself is under construction
-  moldeaUrl: 'https://skill.moldea.ai/',
+  // live moldea destinations; moldea.ai itself is under construction, so it is not linked yet
+  moldea: {
+    githubUrl: 'https://github.com/moldea-ai',
+    packagesUrl: 'https://packages.moldea.ai/',
+    skillUrl: 'https://skill.moldea.ai/',
+  },
   name: 'Agentic Coding',
   navigation: [
     { href: '/', label: 'Agentic Coding' },
@@ -213,14 +217,3 @@ export const WORKFLOW_PAGE_DATES = {
   publishedAt: '2026-10-15',
   updatedAt: '2026-10-15',
 } as const;
-
-// former cookbook recipes and the workflow step that replaced each one
-export const MOVED_COOKBOOK_RECIPES = {
-  'plan-a-feature': 'jg-plan',
-  'challenge-a-plan': 'jg-challenge-plan',
-  'break-down-a-plan': 'jg-breakdown',
-  'execute-one-milestone': 'jg-execute',
-  'investigate-a-failing-test': 'jg-debug',
-  'review-a-change': 'jg-review',
-  'publish-an-authorized-change': 'jg-push',
-} as const satisfies Record<string, IWorkflowSkill>;

@@ -29,7 +29,7 @@ example:
         - kind: text
           text: crash after insert, before ack -> integration, retried event
         - kind: text
-          text: forged or stale signature -> rejected before any side effect
+          text: forged or stale signature -> integration, signature check before any write
         - kind: heading
           text: Survives the current tests
         - kind: text

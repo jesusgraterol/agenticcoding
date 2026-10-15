@@ -208,7 +208,7 @@ Introduce or strengthen these values only in forms that fit the repository:
 20. transparent assumptions, blockers, skipped checks, deviations, and uncertainty
 21. progressively broader delegation only after the project establishes clear rails
 22. developer accountability for intent, direction, tradeoffs, authority, and final quality
-23. planning records that change only through an invoked planning workflow and are retained as the task record
+23. planning records that change only through an invoked planning or execution workflow and are retained as the task record
 24. bug fixes that start from a test failing for the reported reason, with expected values from an independent source
 25. a search for other instances whenever a root cause is a repeatable pattern
 

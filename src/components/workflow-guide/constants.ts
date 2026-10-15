@@ -51,9 +51,15 @@ export const STEP_EXAMPLES: Record<Exclude<IWorkflowSkill, 'jg-execute'>, ITrans
       artifact: {
         lines: [
           { kind: 'heading', text: '## Challenges' },
-          { kind: 'text', text: '1. Revoking an admin leaves the keys they created active.' },
+          {
+            kind: 'text',
+            text: '1. The plan never says what happens to keys when their creator leaves.',
+          },
           { kind: 'heading', text: '## Developer decisions required' },
-          { kind: 'text', text: '1. Keep keys when their creator leaves? Recommended: yes.' },
+          {
+            kind: 'text',
+            text: '1. Keep those keys? Recommended: yes, the organization owns them.',
+          },
           { kind: 'heading', text: '## Recommendation' },
           { kind: 'text', text: 'Plan revision required before proceeding' },
         ],
@@ -65,7 +71,7 @@ export const STEP_EXAMPLES: Record<Exclude<IWorkflowSkill, 'jg-execute'>, ITrans
     {
       invocation: 'jg-plan',
       speaker: 'developer',
-      text: 'Keep the keys and give the organization ownership.',
+      text: 'Keep the keys; they survive their creator.',
     },
   ],
   'jg-breakdown': [
@@ -74,7 +80,6 @@ export const STEP_EXAMPLES: Record<Exclude<IWorkflowSkill, 'jg-execute'>, ITrans
       artifact: {
         lines: [
           { kind: 'heading', text: '## Milestone 1: Organization-owned tokens' },
-          { kind: 'muted', text: '**Status:** done' },
           { kind: 'heading', text: '## Milestone 2: Admin endpoints and scopes' },
           { kind: 'heading', text: '## Milestone 3: Rotation and audit events' },
           { kind: 'heading', text: '## Approval required' },
@@ -136,7 +141,7 @@ export const STEP_EXAMPLES: Record<Exclude<IWorkflowSkill, 'jg-execute'>, ITrans
           { kind: 'heading', text: 'Findings' },
           {
             kind: 'text',
-            text: '1. High: the revoke route skips the organization admin check (routes.ts:88)',
+            text: "1. High: members can list another organization's keys (token.service.ts:42)",
           },
           { kind: 'heading', text: 'Checks run' },
           { kind: 'text', text: 'unit, integration, typecheck: passed' },
@@ -164,14 +169,14 @@ export const STEP_EXAMPLES: Record<Exclude<IWorkflowSkill, 'jg-execute'>, ITrans
         lines: [
           {
             kind: 'muted',
-            text: '$ git commit -s -S -m "feat(tokens): add organization API keys" -- <6 task files>',
+            text: '$ git commit -s -S -m "feat(tokens): give tokens an organization owner" -- <6 task files>',
           },
           {
             kind: 'text',
-            text: '[feature/org-api-keys 7d03b18] feat(tokens): add organization API keys',
+            text: '[feature/org-api-keys 3f8c2e1] feat(tokens): give tokens an organization owner',
           },
           { kind: 'muted', text: '$ git push origin HEAD:refs/heads/feature/org-api-keys' },
-          { kind: 'text', text: '7d03b18 pushed to origin/feature/org-api-keys' },
+          { kind: 'text', text: '3f8c2e1 pushed to origin/feature/org-api-keys' },
         ],
         status: { label: 'Pushed', tone: 'success' },
         title: 'Commit and push',
@@ -188,12 +193,12 @@ export const SUPERVISED_EXECUTE_EXAMPLE: ITranscriptMessage[] = [
   {
     artifact: {
       lines: [
-        { kind: 'text', text: 'Milestone 2: Admin endpoints and scopes' },
+        { kind: 'text', text: 'Milestone 1: Organization-owned tokens' },
         { kind: 'text', text: 'Files: 6 changed' },
         { kind: 'text', text: 'Checks: unit, integration, typecheck passed' },
         { kind: 'text', text: 'Status line written to milestones.md' },
         { kind: 'heading', text: 'Next' },
-        { kind: 'text', text: 'jg-review, then jg-push, then jg-execute for milestone 3' },
+        { kind: 'text', text: 'jg-review, then jg-push, then jg-execute for milestone 2' },
       ],
       status: { label: 'Checks passed', tone: 'success' },
       title: 'Milestone report',

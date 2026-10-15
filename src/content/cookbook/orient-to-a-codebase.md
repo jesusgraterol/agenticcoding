@@ -37,7 +37,7 @@ example:
         - kind: text
           text: creation, acceptance, the cleanup job, email copy, error docs
         - kind: muted
-          text: 'Unverified: no index on expires_at yet'
+          text: 'Open question: expiration will need an index on expires_at'
 prompt: |
   Help me build a working map of this repository without modifying files, installing dependencies, generating artifacts, or changing Git state.
 

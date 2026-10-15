@@ -10,15 +10,6 @@ const { text } = await loadResource(resourceId);
 const resourceConfig = RESOURCE_CONFIG[resourceId];
 const publishedAt = new Date(`${resourceConfig.publishedAt}T00:00:00.000Z`);
 const updatedAt = new Date(`${resourceConfig.updatedAt}T00:00:00.000Z`);
-
-// 3.x commands and the skills that replaced them in 4.0.0
-const REPLACED_COMMANDS = [
-  { command: 'plan', skill: 'jg-plan' },
-  { command: 'challenge plan', skill: 'jg-challenge-plan' },
-  { command: 'breakdown', skill: 'jg-breakdown' },
-  { command: 'review', skill: 'jg-review' },
-  { command: 'review <target-branch>', skill: 'jg-review <target-branch>' },
-] as const;
 ---
 
 <ContentLayout
@@ -55,10 +46,11 @@ const REPLACED_COMMANDS = [
     <div class="prose-shell">
       <div class="mb-10 grid gap-5 rounded-xl border border-border bg-secondary/35 p-5 sm:p-7">
         <p class="text-lg leading-8">
-          This file sets the standards an agent follows on every task: skill-first authority,
-          codebase-first reasoning, collaborative planning, retained planning records, narrow
-          authority, coherent execution, failing-test-first bug fixes, agent-operated evidence,
-          developer-governed acceptance, explicit publication authority, transparency, and safety.
+          This file sets the standards an agent follows on every task: candor, skill-first
+          authority, codebase-first reasoning, collaborative planning, proportional tradeoffs,
+          narrow authority, clear error handling, resource efficiency, coherent execution,
+          failing-test-first bug fixes, agent-operated evidence, developer-governed acceptance,
+          explicit publication authority, cleanup, portability, and safety.
         </p>
         <p class="text-sm leading-6 text-muted">
           It deliberately does not prescribe a language, framework, folder structure, package
@@ -93,58 +85,6 @@ const REPLACED_COMMANDS = [
             >.
           </p>
           <InstallCommand id="start-install-command" />
-        </section>
-        <section
-          class="grid gap-4 rounded-xl border border-border p-5 sm:p-7"
-          aria-labelledby="foundation-changes-title"
-        >
-          <h2
-            id="foundation-changes-title"
-            class="text-xl font-semibold tracking-tight"
-          >
-            What changed in 4.0.0
-          </h2>
-          <p class="text-sm leading-6 text-muted">
-            The commands that 3.x defined inside this file now live in skills, so the file only sets
-            standards.
-          </p>
-          <table class="w-full text-left text-sm">
-            <thead class="font-mono text-xs text-muted uppercase">
-              <tr class="border-b border-border">
-                <th
-                  class="py-2 pr-4 font-bold"
-                  scope="col"
-                  >3.x command</th
-                >
-                <th
-                  class="py-2 font-bold"
-                  scope="col"
-                  >4.0.0 skill</th
-                >
-              </tr>
-            </thead>
-            <tbody>
-              {
-                REPLACED_COMMANDS.map(({ command, skill }) => (
-                  <tr class="border-b border-border last:border-b-0">
-                    <td class="py-2 pr-4 align-top">
-                      <code class="wrap-anywhere">{command}</code>
-                    </td>
-                    <td class="py-2 align-top">
-                      <code class="wrap-anywhere text-accent">{skill}</code>
-                    </td>
-                  </tr>
-                ))
-              }
-            </tbody>
-          </table>
-          <p class="text-sm leading-6 text-muted">
-            Publication now runs through <code class="text-accent">jg-push</code> for one change or{
-              ' '
-            }
-            <code class="text-accent">jg-execute autonomous</code> for a whole run. The file also adds
-            retained planning records, root-cause pattern searches, and failing-test-first bug fixes.
-          </p>
         </section>
       </div>
       <ResourceDocument

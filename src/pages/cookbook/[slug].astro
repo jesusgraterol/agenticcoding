@@ -30,6 +30,8 @@ const relatedRecipes = recipe.data.relatedSlugs.flatMap((relatedSlug) => {
   return relatedRecipe ? [relatedRecipe] : [];
 });
 const promptSourceId = `${recipe.data.slug}-prompt`;
+// only prompts with [bracketed] placeholders need the fill-in hint
+const hasPromptPlaceholders = /\[[^\]]+\]/u.test(recipe.data.prompt);
 const dateFormatter = new Intl.DateTimeFormat('en', {
   dateStyle: 'long',
   timeZone: 'UTC',
@@ -118,8 +120,8 @@ const hasBeenUpdated = recipe.data.updatedAt.getTime() !== recipe.data.published
           class="overflow-auto p-5 text-sm leading-6 whitespace-pre-wrap"
           tabindex="0"><code>{recipe.data.prompt}</code></pre>
         <p class="border-t border-border px-4 py-3 text-sm leading-6 text-muted sm:px-5">
-          Replace the bracketed context, keep the repository available for inspection, and treat the
-          first answer as the start of the conversation.
+          {hasPromptPlaceholders && 'Replace the bracketed context. '}Keep the repository available
+          for inspection, and treat the first answer as the start of the conversation.
         </p>
       </section>
 

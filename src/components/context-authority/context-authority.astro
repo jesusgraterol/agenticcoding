@@ -6,9 +6,9 @@ const paths = [
   { depth: 1, mode: 'inspect', path: 'auth/' },
   { depth: 2, mode: 'inspect', path: 'session.service.ts' },
   { depth: 2, mode: 'inspect', path: 'permissions.ts' },
-  { depth: 1, mode: 'edit', path: 'api-keys/' },
-  { depth: 2, mode: 'edit', path: 'api-keys.service.ts' },
-  { depth: 2, mode: 'edit', path: 'api-keys.service.test-integration.ts' },
+  { depth: 1, mode: 'edit', path: 'tokens/' },
+  { depth: 2, mode: 'edit', path: 'token.service.ts' },
+  { depth: 2, mode: 'edit', path: 'token.service.test-integration.ts' },
   { depth: 1, mode: 'inspect', path: 'organizations/' },
   { depth: 2, mode: 'inspect', path: 'organization.model.ts' },
   { depth: 1, mode: 'inspect', path: 'shared/crypto/' },
@@ -90,7 +90,7 @@ const reliabilityStages = [
       <p class="mt-3 text-xl leading-8 font-semibold">Add organization-owned API-key rotation.</p>
       <p class="mt-5 text-sm leading-6 text-white/65">
         Authentication, organization ownership, and cryptography are dependencies worth
-        understanding. Only the API-key path is a deliverable.
+        understanding. Only the token path is a deliverable.
       </p>
       <div class="mt-8 border-t border-white/15 pt-6">
         <p class="font-mono text-xs text-white/50 uppercase">Reliability layers</p>
@@ -100,7 +100,7 @@ const reliabilityStages = [
               <li class="bg-primary p-3 text-sm">
                 <span class="mr-2 font-mono text-xs text-accent-on-primary">
                   {String(index + 1).padStart(2, '0')}
-                </span>
+                </span>{' '}
                 {stage}
               </li>
             ))

@@ -14,7 +14,7 @@ relatedSlugs:
 situation: A repository already has useful agent instructions, but its planning, authority, testing, or review rules are incomplete or contradictory. Improve them without erasing the knowledge that makes this repository distinct.
 example:
   - speaker: developer
-    text: Use the canonical refinement process at /refine.txt for this repository.
+    text: Use the canonical refinement process at https://agenticcoding.jesusgraterol.dev/refine.txt for this repository.
   - speaker: agent
     text: The proposal is ready. I have not edited anything. Approve, amend, or reject each ID.
     artifact:
@@ -34,7 +34,7 @@ example:
         - kind: text
           text: 'R-01 Reconcile: planning steps duplicated by installed skills'
 prompt: |
-  Use the canonical Agentic Coding refinement process at /refine.txt.
+  Use the canonical Agentic Coding refinement process at https://agenticcoding.jesusgraterol.dev/refine.txt.
 
   Inspect the repository's supported instruction system, consuming agents or tools, installed workflow skills, scope and precedence, authoritative and generated sources, current worktree, and relevant engineering evidence. Preserve valuable project-specific guidance.
 

@@ -34,12 +34,12 @@ describe('buildStructuredData', () => {
       breadcrumbs: [
         { name: 'Home', path: '/' },
         { name: 'Cookbook', path: '/cookbook/' },
-        { name: 'Plan a feature', path: '/cookbook/plan-a-feature/' },
+        { name: 'Control scope', path: '/cookbook/control-scope/' },
       ],
-      canonicalUrl: 'https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/',
+      canonicalUrl: 'https://agenticcoding.jesusgraterol.dev/cookbook/control-scope/',
       description: 'Turn a requirement into a grounded implementation strategy.',
       publishedAt: new Date('2026-08-19T00:00:00.000Z'),
-      title: 'Plan a feature',
+      title: 'Control scope',
       type: 'article',
       updatedAt: new Date('2026-08-19T00:00:00.000Z'),
     });
@@ -48,7 +48,7 @@ describe('buildStructuredData', () => {
       '@context': 'https://schema.org',
       '@graph': [
         {
-          '@id': 'https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/#article',
+          '@id': 'https://agenticcoding.jesusgraterol.dev/cookbook/control-scope/#article',
           '@type': 'Article',
           articleSection: 'Planning',
           author: {
@@ -59,7 +59,7 @@ describe('buildStructuredData', () => {
           dateModified: '2026-08-19',
           datePublished: '2026-08-19',
           description: 'Turn a requirement into a grounded implementation strategy.',
-          headline: 'Plan a feature',
+          headline: 'Control scope',
           image: {
             '@type': 'ImageObject',
             height: 630,
@@ -74,13 +74,13 @@ describe('buildStructuredData', () => {
             url: 'https://agenticcoding.jesusgraterol.dev/',
           },
           mainEntityOfPage: {
-            '@id': 'https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/',
+            '@id': 'https://agenticcoding.jesusgraterol.dev/cookbook/control-scope/',
             '@type': 'WebPage',
           },
-          url: 'https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/',
+          url: 'https://agenticcoding.jesusgraterol.dev/cookbook/control-scope/',
         },
         {
-          '@id': 'https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/#breadcrumb',
+          '@id': 'https://agenticcoding.jesusgraterol.dev/cookbook/control-scope/#breadcrumb',
           '@type': 'BreadcrumbList',
           itemListElement: [
             {
@@ -97,8 +97,8 @@ describe('buildStructuredData', () => {
             },
             {
               '@type': 'ListItem',
-              item: 'https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/',
-              name: 'Plan a feature',
+              item: 'https://agenticcoding.jesusgraterol.dev/cookbook/control-scope/',
+              name: 'Control scope',
               position: 3,
             },
           ],

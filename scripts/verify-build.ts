@@ -2,7 +2,7 @@ import { access, readFile, readdir } from 'node:fs/promises';
 import { extname, join, relative, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import { MOVED_COOKBOOK_RECIPES, SITE_CONFIG } from '../src/site.config.ts';
+import { SITE_CONFIG } from '../src/site.config.ts';
 
 const repositoryRoot = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const DEFAULT_BUILD_DIRECTORY = resolve(repositoryRoot, 'dist');
@@ -15,18 +15,15 @@ const VERIFY_BUILD_ERROR_MESSAGES = {
   BrokenInternalLink: 'Broken internal link',
   BrokenInternalLlmsTextLink: 'Broken internal llms.txt link',
   CanonicalUrlMissingFromSitemap: 'Canonical URL is missing from the sitemap',
-  IncompleteRedirectPage: 'Redirect page is incomplete',
   InvalidStructuredData: 'Invalid structured data',
   InvalidStructuredDataGraph: 'Structured data graph is invalid',
   InvalidLlmsTextStructure: 'llms.txt does not follow the required project index structure.',
   MissingOrDuplicatePageDescription: 'Missing or duplicate page description',
   MissingOrDuplicatePageTitle: 'Missing or duplicate page title',
-  MissingRedirectPage: 'Redirect page is missing',
   MissingRequiredMetadata: 'Missing required metadata',
   MissingStructuredData: 'Missing structured data',
   NonObjectStructuredData: 'Structured data is not an object',
   ProductionBuildContainsTestFile: 'Production build contains a test file',
-  RedirectPageInSitemap: 'Redirect page is listed in the sitemap',
   SearchIndexableNotFoundPage: 'The custom 404 page must remain excluded from search indexes.',
   StructuredDataDoesNotMatchPage: 'Structured data does not match the canonical page',
 } as const;
@@ -47,11 +44,6 @@ const REQUIRED_BUILD_PATHS = [
   'robots.txt',
   'sitemap-index.xml',
 ] as const;
-// static refresh pages that keep former recipe URLs pointing at their workflow steps
-const REDIRECT_PAGES = Object.entries(MOVED_COOKBOOK_RECIPES).map(([slug, skill]) => ({
-  htmlPath: `cookbook/${slug}/index.html`,
-  target: `/workflow/#${skill}`,
-}));
 
 /** Escapes a literal value before interpolating it into a regular expression. */
 const escapeRegularExpression = (input: string): string =>
@@ -190,9 +182,6 @@ const extractStructuredDataEntities = (
  * - Breadcrumb hierarchy is incomplete
  * - Broken internal link
  * - Broken internal anchor
- * - Redirect page is missing
- * - Redirect page is incomplete
- * - Redirect page is listed in the sitemap
  * - The custom 404 page must remain excluded from search indexes.
  * - llms.txt does not follow the required project index structure.
  * - Broken internal llms.txt link
@@ -215,10 +204,7 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
   }
 
   const htmlFiles = buildFiles.filter((filePath) => filePath.endsWith('.html'));
-  const redirectHtmlPaths = new Set(REDIRECT_PAGES.map(({ htmlPath }) => htmlPath));
-  const publicHtmlFiles = htmlFiles.filter(
-    (filePath) => filePath !== '404.html' && !redirectHtmlPaths.has(filePath),
-  );
+  const publicHtmlFiles = htmlFiles.filter((filePath) => filePath !== '404.html');
   const htmlByPath = new Map<string, string>();
   const descriptions = new Set<string>();
   const titles = new Set<string>();
@@ -273,29 +259,6 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
       );
     }
   };
-
-  for (const { htmlPath, target } of REDIRECT_PAGES) {
-    if (!buildFiles.includes(htmlPath)) {
-      throw new Error(`${VERIFY_BUILD_ERROR_MESSAGES.MissingRedirectPage}: ${htmlPath}`);
-    }
-
-    const html = await readBuildHtml(htmlPath);
-
-    if (
-      !html.includes('<meta name="robots" content="noindex">') ||
-      !html.includes(`<meta http-equiv="refresh" content="0;url=${target}">`)
-    ) {
-      throw new Error(`${VERIFY_BUILD_ERROR_MESSAGES.IncompleteRedirectPage}: ${htmlPath}`);
-    }
-
-    const redirectUrl = resolveCanonicalUrl(htmlPath);
-
-    if (sitemap.includes(`<loc>${redirectUrl}</loc>`)) {
-      throw new Error(`${VERIFY_BUILD_ERROR_MESSAGES.RedirectPageInSitemap}: ${redirectUrl}`);
-    }
-
-    await verifyInternalLink(target, htmlPath);
-  }
 
   for (const htmlPath of publicHtmlFiles) {
     const html = await readBuildHtml(htmlPath);

@@ -60,6 +60,5 @@ describe('refinement prompt governance contract', () => {
     expect(prompt).toContain('retained as the task record');
     expect(prompt).toContain('start from a test failing for the reported reason');
     expect(prompt).toContain('whenever a root cause is a repeatable pattern');
-    expect(prompt).not.toContain('separate authority for external actions');
   });
 });

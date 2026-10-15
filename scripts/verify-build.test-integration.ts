@@ -6,7 +6,6 @@ import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'nod
 
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 
-import { MOVED_COOKBOOK_RECIPES } from '../src/site.config.ts';
 import { normalizeResourceText } from '../src/utilities/resource-text/utilities.ts';
 import { verifyBuild } from './verify-build.ts';
 
@@ -292,53 +291,10 @@ describe('static build artifact', () => {
       false,
     ],
     [
-      'missing redirect page',
-      'Redirect page is missing: cookbook/plan-a-feature/index.html',
-      async (buildDirectory) =>
-        rm(resolveBuildFile(buildDirectory, 'cookbook/plan-a-feature/index.html')),
-      false,
-    ],
-    [
-      'redirect page without noindex',
-      'Redirect page is incomplete: cookbook/plan-a-feature/index.html',
-      async (buildDirectory) =>
-        replaceBuildFileText(
-          buildDirectory,
-          'cookbook/plan-a-feature/index.html',
-          '<meta name="robots" content="noindex">',
-          '',
-        ),
-      false,
-    ],
-    [
-      'redirect page with a wrong target',
-      'Redirect page is incomplete: cookbook/plan-a-feature/index.html',
-      async (buildDirectory) =>
-        replaceBuildFileText(
-          buildDirectory,
-          'cookbook/plan-a-feature/index.html',
-          'content="0;url=/workflow/#jg-plan"',
-          'content="0;url=/workflow/#jg-review"',
-        ),
-      false,
-    ],
-    [
-      'redirect target without its anchor',
-      'Broken internal anchor in cookbook/plan-a-feature/index.html: /workflow/#jg-plan',
+      'broken cross-page anchor',
+      'Broken internal anchor in cookbook/index.html: /workflow/#jg-plan',
       async (buildDirectory) =>
         replaceBuildFileText(buildDirectory, 'workflow/index.html', 'id="jg-plan"', ''),
-      false,
-    ],
-    [
-      'redirect page listed in the sitemap',
-      'Redirect page is listed in the sitemap: https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/',
-      async (buildDirectory) =>
-        replaceBuildFileText(
-          buildDirectory,
-          'sitemap-0.xml',
-          '</urlset>',
-          '<url><loc>https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/</loc></url></urlset>',
-        ),
       false,
     ],
     [
@@ -424,10 +380,6 @@ describe('static build artifact', () => {
     }
 
     expect(sitemap).toContain('<loc>https://agenticcoding.jesusgraterol.dev/workflow/</loc>');
-
-    for (const movedSlug of Object.keys(MOVED_COOKBOOK_RECIPES)) {
-      expect(sitemap).not.toContain(`/cookbook/${movedSlug}/`);
-    }
   });
 
   test('publishes an LLM index synchronized with every cookbook recipe', async () => {
@@ -452,10 +404,6 @@ describe('static build artifact', () => {
 
     for (const slug of expectedSlugs) {
       expect(llmsText).toContain(`/cookbook/${slug}/`);
-    }
-
-    for (const movedSlug of Object.keys(MOVED_COOKBOOK_RECIPES)) {
-      expect(llmsText).not.toContain(`/cookbook/${movedSlug}/`);
     }
   });
 });
