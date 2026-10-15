@@ -87,6 +87,12 @@ export type IWorkflowStage = keyof typeof WORKFLOW_STAGES;
 // when a workflow step is not part of every change
 export type IWorkflowStepMarker = 'optional' | 'when-needed';
 
+// visible labels for steps that are not part of every change
+export const WORKFLOW_STEP_MARKER_LABELS = {
+  optional: 'Optional',
+  'when-needed': 'When needed',
+} as const satisfies Record<IWorkflowStepMarker, string>;
+
 // one jg skill as presented by this site; jg-skills owns its full instructions
 export interface ISkillSummary {
   mayChange: string;
@@ -193,6 +199,13 @@ export const SUPPORTING_SKILLS = [
     skill: 'jg-session',
   },
 ] as const satisfies readonly ISkillSummary[];
+
+// the outcomes a developer chooses after reviewing the evidence
+export const REVIEW_OUTCOMES = [
+  { label: 'Correct', text: 'Fix the defect or weak proof, then review the new state.' },
+  { label: 'Continue', text: 'Authorize the next milestone.' },
+  { label: 'Complete', text: 'Accept the change; nothing is left to build.' },
+] as const;
 
 // publication dates of the workflow page
 export const WORKFLOW_PAGE_DATES = {

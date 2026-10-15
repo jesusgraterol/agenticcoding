@@ -1,11 +1,5 @@
 import type { ITranscriptMessage } from '../../content/index.ts';
-import type { IWorkflowSkill, IWorkflowStepMarker } from '../../site.config.ts';
-
-// visible labels for steps that are not part of every change
-export const STEP_MARKER_LABELS = {
-  optional: 'Optional',
-  'when-needed': 'When needed',
-} as const satisfies Record<IWorkflowStepMarker, string>;
+import type { IWorkflowSkill } from '../../site.config.ts';
 
 /*
  * Example transcripts for every step except jg-execute, whose two modes are defined below. They
@@ -244,11 +238,4 @@ export const AUTONOMOUS_STOP_CONDITIONS = [
   'a review that ends in Review incomplete, or three rounds that still block',
   'a merge conflict, or a rejected or failed push',
   'changes in scope that nobody can account for',
-] as const;
-
-// the outcomes a developer chooses after reviewing the evidence
-export const REVIEW_OUTCOMES = [
-  { label: 'Correct', text: 'Fix the defect or weak proof, then review the new state.' },
-  { label: 'Continue', text: 'Authorize the next milestone.' },
-  { label: 'Complete', text: 'Accept the change; nothing is left to build.' },
 ] as const;

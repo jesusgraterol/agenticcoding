@@ -535,7 +535,7 @@ The hero MUST include:
 - a concise thesis
 - a short explanation
 - calls to action for `/start` and `/workflow`
-- a static session transcript that shows the workflow running through jg skills on a fictional feature, in at most eight messages
+- a static session transcript that shows the workflow running through jg skills on a fictional feature, in at most ten short messages
 
 Recommended starting direction:
 

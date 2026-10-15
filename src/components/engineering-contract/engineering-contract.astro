@@ -1,34 +1,44 @@
 ---
+/*
+ * The six layers of the engineering contract. Each pairs a short rule with one concrete example;
+ * examples that describe a skill must match what it may change in the jg-skills README.
+ */
 const contractLayers = [
   {
+    example: 'jg-plan writes plan.md and never touches code.',
     name: 'Authority',
     question: 'who may act',
-    text: 'Dispatch explicit commands before ordinary intent, then preserve the developer’s stated objective, constraints, and acceptance criteria.',
+    text: 'An invoked skill runs its own workflow. Everything else starts as ordinary intent.',
   },
   {
+    example: 'Read the README, then the smallest complete affected path.',
     name: 'Evidence',
     question: 'what is true',
-    text: 'Inspect the relevant repository first and resolve decisions through safety, current contracts, local patterns, and installed tooling.',
+    text: 'Repository facts beat generic assumptions.',
   },
   {
+    example: 'Extend src/tokens/; do not add a second keys table.',
     name: 'Ownership',
     question: 'where work belongs',
-    text: 'Extend the module that already owns the behavior, reuse established boundaries, and avoid parallel public contracts.',
+    text: 'Extend the module that already owns the behavior.',
   },
   {
+    example: 'Code, tests, errors, and docs land in the same change.',
     name: 'Coherence',
     question: 'what stays aligned',
-    text: 'Deliver production behavior with its validation, tests, errors, documentation, migrations, and verification in one consistent state.',
+    text: 'Behavior ships with everything that keeps it true.',
   },
   {
+    example: 'jg-review: findings first, then a readiness verdict.',
     name: 'Judgment',
     question: 'what proves readiness',
-    text: 'Challenge plans before execution, attack the evidence after it, and let the developer decide whether the result is acceptable.',
+    text: 'The agent attacks its own work; the developer decides.',
   },
   {
+    example: 'jg-push per change, or jg-execute autonomous per run.',
     name: 'Publication',
     question: 'what may leave',
-    text: 'Treat commits, pushes, deployments, releases, and other external actions as separate authority boundaries.',
+    text: 'Commits and pushes need an explicit grant.',
   },
 ] as const;
 ---
@@ -42,8 +52,8 @@ const contractLayers = [
   </figcaption>
   <ol class="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">
     {
-      contractLayers.map(({ name, question, text }, index) => (
-        <li class="bg-background py-6 sm:p-6">
+      contractLayers.map(({ example, name, question, text }, index) => (
+        <li class="flex flex-col bg-background py-6 sm:p-6">
           <div class="flex items-baseline justify-between gap-4">
             <span class="font-mono text-xs font-bold text-accent">
               LAYER {String(index + 1).padStart(2, '0')}
@@ -51,7 +61,12 @@ const contractLayers = [
             <span class="font-mono text-xs text-muted">{question}</span>
           </div>
           <h3 class="mt-8 text-xl font-semibold tracking-tight">{name}</h3>
-          <p class="mt-3 text-sm leading-6 text-muted">{text}</p>
+          <p class="mt-2 text-sm leading-6 text-muted">{text}</p>
+          <p class="mt-auto pt-5">
+            <code class="block rounded-md bg-code px-3 py-2 text-xs leading-5 wrap-anywhere">
+              {example}
+            </code>
+          </p>
         </li>
       ))
     }

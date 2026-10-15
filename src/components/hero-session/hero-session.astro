@@ -1,0 +1,61 @@
+---
+import type { ITranscriptMessage } from '../../content/index.ts';
+import SessionTranscript from '../session-transcript/session-transcript.astro';
+
+/*
+ * One supervised change from idea to signed push, on the same fictional organization API keys
+ * feature the workflow page uses. The developer invokes every skill; the agent redirects the
+ * first idea toward the existing token owner before any plan exists.
+ */
+const HERO_SESSION: ITranscriptMessage[] = [
+  {
+    invocation: 'jg-brainstorm',
+    speaker: 'developer',
+    text: 'Organization API keys: a new table with its own CRUD endpoints?',
+  },
+  {
+    speaker: 'agent',
+    text: 'src/tokens/ already owns hashing, scopes, and revocation. Give tokens an organization owner instead of a second table.',
+  },
+  { invocation: 'jg-plan', speaker: 'developer' },
+  {
+    artifact: {
+      lines: [
+        { kind: 'heading', text: '# Plan: Organization API keys' },
+        { kind: 'text', text: 'Extend src/tokens/ with an organization owner.' },
+        { kind: 'heading', text: '## Approval required' },
+      ],
+      title: 'plan.md',
+    },
+    speaker: 'agent',
+    text: 'Plan saved. Approve it to start.',
+  },
+  { invocation: 'jg-execute', speaker: 'developer', text: 'Approved.' },
+  {
+    speaker: 'agent',
+    text: 'Milestone 1 built. Unit, integration, and typecheck passed.',
+  },
+  { invocation: 'jg-review', speaker: 'developer' },
+  {
+    artifact: {
+      lines: [
+        { kind: 'text', text: 'Findings: none blocking' },
+        { kind: 'text', text: 'Checks: unit, integration, typecheck passed' },
+      ],
+      status: { label: 'Ready to commit', tone: 'success' },
+      title: 'Review of 6 task files',
+    },
+    speaker: 'agent',
+  },
+  { invocation: 'jg-push', speaker: 'developer' },
+  {
+    speaker: 'agent',
+    text: 'Signed commit 7d03b18 pushed to feature/org-api-keys.',
+  },
+];
+---
+
+<SessionTranscript
+  label="Example session: organization API keys, from idea to signed push"
+  messages={HERO_SESSION}
+/>

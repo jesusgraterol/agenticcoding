@@ -188,7 +188,7 @@ test.describe('production website', () => {
     ).toBeVisible();
     await expect(
       page.getByRole('heading', {
-        name: 'Plan together. Challenge assumptions. Execute in bounded slices.',
+        name: 'Plan together. Build in slices. Publish on your terms.',
       }),
     ).toBeVisible();
     await expect(
@@ -212,16 +212,36 @@ test.describe('production website', () => {
       'href',
       'https://moldea.ai/',
     );
-    await expect(page.getByText('controlled execution', { exact: true })).toBeVisible();
-    await expect(page.getByText(/Agent-operated\. Developer-governed\./u)).toBeVisible();
+    await expect(page.getByText(/Skills run\s+the workflow\./u)).toBeVisible();
+
+    const heroSession = page.getByRole('list', {
+      name: 'Example session: organization API keys, from idea to signed push',
+    });
+
+    await expect(heroSession).toContainText('jg-brainstorm');
+    await expect(heroSession).toContainText('Ready to commit');
+    await expect(heroSession).toContainText('Signed commit 7d03b18 pushed');
     await expect(page.getByText('engineering-contract.layers', { exact: true })).toBeVisible();
     await expect(page.getByText(/^LAYER \d{2}$/u)).toHaveCount(6);
-    await expect(page.getByRole('heading', { name: 'Challenge', exact: true })).toBeVisible();
+
+    for (const stage of ['Plan', 'Build', 'Ship'] as const) {
+      await expect(page.getByRole('heading', { level: 3, name: stage, exact: true })).toBeVisible();
+    }
+
+    await expect(page.getByRole('link', { name: /^jg-challenge-plan/u })).toHaveAttribute(
+      'href',
+      '/workflow/#jg-challenge-plan',
+    );
     await expect(page.getByText('Correct', { exact: true })).toBeVisible();
     await expect(page.getByText('Continue', { exact: true })).toBeVisible();
     await expect(page.getByText('Complete', { exact: true })).toBeVisible();
-    await expect(page.getByText('Publish only when explicitly authorized.')).toBeVisible();
+    await expect(page.getByText('Publish only when explicitly authorized:')).toBeVisible();
     await expect(page.getByText('repository-maturity.system', { exact: true })).toBeVisible();
+    await expect(
+      page.getByRole('heading', {
+        name: 'From supervised milestones to autonomous runs, never to free rein.',
+      }),
+    ).toBeVisible();
     await expect(
       page.getByRole('heading', {
         name: 'Code inspection becomes a response to risk, not a permanent ritual.',

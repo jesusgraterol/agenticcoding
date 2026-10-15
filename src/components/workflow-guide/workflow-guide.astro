@@ -2,9 +2,11 @@
 import { ArrowUpRight, ChevronRight } from '@lucide/astro';
 
 import {
+  REVIEW_OUTCOMES,
   SITE_CONFIG,
   SUPPORTING_SKILLS,
   WORKFLOW_STAGES,
+  WORKFLOW_STEP_MARKER_LABELS,
   WORKFLOW_STEPS,
   type IWorkflowStage,
 } from '../../site.config.ts';
@@ -15,9 +17,7 @@ import {
   AUTONOMOUS_CYCLE,
   AUTONOMOUS_EXECUTE_EXAMPLE,
   AUTONOMOUS_STOP_CONDITIONS,
-  REVIEW_OUTCOMES,
   STEP_EXAMPLES,
-  STEP_MARKER_LABELS,
   SUPERVISED_EXECUTE_EXAMPLE,
 } from './constants.ts';
 
@@ -136,7 +136,7 @@ const buildSkillUrl = (skill: string): string =>
                   </h3>
                   {step.marker && (
                     <span class="rounded-full border border-border-strong px-2 py-0.5 text-xs font-semibold text-muted">
-                      {STEP_MARKER_LABELS[step.marker]}
+                      {WORKFLOW_STEP_MARKER_LABELS[step.marker]}
                     </span>
                   )}
                 </div>
