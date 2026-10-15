@@ -209,15 +209,25 @@ test.describe('production website', () => {
     await expect(page.getByText('scope-map', { exact: true })).toBeVisible();
   });
 
-  test('start page publishes the current foundation version and command contract', async ({
+  test('start page publishes the current foundation version and skill dispatch', async ({
     page,
   }) => {
     await page.goto('/start/');
 
-    await expect(page.getByText('Version 3.1.0', { exact: true })).toBeVisible();
-    await expect(page.locator('time[datetime="2026-08-30"]')).toBeVisible();
+    await expect(page.getByText('Version 4.0.0', { exact: true })).toBeVisible();
+    await expect(page.locator('time[datetime="2026-10-15"]').first()).toBeVisible();
     await expect(page.locator('#agents-foundation-source')).toContainText(
-      'challenge plan [<plan-path-or-identifier>]',
+      'determine whether the developer invoked a skill',
+    );
+    await expect(page.locator('#agents-foundation-source')).not.toContainText('## Agent commands');
+  });
+
+  test('refine page publishes the current refinement prompt version', async ({ page }) => {
+    await page.goto('/refine/');
+
+    await expect(page.getByText('Version 2.0.0', { exact: true })).toBeVisible();
+    await expect(page.locator('#refinement-prompt-source')).toContainText(
+      'installed agent skills that define workflows',
     );
   });
 

@@ -20,6 +20,7 @@ Inspect the current instruction system and the smallest complete set of reposito
 - which agents or tools consume each file and whether its filename, location, and syntax are supported
 - the scope, hierarchy, precedence, and ownership of each instruction source
 - whether a file is authoritative, mirrored, generated, protected, or managed elsewhere
+- installed agent skills that define workflows, such as planning, review, or publication, so the proposal neither duplicates nor contradicts them in instruction files
 - relevant root documentation and architecture guidance
 - tooling, tests, and repository conventions needed to interpret existing rules
 - the current worktree state and any pre-existing changes in instruction files
@@ -158,7 +159,7 @@ Verify that:
 - filenames, locations, scopes, frontmatter, glob patterns, and other instruction syntax remain valid for their consuming agents or tools
 - authoritative and approved mirrored instruction surfaces are synchronized without creating competing owners
 - precedence is unambiguous and no applicable lower-scope rule silently contradicts the result
-- command names, activation conditions, permissions, approval boundaries, and stopping conditions are explicit where commands exist
+- skill and command names, invocation conditions, permissions, approval boundaries, and stopping conditions are explicit where skills or commands exist, and instruction files do not duplicate or contradict workflows that installed skills define
 - every meaningful original rule has an intentional final disposition
 - existing instruction-specific linters, formatters, or repository checks pass when available, without installing new tooling
 
@@ -186,7 +187,7 @@ Review the final diff and do not claim success if the result diverges from the a
 Introduce or strengthen these values only in forms that fit the repository:
 
 1. correctness, clarity, maintainability, consistency, and reviewability over cleverness
-2. task-intent classification and explicit authorization boundaries, including separate authority for external actions
+2. task-intent classification and explicit authorization boundaries, including explicit authority for external actions, granted per action or per explicitly invoked autonomous run
 3. a clear decision-precedence model and correct handling of scoped instruction files
 4. codebase-first reasoning grounded in the smallest complete affected path
 5. collaborative planning in which the agent may investigate, propose, and challenge
@@ -203,10 +204,13 @@ Introduce or strengthen these values only in forms that fit the repository:
 16. security, privacy, authorization, data integrity, and safe handling of destructive actions
 17. deliberate handling of high-blast-radius changes and domain-specific production safeguards
 18. synchronization of state-bearing documentation and governance files with current behavior
-19. unambiguous command activation, permissions, approval boundaries, and stopping conditions
+19. unambiguous skill or command invocation, permissions, approval boundaries, and stopping conditions
 20. transparent assumptions, blockers, skipped checks, deviations, and uncertainty
 21. progressively broader delegation only after the project establishes clear rails
 22. developer accountability for intent, direction, tradeoffs, authority, and final quality
+23. planning records that change only through an invoked planning workflow and are retained as the task record
+24. bug fixes that start from a test failing for the reported reason, with expected values from an independent source
+25. a search for other instances whenever a root cause is a repeatable pattern
 
 Do not blindly impose:
 

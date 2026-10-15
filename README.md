@@ -4,14 +4,14 @@
 
 The website turns that approach into four practical resources:
 
-- a concise explanation of the command-first operating model, engineering contract, and maturity path
+- a concise explanation of the operating model, engineering contract, and maturity path
 - a neutral `AGENTS.md` foundation for new or existing repositories
 - a preservation-first prompt for refining instructions that already contain useful project knowledge
 - a field guide of reusable conversations, worked examples, and recovery techniques for planning, plan challenge, execution, investigation, agent-operated evidence, developer acceptance, and separately authorized publication
 
 The landing page also identifies [`moldea`](https://moldea.ai/) as the real project work through which these principles were developed and tested.
 
-Evidence is agent-operated and developer-governed. The coding agent carries the verification workload through findings-first review, tests, checks, failure investigation, and reproducible reporting tied to an exact repository state. The developer builds the proving system, challenges whether the evidence is independent and sufficient, decides when risk warrants code inspection, and owns acceptance and publication as separate decisions.
+Evidence is agent-operated and developer-governed. The coding agent carries the verification workload through findings-first review, tests, checks, failure investigation, and reproducible reporting tied to an exact repository state. The developer builds the proving system, challenges whether the evidence is independent and sufficient, decides when risk warrants code inspection, and grants publication explicitly, either per change or for an autonomous run.
 
 The site is statically generated with Astro and Tailwind CSS. It uses the same Ubuntu Sans typography and core color palette as the Moldea projects while establishing a minimal technical product-documentation visual language. Client-routed navigation provides an accessible progress indicator while the next page is loading.
 

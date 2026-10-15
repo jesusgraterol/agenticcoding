@@ -11,59 +11,50 @@ describe('Agentic Coding foundation contract', () => {
     foundation = await readFile(resolve(import.meta.dirname, 'agents-foundation.md'), 'utf8');
   });
 
-  test('dispatches commands before ordinary task intent', () => {
-    const commandDispatchIndex = foundation.indexOf(
-      'Before classifying ordinary task intent, determine whether the developer clearly invoked a command',
+  test('dispatches invoked skills before ordinary task intent', () => {
+    const skillDispatchIndex = foundation.indexOf(
+      'Before classifying ordinary task intent, determine whether the developer invoked a skill',
     );
     const ordinaryIntentIndex = foundation.indexOf(
-      'When no command is invoked, determine whether the developer requested',
+      'When no skill is invoked, determine whether the developer requested',
     );
 
-    expect(commandDispatchIndex).toBeGreaterThan(-1);
-    expect(ordinaryIntentIndex).toBeGreaterThan(commandDispatchIndex);
+    expect(skillDispatchIndex).toBeGreaterThan(-1);
+    expect(ordinaryIntentIndex).toBeGreaterThan(skillDispatchIndex);
     expect(foundation).toContain(
-      'follow its executable workflow instead of reclassifying it as an ordinary request',
+      'follow its workflow instead of reclassifying the invocation as an ordinary request',
+    );
+    expect(foundation).toContain('apply the rest of these instructions to the work it performs');
+  });
+
+  test('leaves workflow definitions to skills and stays tool-neutral', () => {
+    expect(foundation).not.toContain('## Agent commands');
+    expect(foundation).not.toContain('challenge plan');
+    expect(foundation).not.toContain('repo push');
+    expect(foundation).not.toContain('`review');
+    expect(foundation).not.toMatch(/jg-/u);
+  });
+
+  test('keeps planning records skill-owned and retained', () => {
+    expect(foundation).toContain('## Planning records');
+    expect(foundation).toContain(
+      'Create or change planning files, such as a plan and its milestones, only through an invoked planning or execution skill',
+    );
+    expect(foundation).toContain('Retain planning files as the task record');
+    expect(foundation).toContain(
+      "Treat another task's planning files as history, not as evidence of current behavior",
     );
   });
 
-  test('defines an exact read-only challenge command', () => {
-    expect(foundation).toContain('### `challenge plan [<plan-path-or-identifier>]`');
-    expect(foundation).toContain('Require one concrete plan');
-    expect(foundation).toContain('SHA-256 hash of its complete content');
-    expect(foundation).toContain('Verify the hash again immediately before responding');
+  test('requires root-cause pattern searches and failing-test-first bug fixes', () => {
     expect(foundation).toContain(
-      '`Plan at a glance`, `Material impact`, `Challenges`, `Developer decisions required`, and `Recommendation`',
-    );
-    expect(foundation).toContain('Keep the result at or below 1,000 words');
-    expect(foundation).toContain('Challenge is read-only and advisory');
-    expect(foundation).toContain('Any plan revision makes the challenge stale');
-    expect(foundation).toContain('`No material concerns`');
-    expect(foundation).toContain('`Plan revision required before proceeding`');
-    expect(foundation).toContain('`Developer decision required before proceeding`');
-    expect(foundation).toContain(
-      'Use `Plan revision required before proceeding` whenever a material plan defect exists',
+      'When that cause is a repeatable pattern, search for other instances',
     );
     expect(foundation).toContain(
-      'Use `Developer decision required before proceeding` only when the plan is otherwise sound',
+      'first write or run a test that fails for the reported reason, and confirm why it fails',
     );
-    expect(foundation).toContain('Use `No material concerns` only when neither condition applies');
-  });
-
-  test('defines uncommitted and branch review commands', () => {
-    expect(foundation).toContain('### `review` and `review <target-branch>`');
-    expect(foundation).toContain('For `review`, review the complete uncommitted worktree');
-    expect(foundation).toContain('For `review <target-branch>`, require an active branch');
-    expect(foundation).toContain('Refresh the relevant remote-tracking ref');
-    expect(foundation).toContain('use an incomplete verdict when that uncertainty is material');
-    expect(foundation).toContain('Account for target-side changes after the merge base');
-    expect(foundation).toContain('assess the prospective merge result');
-    expect(foundation).toContain('staging-insensitive fingerprint');
-    expect(foundation).toContain('effective target and merge-base commits');
-    expect(foundation).toContain(
-      'Evaluate focused test adequacy separately from the affected broader regression suite',
-    );
-    expect(foundation).toContain('`Ready to merge into <target-branch>`');
-    expect(foundation).toContain('`Review incomplete`');
+    expect(foundation).toContain('say so instead of claiming a failing test');
+    expect(foundation).toContain('Take expected values from an independent source');
   });
 
   test('defines agent-operated evidence and developer-governed acceptance', () => {
@@ -76,49 +67,25 @@ describe('Agentic Coding foundation contract', () => {
       'Direct developer code inspection is proportional and risk-triggered',
     );
     expect(foundation).toContain('retains the acceptance decision');
-    expect(foundation).toContain('After evaluating the verdict and evidence');
     expect(foundation).toContain('**Correct** when the evidence exposes a defect');
     expect(foundation).toContain('**Continue** when an accepted milestone is complete');
     expect(foundation).toContain(
       '**Complete** when the accepted state satisfies the task contract',
     );
-    expect(foundation).toContain('Publication remains a separate authority after acceptance');
     expect(foundation).toContain(
-      'The agent verdict never authorizes acceptance or publication by itself',
+      'On its own, it does not approve accepting, merging, or releasing the change',
     );
   });
 
-  test('persists plans within narrow planning-only authority', () => {
-    expect(foundation).toContain(
-      '`coding-agent-planning/<unix-seconds>_<descriptive-slug>/plan.md`',
-    );
-    expect(foundation).toContain('reuse the same directory');
-    expect(foundation).toContain('remove an existing `milestones.md`');
-    expect(foundation).toContain('matches `plan.md` exactly');
-    expect(foundation).toContain(
-      'The developer decides whether `coding-agent-planning/` is tracked',
-    );
-    expect(foundation).toContain('The command itself is not implementation approval');
-  });
-
-  test('creates milestones only for useful implementation slices', () => {
-    expect(foundation).toContain('at least two coherent implementation slices');
-    expect(foundation).toContain('If the plan is one coherent scope');
-    expect(foundation).toContain('do not create `milestones.md`');
-    expect(foundation).toContain('Write the complete sequence to `milestones.md` beside `plan.md`');
-    expect(foundation).toContain('Cover every plan deliverable');
-    expect(foundation).toContain(
-      'does not approve the plan, milestone sequence, or implementation',
-    );
-    expect(foundation).toContain('explicitly authorizes that milestone');
-  });
-
-  test('keeps publication under separate repository-specific authority', () => {
+  test('requires explicit publication authority, per request or per invoked run', () => {
     expect(foundation).toContain('## Publication authority');
     expect(foundation).toContain(
-      'Implementation, plan approval, milestone completion, review readiness, and developer acceptance do not authorize publication',
+      'Implementation, plan approval, milestone completion, review readiness, and developer acceptance do not by themselves authorize publication',
     );
-    expect(foundation).toContain('does not define a universal `repo push` command');
-    expect(foundation).not.toContain('### `repo push`');
+    expect(foundation).toContain(
+      'Publication requires an explicit developer request or an invoked skill whose workflow includes it',
+    );
+    expect(foundation).toContain('That authority comes only from the invocation');
+    expect(foundation).toContain('never weaken a test, check, or finding to keep a run going');
   });
 });
