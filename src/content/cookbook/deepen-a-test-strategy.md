@@ -2,16 +2,38 @@
 title: Deepen a test strategy
 description: Design tests around realistic defects and integration boundaries instead of chasing test count or coverage.
 slug: deepen-a-test-strategy
-order: 10
+order: 5
 category: review
-publishedAt: 2026-08-19
-updatedAt: 2026-08-22
+publishedAt: 2026-10-15
+updatedAt: 2026-10-15
 featured: true
 draft: false
 relatedSlugs:
-  - challenge-a-plan
-  - investigate-a-failing-test
-  - review-a-change
+  - control-scope
+  - recover-from-agent-drift
+situation: A plan says "add tests", or a suite is green but unconvincing. You need to know which defects matter, where each one becomes observable, and whether a passing test would actually catch it.
+example:
+  - speaker: developer
+    text: Review the test strategy for the webhook that applies account credits. Do not write tests yet.
+  - speaker: agent
+    text: The current tests mock the ledger, so a duplicate delivery could credit an account twice and every test would still pass.
+    artifact:
+      title: Risk matrix
+      lines:
+        - kind: heading
+          text: Defect -> where it becomes observable
+        - kind: text
+          text: duplicate delivery credits twice -> integration, real database
+        - kind: text
+          text: two copies race -> integration, unique constraint
+        - kind: text
+          text: crash after insert, before ack -> integration, retried event
+        - kind: text
+          text: forged or stale signature -> integration, signature check before any write
+        - kind: heading
+          text: Survives the current tests
+        - kind: text
+          text: 'every assertion checks a mock call, never the persisted balance'
 prompt: |
   Review the test strategy for this behavior without modifying files:
 
@@ -28,81 +50,20 @@ prompt: |
   End with exact proposed test files, scenarios, fixtures, boundaries, independent oracles, and verification commands. Do not implement the tests yet.
 ---
 
-## Situation
+## What good looks like
 
-A plan or implementation says “add tests,” but that phrase does not establish what could break, which boundary should be exercised, or whether passing tests provide meaningful confidence.
+- correctness properties taken from the real contract
+- a risk matrix that maps each defect to the boundary where it becomes observable
+- application collaborators kept real wherever their interaction defines correctness
+- only impractical external boundaries mocked, with the lost confidence named
+- cases ranked by production impact, not added mechanically
+- every place where implementation and tests share the same assumption called out
+- independent oracles chosen for the defect each can falsify: property-based or fuzz tests, mutation testing, contract or differential tests, durable invariants, or realistic integration and end-to-end paths
+- exact test files, fixtures, and verification commands
 
-Use this recipe before implementing a risky behavior, after a regression escapes, or during review when the suite is green but feels unconvincing.
+Invest in the verification system the agent will operate. Decide which failures justify integration cost and which assumptions need an independent oracle.
 
-## Common mistake
-
-Test strategies often mirror functions instead of risks. Every helper gets a unit test while the transaction, authorization boundary, queue handoff, or UI state that defines correctness remains mocked.
-
-Coverage percentage can make this worse. A line executes, but the assertion never proves the invariant that matters.
-
-## Agentic approach
-
-Start with plausible defects and work backward to evidence.
-
-For each correctness property, ask:
-
-1. What realistic defect would violate it?
-2. At which boundary does that defect become observable?
-3. What is the narrowest test that still keeps the important application path real?
-4. Which external boundary must be stubbed, and what uncertainty remains?
-5. Could the defect still survive if the proposed assertion passes?
-6. Did the test derive its expected result from the same assumption as the implementation?
-
-This produces fewer, stronger tests than copying the implementation structure.
-
-Independent evidence does not mean applying every advanced testing technique. Choose the smallest mechanism that can falsify the risky assumption from outside the implementation path:
-
-- use property-based or fuzz tests for broad input spaces and invariant violations
-- use mutation testing to prove that the suite detects meaningful implementation defects
-- use contract or differential tests when another authoritative behavior can serve as an oracle
-- use realistic integration and end-to-end tests when correctness depends on components working together
-- use database constraints, schemas, and durable invariants for states the system must never permit
-- use canaries, observability, and rollback controls for important behavior that cannot be proven fully before release
-
-An independent agent or model can provide another adversarial perspective, but it is not independent evidence when it relies on the same incomplete contract or mocks.
-
-## Before you send the prompt
-
-Provide the behavior, task contract, current test files, failure history, and relevant infrastructure constraints. State whether real databases, filesystems, queues, browsers, or provider sandboxes are available in the established test environment.
-
-Do not request every imaginable edge case. Ask the agent to prioritize by failure impact and likelihood.
-
-## Worked example
-
-Suppose a worker applies account credits from a provider webhook. The handler validates a signature, creates a credit transaction, increments the balance, and acknowledges the event.
-
-A unit-only strategy might mock signature verification, transaction persistence, and balance mutation, then assert that three methods were called. It can pass while duplicate delivery credits the account twice.
-
-A risk-based strategy would include:
-
-- **Unit:** payload validation and deterministic extraction of the provider event id.
-- **Integration:** real handler, validation, persistence, unique constraint, and balance mutation against a disposable database; only the provider signature primitive is stubbed if a valid request cannot be produced locally.
-- **Duplicate delivery:** submit the same event twice and prove one durable transaction and one balance effect.
-- **Concurrent delivery:** race two copies of the same event and prove the database invariant holds.
-- **Partial failure:** fail after transaction creation but before acknowledgement, retry, and prove the final state remains exactly once.
-- **Authorization and authenticity:** reject an invalid signature and stale timestamp before any side effect.
-
-The key assertion is not that `creditBalance` was called. It is that the persisted balance and transaction ledger remain correct under replay and failure.
-
-## What a good result contains
-
-- correctness properties derived from the real contract
-- a risk matrix connecting defects to test boundaries
-- a deliberate unit, integration, and end-to-end split
-- minimal external mocking with important application collaboration kept real
-- adversarial cases prioritized by impact
-- shared implementation and test assumptions identified explicitly
-- independent oracles selected for the material risks they can falsify
-- explicit assessment of defects that could survive
-- removal or avoidance of redundant and brittle tests
-- exact test ownership, fixtures, setup, and verification commands
-
-## Useful follow-ups
+## If the result drifts
 
 To challenge mocks:
 
@@ -110,11 +71,7 @@ To challenge mocks:
 
 To prioritize cases:
 
-> Rank proposed tests by the production failure they detect. Remove cases that only repeat library guarantees or cannot catch a distinct application defect.
-
-To probe complexity:
-
-> Evaluate time and space behavior for realistic and pathological input sizes. Recommend representative tests without brittle wall-clock assertions.
+> Rank the proposed tests by the production failure each one detects. Remove cases that only repeat library guarantees or cannot catch a distinct application defect.
 
 To challenge correlated evidence:
 
@@ -122,17 +79,10 @@ To challenge correlated evidence:
 
 ## Warning signs
 
-- test count or coverage is the primary objective
-- tests mirror methods rather than user-visible or persisted outcomes
-- internal collaborators are mocked at the boundary where correctness lives
-- only happy paths and ordinary validation cases exist
-- authorization, duplicate delivery, retry, partial failure, or concurrency are ignored where relevant
-- snapshots replace precise assertions
-- implementation and tests can fail together because they encode the same assumption
-- advanced techniques are proposed without naming the distinct defect they can detect
-- proposed tests depend on private implementation details
-- performance claims rely on arbitrary timing thresholds
-
-## Developer review responsibility
-
-Invest in the verification system the agent will operate. Decide which failures justify integration cost, which assumptions need an independent oracle, and which external systems can participate reliably. Confirm that the final strategy can falsify the defects you care about, not merely produce a reassuring report.
+- test count or coverage as the goal
+- tests that mirror methods instead of persisted or user-visible outcomes
+- collaborators mocked at the boundary where correctness lives
+- only happy paths and ordinary validation
+- duplicate delivery, retry, partial failure, or concurrency ignored where they apply
+- snapshots replacing precise assertions
+- performance claims based on arbitrary timing thresholds

@@ -3,13 +3,13 @@ import { ArrowRight, Braces, Gauge, ShieldCheck, Sparkles } from '@lucide/astro'
 
 import CodingAgentStrip from '../components/coding-agent-strip/coding-agent-strip.astro';
 import CodingModesComparison from '../components/coding-modes-comparison/coding-modes-comparison.astro';
-import CollaborationWorkbench from '../components/collaboration-workbench/collaboration-workbench.astro';
 import ContextAuthority from '../components/context-authority/context-authority.astro';
 import EngineeringContract from '../components/engineering-contract/engineering-contract.astro';
-import HeroWorkbench from '../components/hero-workbench/hero-workbench.astro';
+import HeroSession from '../components/hero-session/hero-session.astro';
 import MaturitySystem from '../components/maturity-system/maturity-system.astro';
 import MoldeaProof from '../components/moldea-proof/moldea-proof.astro';
 import ResourceActions from '../components/resource-actions/resource-actions.astro';
+import SkillPipeline from '../components/skill-pipeline/skill-pipeline.astro';
 import BaseLayout from '../layouts/base-layout.astro';
 import { SITE_CONFIG } from '../site.config.ts';
 
@@ -43,20 +43,21 @@ const leverageItems = [
   title="Agentic Coding | Better software with coding agents"
   structuredDataType="website"
 >
-  <section class="border-b border-border pt-20 pb-16 sm:pt-28 sm:pb-20">
-    <div class="page-shell">
-      <div class="mx-auto max-w-4xl text-center">
+  <section class="border-b border-border pt-14 pb-16 sm:pt-20 sm:pb-20">
+    <div
+      class="page-shell grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start lg:gap-14"
+    >
+      <div class="lg:sticky lg:top-28">
         <p class="eyebrow">Professional software development after manual coding</p>
-        <h1 class="display-title mx-auto mt-6">
-          A disciplined way to build software
+        <h1 class="display-title mt-6">
+          A disciplined way to build software{' '}
           <span class="block text-accent">with coding agents.</span>
         </h1>
-        <p class="lede mx-auto mt-7">
-          Use coding agents across planning, challenge, implementation, and agent-operated evidence.
-          Developers supervise the proof, direct deeper audits when risk demands them, and own
-          acceptance and publication as separate decisions.
+        <p class="lede mt-7">
+          <code class="text-[0.9em] text-foreground">AGENTS.md</code> sets the standards. Skills run the
+          workflow. You decide how much to delegate, while the agent carries the evidence.
         </p>
-        <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <div class="mt-8 flex flex-wrap gap-3">
           <a
             class="action-primary"
             href="/start/"
@@ -69,12 +70,12 @@ const leverageItems = [
           </a>
           <a
             class="action-secondary"
-            href="/cookbook/"
+            href="/workflow/"
             >See the workflow</a
           >
         </div>
       </div>
-      <HeroWorkbench />
+      <HeroSession />
     </div>
   </section>
 
@@ -92,8 +93,8 @@ const leverageItems = [
           The difference is control, not line count.
         </h2>
         <p class="lede mx-auto mt-6 text-base sm:text-lg">
-          An agent may write most of the implementation and the work can still be deeply engineered.
-          What matters is who controls the decisions, scope, evidence, and quality.
+          An agent may write most of the code and the work can still be deeply engineered. What
+          matters is who controls the decisions, scope, evidence, and quality.
         </p>
       </div>
 
@@ -118,8 +119,7 @@ const leverageItems = [
             A collaborative discipline, not a shortcut.
           </p>
           <p class="mt-5 text-base leading-7 text-muted">
-            Developers use coding agents throughout the work while retaining responsibility for
-            intent, system direction, and engineering quality.
+            Agents work across the lifecycle. Developers keep intent, direction, and quality.
           </p>
         </div>
         <dl class="grid gap-px overflow-hidden rounded-lg border border-border bg-border">
@@ -160,9 +160,8 @@ const leverageItems = [
           Reliable delegation has layers.
         </h2>
         <p class="lede mx-auto mt-6 text-base sm:text-lg">
-          Strong coding instructions do more than describe style. They connect authority, repository
-          evidence, ownership, coherent implementation, adversarial proof, and external action into
-          one engineering contract.
+          <code class="text-[0.9em] text-foreground">AGENTS.md</code> turns authority, evidence, ownership,
+          coherence, judgment, and publication into one contract every skill works within.
         </p>
       </div>
       <EngineeringContract />
@@ -175,21 +174,19 @@ const leverageItems = [
   >
     <div class="page-shell">
       <div class="mx-auto max-w-3xl text-center">
-        <p class="eyebrow">03 / Collaborate on the work</p>
+        <p class="eyebrow">03 / Run the workflow</p>
         <h2
           id="collaboration-title"
           class="section-title mx-auto mt-4"
         >
-          Plan together. Challenge assumptions. Execute in bounded slices.
+          Plan together. Build in slices. Publish on your terms.
         </h2>
         <p class="lede mx-auto mt-6 text-base sm:text-lg">
-          The agent can inspect the system, challenge an approach, and help converge on a stronger
-          strategy before production code is written. After implementation, use <code>review</code>
-          for the worktree or <code>review &lt;target-branch&gt;</code> for a branch. The agent produces
-          the findings and verification; the developer chooses whether to correct, continue, or complete.
+          Each step runs only when you invoke its skill. The agent plans, builds, and assembles the
+          evidence; you approve the plan, choose the outcome, and grant publication.
         </p>
       </div>
-      <CollaborationWorkbench />
+      <SkillPipeline />
     </div>
   </section>
 
@@ -207,8 +204,8 @@ const leverageItems = [
           Clear systems earn wider delegation.
         </h2>
         <p class="lede mx-auto mt-6 text-base sm:text-lg">
-          Demonstrate the path, codify what repeats, delegate as the environment becomes dependable,
-          and let stronger evidence replace routine code inspection as the corrective layer matures.
+          Demonstrate the path, codify what repeats, and delegate more as the evidence earns it, up
+          to autonomous runs with explicit limits.
         </p>
       </div>
       <MaturitySystem />
@@ -315,8 +312,8 @@ const leverageItems = [
           Give the work a stronger operating system.
         </h2>
         <p class="lede mx-auto mt-6 text-base sm:text-lg">
-          Establish the foundation, refine what the repository already knows, and practice the
-          workflow through concrete conversations.
+          Set the standards, install the skills, refine what the repository already knows, and keep
+          techniques at hand for the harder moments.
         </p>
       </div>
       <ResourceActions />

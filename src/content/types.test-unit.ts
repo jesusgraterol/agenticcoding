@@ -1,19 +1,24 @@
 // @vitest-environment node
 import { describe, expect, test } from 'vitest';
 
-import { CookbookEntrySchema } from './types.ts';
+import { CookbookEntrySchema, TranscriptMessageSchema } from './types.ts';
 
 const BASE_ENTRY = {
   category: 'planning',
-  description: 'Turn a requirement into an implementation strategy.',
+  description: 'Build a verified working map before changing an unfamiliar repository.',
   draft: false,
+  example: [
+    { speaker: 'developer', text: 'Map this repository before I change invitations.' },
+    { speaker: 'agent', text: 'One invitation, traced from the form to the database.' },
+  ],
   featured: true,
   order: 1,
-  prompt: 'Plan this feature.',
+  prompt: 'Help me build a working map of this repository.',
   relatedSlugs: [],
-  slug: 'plan-a-feature',
-  title: 'Plan a feature',
-} as const;
+  situation: 'The repository is new to you.',
+  slug: 'orient-to-a-codebase',
+  title: 'Orient to a codebase',
+};
 
 describe('CookbookEntrySchema', () => {
   test.each([
@@ -41,6 +46,28 @@ describe('CookbookEntrySchema', () => {
         message: 'updatedAt must not precede publishedAt',
         path: ['updatedAt'],
       },
+    ]);
+  });
+});
+
+describe('TranscriptMessageSchema', () => {
+  test.each([
+    ['an invocation', { invocation: 'jg-plan' }],
+    ['text', { text: 'Plan saved. Approve it to start.' }],
+    ['an artifact', { artifact: { lines: [{ kind: 'text', text: 'Done' }], title: 'Report' } }],
+  ])('TranscriptMessageSchema.safeParse(message with only %s) -> success', (_content, message) => {
+    expect(TranscriptMessageSchema.safeParse({ speaker: 'agent', ...message }).success).toBe(true);
+  });
+
+  test('rejects a message with no content', () => {
+    const result = TranscriptMessageSchema.safeParse({ speaker: 'developer' });
+
+    expect(result.success).toBe(false);
+
+    if (result.success) return;
+
+    expect(result.error.issues.map(({ message }) => message)).toStrictEqual([
+      'A transcript message needs an artifact, an invocation, or text',
     ]);
   });
 });

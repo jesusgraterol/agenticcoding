@@ -2,7 +2,12 @@
 import { ArrowRight } from '@lucide/astro';
 
 import ContentLayout from '../../layouts/content-layout.astro';
-import { calculateReadingTime, loadPublishedRecipes } from '../../utilities/cookbook/index.ts';
+import type { ICookbookCategory } from '../../content/index.ts';
+import {
+  calculateReadingTime,
+  COOKBOOK_TRACKS,
+  loadPublishedRecipes,
+} from '../../utilities/cookbook/index.ts';
 
 const recipes = await loadPublishedRecipes();
 
@@ -13,14 +18,14 @@ const startingPoints = [
     label: 'The codebase is new to me',
   },
   {
-    description: 'Turn an outcome into one grounded, approval-ready strategy.',
-    href: '/cookbook/plan-a-feature/',
+    description: 'Turn an outcome into one grounded, approval-ready plan with jg-plan.',
+    href: '/workflow/#jg-plan',
     label: 'I need a plan',
   },
   {
-    description: 'Test assumptions while changing course is still inexpensive.',
-    href: '/cookbook/challenge-a-plan/',
-    label: 'The plan feels too easy',
+    description: 'Reproduce it, find the cause, and fix it with a test that fails first.',
+    href: '/workflow/#jg-debug',
+    label: 'Something is broken',
   },
   {
     description: 'Audit the current state and recover without discarding useful work.',
@@ -29,30 +34,10 @@ const startingPoints = [
   },
 ] as const;
 
-const tracks = [
-  {
-    category: 'planning',
-    description:
-      'Understand the system, choose a design, and expose weak assumptions before editing.',
-    label: 'Understand and plan',
-  },
-  {
-    category: 'execution',
-    description:
-      'Implement bounded outcomes, preserve scope, and publish accepted work only under separate authority.',
-    label: 'Execute with control',
-  },
-  {
-    category: 'review',
-    description: 'Investigate failures and demand evidence that matches the real production risks.',
-    label: 'Verify and correct',
-  },
-  {
-    category: 'instructions',
-    description: 'Improve the durable rules that shape every future agent conversation.',
-    label: 'Govern the workflow',
-  },
-] as const;
+const tracks = (Object.keys(COOKBOOK_TRACKS) as ICookbookCategory[]).map((category) => ({
+  ...COOKBOOK_TRACKS[category],
+  category,
+}));
 ---
 
 <ContentLayout
@@ -61,7 +46,7 @@ const tracks = [
     { name: 'Cookbook', path: '/cookbook/' },
   ]}
   canonicalPath="/cookbook/"
-  description="A field guide for planning, challenge, execution, evidence, correction, developer acceptance, and governed publication with coding agents."
+  description="Techniques for the situations no workflow skill runs: orienting, controlling scope, keeping documentation current, recovering from drift, deepening tests, and refining instructions."
   eyebrow="Agentic Coding cookbook"
   structuredDataType="collection"
   title="Choose the conversation your work needs."
@@ -78,8 +63,13 @@ const tracks = [
             where the agent must stop.
           </p>
           <p class="mt-5 leading-7 text-muted">
-            These recipes are working conversations, not incantations. Adapt the context, inspect
-            the result, and use the follow-up moves when the first answer is not good enough.
+            These recipes are working conversations, not incantations. Each one opens with an
+            example, then gives the prompt and the follow-up moves for when the first answer is not
+            good enough. Planning, building, reviewing, and publishing run through skills on the <a
+              class="font-semibold text-foreground underline underline-offset-4"
+              href="/workflow/"
+              >workflow page</a
+            >.
           </p>
         </div>
 

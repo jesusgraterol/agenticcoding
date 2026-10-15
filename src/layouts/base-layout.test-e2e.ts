@@ -5,36 +5,31 @@ const ACCESSIBILITY_ROUTES = [
   '/',
   '/start/',
   '/refine/',
+  '/workflow/',
   '/cookbook/',
-  '/cookbook/plan-a-feature/',
-  '/cookbook/publish-an-authorized-change/',
+  '/cookbook/control-scope/',
 ] as const;
 
 const DARK_ACCESSIBILITY_ROUTES = [
   '/',
   '/start/',
   '/refine/',
-  '/cookbook/plan-a-feature/',
+  '/workflow/',
+  '/cookbook/control-scope/',
 ] as const;
 
 const REQUIRED_ROUTES = [
   '/',
   '/start/',
   '/refine/',
+  '/workflow/',
   '/cookbook/',
   '/cookbook/orient-to-a-codebase/',
-  '/cookbook/plan-a-feature/',
-  '/cookbook/challenge-a-plan/',
-  '/cookbook/break-down-a-plan/',
-  '/cookbook/execute-one-milestone/',
   '/cookbook/control-scope/',
   '/cookbook/synchronize-documentation/',
   '/cookbook/recover-from-agent-drift/',
-  '/cookbook/investigate-a-failing-test/',
   '/cookbook/deepen-a-test-strategy/',
-  '/cookbook/review-a-change/',
   '/cookbook/refine-coding-instructions/',
-  '/cookbook/publish-an-authorized-change/',
 ] as const;
 
 /** Converts an OKLCH token to clipped linear-sRGB relative luminance. */
@@ -167,7 +162,7 @@ test.describe('production website', () => {
     ).toBeVisible();
     await expect(
       page.getByRole('heading', {
-        name: 'Plan together. Challenge assumptions. Execute in bounded slices.',
+        name: 'Plan together. Build in slices. Publish on your terms.',
       }),
     ).toBeVisible();
     await expect(
@@ -187,20 +182,47 @@ test.describe('production website', () => {
     await expect(
       page.getByRole('heading', { name: 'Give the work a stronger operating system.' }),
     ).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Explore moldea' })).toHaveAttribute(
-      'href',
-      'https://moldea.ai/',
-    );
-    await expect(page.getByText('controlled execution', { exact: true })).toBeVisible();
-    await expect(page.getByText(/Agent-operated\. Developer-governed\./u)).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: 'moldea on GitHub (opens in a new tab)' }),
+    ).toHaveAttribute('href', 'https://github.com/moldea-ai');
+    await expect(
+      page.getByRole('link', { name: 'Agent Skill documentation (opens in a new tab)' }),
+    ).toHaveAttribute('href', 'https://skill.moldea.ai/');
+    await expect(
+      page.getByRole('link', { name: 'Packages documentation (opens in a new tab)' }),
+    ).toHaveAttribute('href', 'https://packages.moldea.ai/');
+    await expect(page.getByText('In development', { exact: true })).toBeVisible();
+    await expect(page.getByText('Git-native project context for coding agents.')).toBeVisible();
+    await expect(page.getByText(/Skills run\s+the workflow\./u)).toBeVisible();
+
+    const heroSession = page.getByRole('list', {
+      name: 'Example session: organization API keys, from idea to signed push',
+    });
+
+    await expect(heroSession).toContainText('jg-brainstorm');
+    await expect(heroSession).toContainText('Ready to commit');
+    await expect(heroSession).toContainText('Signed commit 5b2e9a4 pushed');
     await expect(page.getByText('engineering-contract.layers', { exact: true })).toBeVisible();
     await expect(page.getByText(/^LAYER \d{2}$/u)).toHaveCount(6);
-    await expect(page.getByRole('heading', { name: 'Challenge', exact: true })).toBeVisible();
+
+    for (const stage of ['Plan', 'Build', 'Ship'] as const) {
+      await expect(page.getByRole('heading', { level: 3, name: stage, exact: true })).toBeVisible();
+    }
+
+    await expect(page.getByRole('link', { name: /^jg-challenge-plan/u })).toHaveAttribute(
+      'href',
+      '/workflow/#jg-challenge-plan',
+    );
     await expect(page.getByText('Correct', { exact: true })).toBeVisible();
     await expect(page.getByText('Continue', { exact: true })).toBeVisible();
     await expect(page.getByText('Complete', { exact: true })).toBeVisible();
-    await expect(page.getByText('Publish only when explicitly authorized.')).toBeVisible();
+    await expect(page.getByText('Publish only when explicitly authorized:')).toBeVisible();
     await expect(page.getByText('repository-maturity.system', { exact: true })).toBeVisible();
+    await expect(
+      page.getByRole('heading', {
+        name: 'From supervised milestones to autonomous runs, never to free rein.',
+      }),
+    ).toBeVisible();
     await expect(
       page.getByRole('heading', {
         name: 'Code inspection becomes a response to risk, not a permanent ritual.',
@@ -209,15 +231,24 @@ test.describe('production website', () => {
     await expect(page.getByText('scope-map', { exact: true })).toBeVisible();
   });
 
-  test('start page publishes the current foundation version and command contract', async ({
+  test('start page publishes the current foundation version and skill dispatch', async ({
     page,
   }) => {
     await page.goto('/start/');
 
-    await expect(page.getByText('Version 3.1.0', { exact: true })).toBeVisible();
-    await expect(page.locator('time[datetime="2026-08-30"]')).toBeVisible();
+    await expect(page.getByText('Version 1.0.0', { exact: true })).toBeVisible();
+    await expect(page.locator('time[datetime="2026-10-15"]').first()).toBeVisible();
     await expect(page.locator('#agents-foundation-source')).toContainText(
-      'challenge plan [<plan-path-or-identifier>]',
+      'determine whether the developer invoked a skill',
+    );
+  });
+
+  test('refine page publishes the current refinement prompt version', async ({ page }) => {
+    await page.goto('/refine/');
+
+    await expect(page.getByText('Version 1.0.0', { exact: true })).toBeVisible();
+    await expect(page.locator('#refinement-prompt-source')).toContainText(
+      'installed agent skills that define workflows',
     );
   });
 
@@ -239,18 +270,38 @@ test.describe('production website', () => {
       '/cookbook/recover-from-agent-drift/',
     );
 
-    await page.getByRole('link', { name: /I need a plan/u }).click();
+    await expect(page.getByRole('link', { name: /I need a plan/u })).toHaveAttribute(
+      'href',
+      '/workflow/#jg-plan',
+    );
+    await expect(page.getByRole('link', { name: /Something is broken/u })).toHaveAttribute(
+      'href',
+      '/workflow/#jg-debug',
+    );
 
-    await expect(page).toHaveURL('/cookbook/plan-a-feature/');
+    await page.getByRole('link', { name: /The agent has drifted/u }).click();
+
+    await expect(page).toHaveURL('/cookbook/recover-from-agent-drift/');
+    await expect(page.getByText(/^The agent went past a checkpoint/u)).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Example', exact: true })).toBeVisible();
+    await expect(
+      page.getByRole('list', { name: 'Example conversation: Recover from agent drift' }),
+    ).toContainText('Recovery audit');
     await expect(page.getByRole('heading', { name: 'Working prompt' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Worked example' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Useful follow-ups' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'What good looks like' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'If the result drifts' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Warning signs' })).toBeVisible();
   });
 
-  test('cookbook index and working prompt do not overflow at 320 pixels', async ({ page }) => {
+  test('content pages do not overflow at 320 pixels', async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 900 });
 
-    for (const route of ['/cookbook/', '/cookbook/plan-a-feature/'] as const) {
+    for (const route of [
+      '/cookbook/',
+      '/cookbook/control-scope/',
+      '/workflow/',
+      '/start/',
+    ] as const) {
       await page.goto(route);
 
       expect(
@@ -352,8 +403,9 @@ test.describe('production website', () => {
     expect(llmsText).toContain(
       '[AGENTS.md foundation](https://agenticcoding.jesusgraterol.dev/AGENTS.md)',
     );
+    expect(llmsText).toContain('[Workflow](https://agenticcoding.jesusgraterol.dev/workflow/)');
     expect(llmsText).toContain(
-      '[Plan a feature](https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/)',
+      '[Control scope](https://agenticcoding.jesusgraterol.dev/cookbook/control-scope/)',
     );
 
     await page.goto('/start/');
@@ -379,7 +431,8 @@ test.describe('production website', () => {
 
     for (const copySource of [
       { pagePath: '/start/', sourceId: 'agents-foundation-source' },
-      { pagePath: '/cookbook/plan-a-feature/', sourceId: 'plan-a-feature-prompt' },
+      { pagePath: '/cookbook/control-scope/', sourceId: 'control-scope-prompt' },
+      { pagePath: '/workflow/', sourceId: 'workflow-install-command' },
     ] as const) {
       await page.goto(copySource.pagePath);
 
@@ -447,9 +500,10 @@ test.describe('production website', () => {
       {
         currentLinkName: 'Cookbook',
         inactiveLinkName: 'Refine',
-        route: '/cookbook/plan-a-feature/',
+        route: '/cookbook/control-scope/',
       },
       { currentLinkName: 'Start', inactiveLinkName: 'Refine', route: '/start/' },
+      { currentLinkName: 'Workflow', inactiveLinkName: 'Start', route: '/workflow/' },
     ] as const;
 
     for (const routeCase of routeCases) {
@@ -459,9 +513,13 @@ test.describe('production website', () => {
 
       expect(await primaryNavigation.locator('a[href^="/"]').allTextContents()).toStrictEqual([
         'Start',
+        'Workflow',
         'Refine',
         'Cookbook',
       ]);
+      await expect(
+        primaryNavigation.getByRole('link', { name: 'Skills (opens in a new tab)' }),
+      ).toHaveAttribute('href', 'https://jg-skills.jesusgraterol.dev/');
 
       const currentLink = primaryNavigation.getByRole('link', {
         name: routeCase.currentLinkName,
@@ -536,11 +594,17 @@ test.describe('production website', () => {
 
     await expect(mobileNavigation).toBeVisible();
     await expect(mobileNavigation.getByRole('link', { name: 'Start', exact: true })).toBeVisible();
+    await expect(
+      mobileNavigation.getByRole('link', { name: 'Workflow', exact: true }),
+    ).toBeVisible();
+    await expect(
+      mobileNavigation.getByRole('link', { name: 'Skills (opens in a new tab)' }),
+    ).toHaveAttribute('href', 'https://jg-skills.jesusgraterol.dev/');
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     ).toBe(true);
 
-    await page.goto('/cookbook/plan-a-feature/');
+    await page.goto('/cookbook/control-scope/');
     await page.getByLabel('Open navigation menu').click();
 
     const currentCookbookLink = page

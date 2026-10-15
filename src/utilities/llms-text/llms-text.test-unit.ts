@@ -7,14 +7,14 @@ describe('buildLlmsText', () => {
   test('builds the required llms.txt structure with ordered public resources', () => {
     const text = buildLlmsText([
       {
-        description: 'Plan a grounded implementation.\nKeep authority narrow.',
-        slug: 'plan-a-feature',
-        title: 'Plan a [feature]',
+        description: 'Map the editable boundary.\nKeep authority narrow.',
+        slug: 'control-scope',
+        title: 'Control [scope]',
       },
       {
-        description: 'Review the complete change.',
-        slug: 'review-a-change',
-        title: 'Review a change',
+        description: 'Build a working map first.',
+        slug: 'orient-to-a-codebase',
+        title: 'Orient to a codebase',
       },
     ]);
 
@@ -23,10 +23,12 @@ describe('buildLlmsText', () => {
     expect(text).toContain(
       '- [AGENTS.md foundation](https://agenticcoding.jesusgraterol.dev/AGENTS.md)',
     );
+    expect(text).toContain('- [Workflow](https://agenticcoding.jesusgraterol.dev/workflow/)');
+    expect(text).toContain('- [jg-skills index](https://jg-skills.jesusgraterol.dev/llms.txt)');
     expect(text).toContain(
-      '- [Plan a \\[feature\\]](https://agenticcoding.jesusgraterol.dev/cookbook/plan-a-feature/): Plan a grounded implementation. Keep authority narrow.',
+      '- [Control \\[scope\\]](https://agenticcoding.jesusgraterol.dev/cookbook/control-scope/): Map the editable boundary. Keep authority narrow.',
     );
-    expect(text.indexOf('plan-a-feature')).toBeLessThan(text.indexOf('review-a-change'));
+    expect(text.indexOf('control-scope')).toBeLessThan(text.indexOf('orient-to-a-codebase'));
     expect(text).toMatch(/\n## Optional\n/u);
     expect(text.endsWith('\n')).toBe(true);
   });

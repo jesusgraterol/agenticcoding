@@ -2,9 +2,9 @@
 
 **Status:** Approved for implementation
 
-**Version:** 3.1.0
+**Version:** 1.0.0
 
-**Last updated:** 2026-08-30
+**Last updated:** 2026-10-15
 
 **Owner:** Jesus Graterol
 
@@ -36,12 +36,17 @@ The terms **MUST**, **MUST NOT**, **SHOULD**, **SHOULD NOT**, and **MAY** descri
 
 It is not a SaaS product, an AI wrapper, or a prompt-generation application. It is an interactive manifesto and practical toolkit for developers who want the leverage of coding agents without surrendering engineering quality, transparency, maintainability, or control.
 
-The project has four primary offerings:
+The project has five primary offerings:
 
 1. a concise, visually compelling explanation of Agentic Coding
 2. a ready-to-use, repository-agnostic `AGENTS.md` foundation
 3. one canonical prompt for safely refining an existing `AGENTS.md`
-4. a cookbook of practical Agentic Coding workflows
+4. a visual walkthrough of the workflow, showing each step run through an agent skill
+5. a cookbook of techniques for recurring situations that no skill covers
+
+The site is organized around one thesis: **`AGENTS.md` sets the standards. Skills run the workflow. You decide how much to delegate.**
+
+The workflow runs through jg-skills, a separate open-source collection of explicit-only agent skills published at `https://jg-skills.jesusgraterol.dev`. This site owns the method: the standards, the refinement prompt, and the visual walkthroughs. jg-skills owns the installable skills and their full instructions. The two sites link to each other, and this site never duplicates the skill text.
 
 The site will be statically generated with Astro and hosted on GitHub Pages at `agenticcoding.jesusgraterol.dev`.
 
@@ -64,7 +69,7 @@ Coding agents can participate meaningfully in:
 - finding regressions
 - synchronizing documentation
 - correcting their own work
-- preparing publication only when separately authorized
+- publishing a change when the developer explicitly grants that authority, per change or per run
 
 The developer should not treat the agent only as an implementation engine. The agent is an active engineering collaborator across the lifecycle.
 
@@ -78,7 +83,7 @@ The developer nevertheless remains accountable for:
 - the authority granted to the agent
 - the final quality bar
 - whether a change belongs in the system
-- whether an accepted change should be published
+- whether, and how far in advance, publication is authorized
 
 The central position of the project is:
 
@@ -92,7 +97,9 @@ Throughout this specification, Evidence is agent-operated and developer-governed
 
 This relationship separates workload from authority. The agent carries the verification workload. The developer builds the system that makes the evidence trustworthy and remains accountable for acceptance. The amount of direct developer involvement varies with risk, novelty, and project maturity rather than following a prescribed allocation.
 
-Every product surface, public resource, and cookbook workflow that describes implementation review MUST preserve this relationship. It must identify the agent as the primary evidence operator and the developer as the acceptance authority. Direct developer code inspection is proportional and risk-triggered rather than universally mandatory. As agents and independent verification systems mature, routine line-by-line inspection MAY give way to evidence-led acceptance, while code remains available for audit when evidence is weak, correlated, incomplete, novel, or attached to a high-risk change.
+Every product surface, public resource, workflow step, and cookbook recipe that describes implementation review MUST preserve this relationship. It must identify the agent as the primary evidence operator and the developer as the acceptance authority. Direct developer code inspection is proportional and risk-triggered rather than universally mandatory. As agents and independent verification systems mature, routine line-by-line inspection MAY give way to evidence-led acceptance, while code remains available for audit when evidence is weak, correlated, incomplete, novel, or attached to a high-risk change.
+
+In an autonomous run, the developer exercises that authority twice: in advance, by explicitly granting the run, and afterwards, by judging the published result. The run's review gate and stop conditions bound what the agent may accept and publish in between.
 
 Agentic Coding sits between traditional manual coding and vibe coding, but it is not defined by the percentage of code written by AI.
 
@@ -124,24 +131,25 @@ Vibe coding can be appropriate for experimentation, disposable prototypes, learn
 
 The developer and agent collaborate on the problem and the solution.
 
-The agent may inspect, plan, propose, challenge, decompose, implement, test, perform adversarial review, assemble the evidence for acceptance, and publish when that external action is separately authorized. The developer actively shapes the process, approves material decisions, controls scope, supervises the evidence, invests in independent verification, accepts or rejects the resulting state, and decides whether it should be published.
+The agent may inspect, plan, propose, challenge, decompose, implement, test, perform adversarial review, assemble the evidence for acceptance, and publish when the developer explicitly grants that authority, either for one change or for an autonomous run. The developer actively shapes the process, approves material decisions, controls scope, supervises the evidence, invests in independent verification, accepts or rejects the resulting state, and decides whether and when publication is authorized.
 
 The site MUST make clear that Agentic Coding is not merely a compromise between writing code manually and delegating code blindly. It is a distinct engineering discipline.
 
 ## 6. Product principles
 
-### 6.1 Dispatch commands before classifying ordinary intent
+### 6.1 Dispatch skills before classifying ordinary intent
 
-An explicit agent command selects an executable workflow before the agent classifies the request as an ordinary explanation, investigation, plan, review, or implementation task.
+An explicitly invoked agent skill selects an executable workflow before the agent classifies the request as an ordinary explanation, investigation, plan, review, or implementation task.
 
 The agent MUST:
 
-- recognize a command only when the developer clearly invokes its name as an instruction
-- follow the command's authority, write limits, stopping conditions, and output contract through completion
-- classify ordinary task intent only when no command is invoked
-- keep implementation, review, publication, deployment, and other external actions under separate authority
+- run a skill only when the developer explicitly invokes it
+- follow the skill's authority, write limits, stopping conditions, and output contract through completion
+- apply the repository's coding instructions to the work the skill performs
+- classify ordinary task intent only when no skill is invoked
+- treat publication, deployment, and other external actions as authorized only by an explicit developer request or an invoked skill whose workflow includes them
 
-Command dispatch is part of the reliability system because the same words can authorize materially different actions depending on whether they invoke a defined workflow.
+Skill dispatch is part of the reliability system because the same words can authorize materially different actions depending on whether they invoke a defined workflow. The workflow taught by this site runs through jg-skills, whose skills are explicit-only: they run only when the developer invokes them by name. That guarantee is verified with Claude Code and Codex.
 
 ### 6.2 Collaborate on the plan
 
@@ -183,7 +191,7 @@ Turn recurring decisions into durable project context: coding instructions, arch
 
 **Delegate**
 
-Grant the agent progressively larger and more complete tasks as the surrounding system becomes clearer.
+Grant the agent progressively larger and more complete tasks as the surrounding system becomes clearer: from one supervised milestone at a time to autonomous runs that review and publish each milestone within explicit limits.
 
 **Verify**
 
@@ -210,7 +218,7 @@ Another required concept is:
 
 ### 6.6 Plan → Challenge → Breakdown when useful → Execute → Review
 
-This is the primary change-development sequence taught by the project.
+This is the primary change-development sequence taught by the project. Each stage runs through an explicitly invoked jg skill: `jg-plan`, `jg-challenge-plan`, `jg-breakdown`, `jg-execute`, and `jg-review`. An optional `jg-brainstorm` conversation may precede the plan, `jg-debug` finds and fixes a bug whose cause is not obvious, and `jg-pause` stops the agent at a safe point.
 
 **Plan**
 
@@ -228,11 +236,18 @@ Evaluate whether the approved strategy contains at least two coherent implementa
 
 Implement only the currently authorized scope. Keep required production changes together with their tests, contracts, documentation, migrations, and verification.
 
+Execution is supervised by default: the agent builds the next authorized milestone, runs its checks, and stops. In an autonomous run, which the developer must invoke explicitly, the agent also reviews and publishes each milestone before starting the next.
+
 **Review**
 
 The coding agent must assume the implementation may contain mistakes and inspect correctness, regressions, architecture, duplication, security, edge cases, test adequacy, maintainability, and documentation. It must run applicable checks, identify uncertainty, and produce reproducible evidence tied to the exact reviewed state. The developer then challenges the evidence and its interpretation of product intent, strengthens independent tests or oracles where needed, and decides whether to correct the current work, continue with another authorized slice, or complete the change. The developer inspects code when the change's risk, novelty, or evidence quality warrants it.
 
-Publication is not a sixth lifecycle stage. An accepted state may enter a separate publication gate only when the developer explicitly authorizes that external action under the repository's own staging, signing, destination, and safety policy.
+Publication is not a sixth lifecycle stage. It requires its own explicit grant, given in one of two ways:
+
+- **per change:** the developer invokes `jg-push` after `jg-review`
+- **per run:** the developer invokes `jg-execute autonomous`, which reviews and publishes each milestone and stops when a decision, scope change, repeated failure, incomplete review, merge conflict, or failed push needs the developer
+
+Implementation authority, plan approval, and milestone completion never imply publication. Staging, signing, and destination follow the repository's own policy or the invoked skill.
 
 ### 6.7 Clarity creates better delegation
 
@@ -261,7 +276,9 @@ The desired system around the agent is:
 
 > **Task Contract → Repository Evidence → Plan → Challenge → Breakdown when useful → Execution → Agent-operated Evidence → Developer Judgment → Correct, Continue, or Complete**
 
-Publication must be shown separately from that system as an explicit post-acceptance authority.
+Publication must be shown as an explicit grant beside that system, never as an automatic consequence of it.
+
+An autonomous run is bounded autonomy, not free rein. The developer grants it explicitly. It asks before publishing to the default branch or publishing commits that were already unpushed, stops after three failed fix attempts or an incomplete review, and never weakens a test, check, or finding to proceed.
 
 A required message is:
 
@@ -314,6 +331,8 @@ As the agent, repository, and verification system mature, developer review may p
 
 The destination is not less engineering judgment. It is judgment exercised through stronger evidence instead of mandatory line-by-line inspection.
 
+Delegation follows the same maturity. A project moves from supervised milestones, where the developer runs review and publication for each one, to autonomous runs, where the developer grants the run and judges the published result, once its verification system makes the review gate trustworthy.
+
 ## 7. Target audience
 
 ### 7.1 Primary audience
@@ -339,7 +358,9 @@ Professional software developers who:
 
 The content may assume familiarity with source control, code review, tests, and repositories.
 
-The content must not assume a specific programming language, framework, model provider, editor, or coding-agent product.
+The method content must not assume a specific programming language, framework, model provider, editor, or coding-agent product.
+
+The site may name jg-skills as the companion collection that runs the workflow. Wherever it recommends installing the skills, it MUST state that their explicit-only invocation is verified with Claude Code and Codex, and MUST NOT imply that guarantee for other agents. Examples show skill names without an agent-specific prefix and explain the invocation syntax once: `/jg-plan` in Claude Code, `$jg-plan` in Codex.
 
 ## 8. Product goals
 
@@ -350,20 +371,21 @@ The first production release MUST:
 3. present collaborative planning as a core capability
 4. teach developers to pave the way before broad delegation
 5. teach wide context and narrow authority
-6. present command-before-intent dispatch and the six-layer engineering contract
-7. present the Plan → Challenge → Breakdown when useful → Execute → Review sequence with Correct, Continue, or Complete outcomes
-8. present publication as a separate post-acceptance authority
+6. present skill-before-intent dispatch and the six-layer engineering contract
+7. present the Plan → Challenge → Breakdown when useful → Execute → Review sequence with Correct, Continue, or Complete outcomes and the jg skill that runs each stage
+8. present publication as an explicit grant, per change or per autonomous run, together with the limits of autonomous runs
 9. present the Demonstrate → Codify → Delegate → Verify loop
 10. explain why strong self-correcting mechanisms are necessary
 11. explain why the long-term opportunity is software quality
 12. provide a neutral, ready-to-use `AGENTS.md`
 13. provide one canonical, preservation-first refinement prompt
-14. provide a useful cookbook with practical workflows
-15. work fully as a static GitHub Pages site
-16. be beautiful, modern, responsive, accessible, fast, and shareable
-17. support Jesus Graterol's professional reputation in an understated way
-18. remain free and usable without an account, backend, or AI API
-19. ground the discipline in an understated example from the real project work behind it
+14. provide a visual workflow walkthrough that links each stage to its jg skill
+15. provide a concise cookbook of techniques for situations no skill covers
+16. work fully as a static GitHub Pages site
+17. be beautiful, modern, responsive, accessible, fast, and shareable, preferring concrete examples to long explanations
+18. support Jesus Graterol's professional reputation in an understated way
+19. remain free and usable without an account, backend, or AI API
+20. ground the discipline in an understated example from the real project work behind it
 
 ## 9. Non-goals
 
@@ -375,7 +397,7 @@ The first production release MUST NOT include:
 - a backend
 - server-side rendering
 - an AI API integration
-- a chat interface
+- an interactive chat interface (static example transcripts are allowed)
 - direct execution of coding agents
 - repository connections
 - file uploads
@@ -454,6 +476,7 @@ All public content routes MUST be statically generated.
 | `/AGENTS.md` | Raw canonical ready-to-use `AGENTS.md` |
 | `/refine` | Human-readable presentation of the canonical refinement prompt |
 | `/refine.txt` | Raw canonical refinement prompt |
+| `/workflow` | Visual walkthrough of the skill-based workflow |
 | `/cookbook` | Cookbook index |
 | `/cookbook/[slug]` | Individual cookbook recipe |
 | `/404.html` | Custom not-found page generated from `src/pages/404.astro` |
@@ -468,13 +491,16 @@ The primary navigation MUST contain:
 
 - Agentic Coding
 - Start
+- Workflow
 - Refine
 - Cookbook
+- Skills
 - Source
 
 Requirements:
 
 - "Agentic Coding" returns to `/`
+- "Skills" opens `https://jg-skills.jesusgraterol.dev/` and is identifiable as an external destination
 - "Source" opens the configured repository
 - the active destination is visually identifiable
 - the navigation is fully keyboard accessible
@@ -494,7 +520,8 @@ The hero MUST include:
 - the product name: `Agentic Coding`
 - a concise thesis
 - a short explanation
-- calls to action for `/start`, `/refine`, and `/cookbook`
+- calls to action for `/start` and `/workflow`
+- a static session transcript that shows the workflow running through jg skills on a fictional feature, in at most ten short messages
 
 Recommended starting direction:
 
@@ -502,7 +529,7 @@ Recommended starting direction:
 
 Supporting idea:
 
-> Coding agents can help us plan, build, test, review, and assemble evidence at extraordinary speed. Agentic Coding is the discipline of using that leverage while developers supervise the evidence and retain final acceptance.
+> `AGENTS.md` sets the standards. Skills run the workflow. You decide how much to delegate.
 
 The final copy may be refined during implementation, but it must preserve the meaning established in this specification.
 
@@ -558,20 +585,22 @@ A featured line should be:
 
 The homepage MUST compress the operating instructions into a static six-layer visual between the operating-model definition and the per-change workflow:
 
-1. command dispatch, task intent, and authority
+1. skill dispatch, task intent, and authority
 2. repository evidence and decision precedence
 3. ownership, reuse, and public contracts
 4. coherent implementation and synchronized state
 5. adversarial evidence and developer acceptance
-6. separately authorized publication and external action
+6. explicitly granted publication and external action
+
+Each layer pairs its rule with one short example line. Example lines that describe a skill must match what that skill may change according to the jg-skills README.
 
 The visual must remain concise enough to function as a manifesto rather than an instruction manual. It must use semantic HTML, preserve an ordered reading sequence, communicate meaning without relying on color, flatten unnecessary containers on mobile, work from 320px through large desktop widths, support light and dark themes through existing tokens, and require no JavaScript or animation.
 
-### 13.6 Interactive planning
+### 13.6 Interactive planning in the hero
 
-This section MUST correct the idea that the developer plans alone and the agent only implements.
+The hero transcript MUST correct the idea that the developer plans alone and the agent only implements.
 
-It should show a short, realistic interaction:
+Through `jg-brainstorm` and `jg-plan`, it should show a short, realistic interaction:
 
 1. the developer describes a problem or initial approach
 2. the agent inspects the relevant system
@@ -580,7 +609,7 @@ It should show a short, realistic interaction:
 5. the agent revises the plan
 6. both converge on an implementation-ready strategy
 
-The example must be understandable without model-specific branding.
+The example must be understandable without model-specific branding. Speakers are labeled "You" and "Coding agent", and the transcript continues through execution, review, and a signed push.
 
 The interaction may use a fictional feature such as organization-level API keys, but it must remain concise and technically credible.
 
@@ -588,7 +617,7 @@ All text must exist in the static HTML. Animation may progressively reveal or hi
 
 ### 13.7 Plan → Challenge → Breakdown when useful → Execute → Review
 
-This is a signature visual and conceptual section.
+This is a signature visual and conceptual section. The homepage presents the sequence as a skill pipeline grouped into Plan, Build, and Ship stages, and each skill links to its step on `/workflow`. Optional skills are marked with text, not color alone.
 
 The visualization MUST expose five ordered stages:
 
@@ -629,11 +658,12 @@ The visualization MUST expose five ordered stages:
 - avoid adjacent cleanup
 - verify each logical step
 - stop before beginning the next unauthorized milestone
+- run supervised by default; when the developer invokes `jg-execute autonomous`, build, review, and publish each remaining milestone within the run's stop conditions
 
 #### Review
 
 - make the agent the primary evidence operator and the developer the acceptance authority
-- recommend `review` for uncommitted work and `review <target-branch>` for a branch
+- run through `jg-review` for the current task's uncommitted work and `jg-review <target-branch>` for a branch
 - require the agent to report findings before praise or summary
 - inspect correctness and regressions
 - inspect scope and duplication
@@ -649,7 +679,9 @@ Review must lead to one of three explicit outcomes:
 - **Continue** when an accepted milestone is complete and another authorized slice remains
 - **Complete** when the accepted state satisfies the task contract and no implementation work remains
 
-Publication MUST appear beside, but outside, this sequence as an unnumbered post-acceptance gate. It requires an accepted state plus separate explicit authority and must not appear to follow automatically from Review, plan approval, implementation authority, or milestone completion.
+Publication MUST appear beside this sequence as an explicit grant, not as a numbered stage. A supervised/autonomous toggle MUST show who runs `jg-review` and `jg-push` in each mode: the developer invokes them in supervised mode, and `jg-execute autonomous` runs them after each milestone once the developer has granted the run. Publication must never appear to follow automatically from Review, plan approval, implementation authority, or milestone completion.
+
+The toggle MUST work without JavaScript, keep both modes in the static HTML, and remain keyboard operable.
 
 A reduced-motion presentation must preserve the same content without animated movement.
 
@@ -680,6 +712,8 @@ This section is the second signature loop.
 It MUST explain each stage using the definitions in section 6.4.
 
 The Verify stage MUST communicate that Evidence is agent-operated and developer-governed. It must separate verification workload from acceptance authority and show the maturity progression from direct code-and-evidence inspection toward evidence-led acceptance with risk-triggered code audits.
+
+The Delegate stage MUST show the progression from supervised milestones to autonomous runs and list the limits of an autonomous run.
 
 The visual treatment should differ enough from the primary change loop that users do not confuse them:
 
@@ -751,19 +785,22 @@ The section must:
 
 - keep the brand name lowercase
 - use the approved light- and dark-theme Moldea lockups without modifying their artwork
-- connect the project to durable context, instructions as production assets, and deterministic verification
-- link to `https://moldea.ai/`
+- describe `moldea` with its own canonical category and promise: "Git-native project context for coding agents" and "Keep project knowledge in Git. Bring relevant context into coding-agent work."
+- present the project as a whole: project knowledge in Git under `/moldea/`, the open-source Agent Skill, the open-source packages, and the hosted platform
+- describe the hosted platform as in development until it is publicly available
+- link only to live destinations: the project on GitHub, `https://skill.moldea.ai/`, and `https://packages.moldea.ai/`; link `https://moldea.ai/` once it is no longer under construction
 - remain an understated evidence section rather than a product advertisement
 
-The section MUST NOT claim customer adoption, general availability, or outcomes that the current Moldea project does not establish. It must not invent a Moldea tagline or use an under-construction product screenshot as evidence.
+The section MUST NOT claim customer adoption, general availability, hosted-platform availability, or outcomes that the current Moldea project does not establish. It must not invent a Moldea tagline or use an under-construction product screenshot as evidence.
 
 ### 13.14 Practical resources
 
-The homepage MUST conclude the main narrative with three clear destinations:
+The homepage MUST conclude the main narrative with four clear destinations:
 
 - **Start with the foundation** → `/start`
+- **Run the workflow with skills** → `/workflow`
 - **Refine existing instructions** → `/refine`
-- **Practice the workflow** → `/cookbook`
+- **Handle the harder moments** → `/cookbook`
 
 ### 13.15 Author section and footer
 
@@ -791,6 +828,7 @@ It must be:
 - model-agnostic
 - free of placeholders
 - free of Jesus-specific package preferences
+- free of tool-specific workflows, including any mention of jg-skills
 - free of project-specific architecture
 - strict about engineering process
 - short enough to inspect and trust in one sitting
@@ -825,17 +863,26 @@ Optimize for:
 
 Do not optimize for cleverness or maximum change volume.
 
-#### Command dispatch, task intent, and authority
+#### Independent judgment and candor
 
-Before ordinary task-intent classification, determine whether the developer clearly invoked a command defined by the foundation. A command mention inside a question, example, quotation, explanation, or planning discussion does not invoke it.
+- assess claims and proposals on evidence, including the developer's and the agent's own earlier work
+- state plainly what is wrong, why it matters, and the smallest correction
+- separate verified facts from assumptions and correct the agent's own mistakes directly
+- avoid flattery, unsupported reassurance, and invented objections
+- never treat candor as authority to expand scope or skip approvals
 
-When a command is invoked:
+#### Skill dispatch, task intent, and authority
 
-- follow that command's executable workflow instead of reclassifying it as an ordinary request
+Before ordinary task-intent classification, determine whether the developer invoked a skill. A skill mention inside a question, example, quotation, explanation, or planning discussion does not invoke it.
+
+When a skill is invoked:
+
+- follow that skill's workflow instead of reclassifying it as an ordinary request
 - respect its write limits, authorization boundaries, stopping conditions, and output contract
-- do not ask for confirmation before actions the command already authorizes
+- apply the rest of the foundation to the work the skill performs
+- do not ask for confirmation before actions the skill already authorizes
 
-Only when no command is invoked, determine whether the developer requested:
+Only when no skill is invoked, determine whether the developer requested:
 
 - an explanation or investigation
 - a plan
@@ -843,7 +890,7 @@ Only when no command is invoked, determine whether the developer requested:
 - a review
 - an implementation
 
-Do not modify files for a planning-only or review-only request, except for planning artifacts explicitly authorized by an invoked `plan` or `breakdown` command.
+Do not modify files for a planning-only or review-only request.
 
 Treat the stated objective, constraints, exclusions, and acceptance criteria as the task contract.
 
@@ -882,6 +929,12 @@ For substantial work:
 - establish architecture, ownership, contracts, risks, tests, and verification
 - distinguish a proposed plan from authorization to implement it
 
+#### Planning records
+
+- change planning files only through an invoked planning or execution skill
+- retain planning files as the task record after completion
+- treat another task's planning files as history, not evidence of current behavior
+
 #### Scope control
 
 - inspect broadly enough to understand the task
@@ -900,12 +953,32 @@ For substantial work:
 - place new behavior with the module that owns it
 - prefer the smallest correct solution consistent with the codebase
 
+#### Proportional rigor and tradeoffs
+
+- match complexity and safeguards to the consequences of failure, not the size of the change
+- give critical behavior the strongest practical design and lower-risk behavior the simplest correct one
+- when viable approaches differ materially and the task does not decide between them, present at most three options with their guarantees, limitations, costs, and failure consequences, recommend one, and ask the developer to choose
+
+#### Error handling
+
+- fail loudly when an assumption is violated, using the project's established error types
+- let errors propagate unless they can be recovered from or translated at a boundary
+- keep the original error as the cause when translating, without exposing internal details across that boundary, and never swallow errors
+- keep documented error contracts synchronized with the implementation
+
+#### Resource efficiency
+
+- consider how cost grows with input size, frequency, and concurrency
+- make operations efficient before caching them, and cache only with a defined source of truth, keys, isolation, freshness, invalidation, and size limits
+- bound or paginate growth-capable collections at the source, preferring cursor-based pagination for new database-backed lists
+
 #### Coherent execution
 
 - execute approved work in small logical steps
 - keep each authorized milestone internally coherent
 - keep required tests, documentation, contracts, migrations, and verification with the behavior they support
 - do not leave deliberate dead-end scaffolding or temporary duplication
+- when a root cause is a repeatable pattern, search for other instances, fix those within scope, and report the rest
 - stop after the authorized milestone
 
 #### Tests and self-correction
@@ -917,12 +990,13 @@ For substantial work:
 - use independent oracles and adversarial verification techniques when risk justifies them
 - do not treat a passing test suite as proof
 - investigate whether production code or the expectation is wrong when tests fail
+- start a bug fix with a test that fails for the reported reason when automated coverage adds confidence, and take expected values from an independent source
 - never weaken tests solely to make them pass
 - report checks that could not be run
 
 #### Review
 
-- require the agent to review the complete scoped change, preferably through `review` or `review <target-branch>`
+- require the agent to review the complete scoped change, through an invoked review skill or the developer's review request
 - report findings first
 - inspect correctness, regressions, architecture, scope, reuse, tests, security, maintainability, and documentation
 - assemble reproducible evidence tied to the exact reviewed state
@@ -930,6 +1004,13 @@ For substantial work:
 - do not declare readiness while a material concern is unresolved
 - require a developer to challenge the evidence and retain the acceptance decision
 - make direct developer code inspection proportional to risk, novelty, and evidence quality
+
+#### Publication authority
+
+- implementation, plan approval, milestone completion, review readiness, and acceptance do not by themselves authorize publication
+- publication requires an explicit developer request or an invoked skill whose workflow includes it, such as an autonomous run that reviews and publishes each milestone within its stop conditions
+- staging, signing, and destination follow repository policy or the invoked skill
+- task-scoped review and push belong to the skills that perform them; the foundation does not restate them
 
 #### Transparency
 
@@ -942,12 +1023,25 @@ For substantial work:
 - do not reset, clean, stash, revert, or overwrite unrelated changes to simplify the worktree
 - do not hide failures
 
+#### Task cleanup
+
+- stop the processes the task started unless the developer asks to keep them, and delete its scratch output once it is no longer needed
+- preserve deliverables, planning records, failure evidence, and anything the task did not create
+- never clean up broadly, and report anything that could not be cleaned up
+
 #### Safety
 
 - do not expose secrets
 - avoid destructive actions without explicit authorization
 - validate security-sensitive and data-integrity-sensitive paths
 - do not make high-blast-radius contract, dependency, schema, deployment, or infrastructure changes casually
+
+#### Portable paths and scripts
+
+- assume Windows, macOS, and Linux unless the repository documents otherwise
+- follow the project's naming conventions, use portable names where they leave the choice open, and build paths with the runtime's path APIs
+- treat user-supplied paths as untrusted and keep resolved paths inside their intended root
+- prefer scripts in the project's main language, start processes without a shell, and never interpolate untrusted values into shell commands
 
 #### Conditional production safeguards
 
@@ -964,96 +1058,9 @@ The foundation MUST require directly affected state-bearing documentation to rem
 
 Coding-instruction files MUST be treated as governance files. Agents must not create, edit, rename, move, delete, or reformat them unless the developer explicitly requests an instruction change.
 
-### 14.4 Foundation commands
+### 14.4 Workflows come from skills
 
-The public foundation MUST include neutral versions of the following commands.
-
-It MUST state that command dispatch precedes ordinary task-intent classification.
-
-#### `plan`
-
-When explicitly invoked:
-
-- perform planning-only work
-- inspect the relevant repository context
-- modify only the planning files authorized by the command and do not change Git state
-- produce an implementation-ready strategy
-- identify exact affected areas when evidence permits
-- include tests, verification, risks, and unresolved decisions
-- create `coding-agent-planning/<unix-seconds>_<descriptive-slug>/plan.md` for a new plan without overwriting an existing path
-- reuse the same planning directory for revisions and remove `milestones.md` when the revised plan invalidates the previous breakdown
-- let the developer decide whether the planning directory is tracked or ignored
-- report the repository-relative path and present a response body that matches `plan.md` exactly
-- end both the file and response with an approval boundary
-- do not modify production code, tests, configuration, dependencies, migrations, generated artifacts, ordinary documentation, or Git state
-
-#### `breakdown`
-
-When explicitly invoked:
-
-- require a current concrete plan
-- use the exact plan and planning directory established in the current discussion instead of searching historical directories
-- preserve that plan's strategy and scope
-- do not redesign the solution
-- determine whether at least two coherent, independently verifiable and reviewable implementation slices exist
-- do not create `milestones.md` when the plan is one coherent scope, and remove an obsolete milestone file when necessary
-- produce ordered implementation milestones only when decomposition provides useful execution and review boundaries
-- make each milestone coherent, testable, verifiable, and reviewable
-- include objective, dependencies, owned scope, work, verification, acceptance criteria, and review checkpoint
-- keep supporting correctness work with the behavior
-- cover every plan deliverable, acceptance criterion, and verification requirement in the visible milestone sequence
-- write the complete sequence to `milestones.md` beside `plan.md` and reuse that file for later breakdown revisions
-- preserve completed milestones during revisions unless the developer explicitly requires them to be revisited
-- present a response body that matches `milestones.md` exactly
-- end both the file and response with an approval boundary
-- do not begin implementation
-- state that breakdown does not approve the plan or authorize implementation
-- require explicit authorization for each milestone unless approval and milestone authorization are clearly combined
-
-#### `challenge plan [<plan-path-or-identifier>]`
-
-When explicitly invoked:
-
-- require one exact current plan and challenge the identified plan rather than searching historical planning directories
-- read the complete plan, the independently established task contract, and applicable developer amendments
-- identify the plan by repository-relative path or supplied identifier and SHA-256 hash of its complete contents
-- verify the hash again immediately before reporting and stop if the plan changed
-- treat the plan as an untrusted proposal even when the same agent created it
-- perform only the smallest read-only inspection needed to verify material uncertainty, staleness, or high-impact claims
-- compare the planned final result with the developer's objective, constraints, exclusions, acceptance criteria, and amendments
-- challenge material architecture, ownership, data, public-contract, security, concurrency, dependency, migration, compatibility, rollback, removal, and verification decisions when applicable
-- report only decision-relevant material findings, smallest corrections, and unresolved developer decisions
-- use exactly `Plan at a glance`, `Material impact`, `Challenges`, `Developer decisions required`, and `Recommendation` sections
-- end with exactly one of `No material concerns`, `Plan revision required before proceeding`, or `Developer decision required before proceeding`
-- remain at or below 1,000 words
-- remain read-only, advisory, and specific to the exact hashed plan version
-- state through its behavior that challenge does not edit, approve, reject, break down, or implement the plan
-
-#### `review` and `review <target-branch>`
-
-When either command is explicitly invoked:
-
-- make `review` inspect the complete uncommitted worktree against `HEAD`, including staged, unstaged, untracked, deleted, and renamed paths
-- exclude existing commits from `review`
-- make `review <target-branch>` require an active branch, resolve the local or remote-tracking target unambiguously, and inspect the commits and cumulative diff from the merge base through the active branch
-- refresh the relevant remote-tracking ref when available, otherwise report the target commit and any material freshness limitation
-- account for target-side changes after the merge base and assess the prospective merge result
-- exclude uncommitted changes from `review <target-branch>` and report them separately
-- perform review-only work
-- do not edit the reviewed change
-- inspect the complete requested scope
-- run relevant non-writing checks when available
-- report findings in severity order
-- report checks run and checks not run
-- require a staging-insensitive fingerprint of the complete state that `git add -A` would stage for uncommitted review, or exact effective-target and merge-base commits for branch review
-- evaluate focused test adequacy independently from the affected broader regression suite and ask whether a material defect could survive all focused tests
-- require a `Review incomplete` verdict when exact scope, target freshness, mergeability, material test adequacy, or required verification cannot be established confidently
-- provide `Ready to commit` for `review`, `Ready to merge into <target-branch>` for branch review, or a clear not-ready or incomplete verdict
-- avoid a ready verdict when material uncertainty remains
-- state that the agent verdict informs but does not authorize developer acceptance
-- state that the developer must evaluate evidence and use code inspection as a risk-triggered escalation rather than a universal requirement
-
-The neutral foundation SHOULD NOT include a `repo push` command because commit signing, staging, remote selection, and publication policy vary significantly across repositories. It MUST instead state that publication is a distinct external authority governed by repository-specific policy.
+The public foundation MUST NOT define agent commands or skill workflows. Executable workflows for planning, plan challenge, breakdown, execution, debugging, review, and publication live in skills that the repository installs. The foundation states only how an invoked skill relates to the rest of the instructions.
 
 ### 14.5 Foundation page behavior
 
@@ -1068,6 +1075,7 @@ The `/start` page MUST include:
 - the last meaningful update date
 - a concise statement of what the foundation deliberately does not prescribe
 - a link to the refinement workflow for repositories with existing instructions
+- a pairing block, outside the copyable file, that recommends jg-skills with the install command, the explicit-only verification note, and a link to `/workflow`
 
 The copied, downloaded, raw, and rendered content must come from the same canonical source.
 
@@ -1112,6 +1120,7 @@ Inspect:
 - relevant project documentation
 - architecture and tooling evidence needed to understand existing rules
 - the hierarchy and precedence of instruction files
+- installed agent skills that define workflows, so proposals neither duplicate nor contradict them in instruction files
 - the current worktree state and pre-existing instruction-file changes
 
 Keep inspection proportional, respect repository context exclusions and sensitive-data boundaries, and do not edit files, install dependencies, create artifacts, or change Git state.
@@ -1217,7 +1226,7 @@ Approval to edit instructions does not authorize commits, pushes, pull requests,
 
 #### Stage 6: Audit the result
 
-After editing, compare the result with the original files, pre-existing worktree state, instruction map, and approved proposal. Verify supported filenames, locations, scopes, syntax, ownership, synchronization, precedence, command semantics, and every original rule's final disposition. Run existing instruction-specific checks when available without installing new tooling.
+After editing, compare the result with the original files, pre-existing worktree state, instruction map, and approved proposal. Verify supported filenames, locations, scopes, syntax, ownership, synchronization, precedence, skill and command invocation semantics, and every original rule's final disposition. Run existing instruction-specific checks when available without installing new tooling.
 
 Review representative failure scenarios when applicable, including answer-only and planning-only requests, partial proposal approval, scoped conflicts, pre-existing changes, high-blast-radius changes, and unauthorized external actions.
 
@@ -1241,7 +1250,7 @@ Report:
 The prompt MUST ask the coding agent to assess and, when appropriate, introduce or strengthen these values:
 
 1. quality, clarity, maintainability, and correctness over cleverness
-2. task intent and explicit authorization boundaries, including separate authority for external actions
+2. task intent and explicit authorization boundaries, including explicit authority for external actions, granted per action or per explicitly invoked autonomous run
 3. decision precedence and correct scoped-instruction handling
 4. codebase-first reasoning
 5. collaborative planning
@@ -1251,17 +1260,26 @@ The prompt MUST ask the coding agent to assess and, when appropriate, introduce 
 9. wide context and narrow authority
 10. reuse of existing architecture and ownership
 11. avoidance of adjacent refactors and duplicate implementations
-12. meaningful tests and self-correction
+12. meaningful tests and self-correction, with independent evidence where tests and implementation may share an assumption
 13. test-failure triage instead of blindly changing expectations
 14. adversarial review
 15. preservation of developer-authored and pre-existing work
 16. security, privacy, authorization, data integrity, and destructive-action safety
 17. deliberate handling of high-blast-radius changes and conditional production safeguards
-18. state-bearing documentation synchronization and instruction governance
-19. unambiguous command activation, permissions, approval boundaries, and stopping conditions
+18. state-bearing documentation synchronization, with coding-instruction files changed only on explicit request
+19. unambiguous skill or command invocation, permissions, approval boundaries, and stopping conditions
 20. transparent assumptions, blockers, skipped checks, and uncertainty
 21. progressive delegation after the project has established clear rails
 22. developer accountability for final engineering decisions
+23. planning records retained as the task record
+24. bug fixes that start from a test failing for the reported reason
+25. a search for other instances of a repeatable root cause
+26. evidence over agreement: candor without flattery, invented objections, or scope expansion
+27. rigor proportional to the consequences of failure, with materially different approaches presented as a few options for the developer to choose
+28. error handling that fails loudly, preserves causes, never swallows errors, and keeps documented error contracts current
+29. resource efficiency, with growth-capable collections bounded at the source and caching only where reuse justifies it
+30. cleanup of task-owned processes and temporary files without broad or destructive cleanup
+31. portable paths and scripts, with untrusted paths kept inside their intended root
 
 The prompt must not blindly impose:
 
@@ -1293,73 +1311,48 @@ The `/refine` page MUST include:
 - a warning to review the proposed changes before approving edits
 - a link to `/start` for repositories with no useful existing instructions
 
-## 16. Cookbook
+## 16. Cookbook and workflow page
 
 ### 16.1 Purpose
 
-The cookbook converts the philosophy into repeatable day-to-day workflows.
+The cookbook covers recurring engineering situations that no skill runs: orienting in an unfamiliar codebase, controlling scope, synchronizing documentation, recovering from drift, deepening a test strategy, and refining instructions. The workflow itself lives on `/workflow` (section 16.6).
 
-It should teach techniques rather than present prompts as magic incantations.
+It should teach techniques rather than present prompts as magic incantations. It MUST help developers identify their current situation, provide the right context, steer weak first responses, and preserve the decisions that remain theirs.
 
-The cookbook MUST function as an operating playbook rather than a prompt gallery. It should help developers identify their current engineering situation, provide the right context, steer weak first responses, inspect evidence, and preserve the decisions that remain theirs.
+Recipes lead with the example. Each recipe MUST contain:
 
-Each recipe MUST explain:
-
-- the situation
-- the common mistake
-- the Agentic Coding approach
-- the context to provide before using the prompt
-- a copyable prompt or conversation starter
-- a concrete worked example
-- what a good result should contain
-- useful follow-up moves for shallow or drifting results
+- a one-to-three-sentence situation
+- a short example transcript
+- a copyable prompt
+- what a good result looks like, including the developer's review responsibility
+- follow-up moves for shallow or drifting results
 - warning signs
-- the developer's review responsibility
 
-### 16.2 Initial recipes
+Each recipe body stays at or below about 440 words, two minutes at the site's reading-time rate.
 
-The cookbook MUST include these thirteen recipes in intentional editorial order:
+### 16.2 Recipes
+
+The cookbook MUST include these six recipes in intentional editorial order:
 
 1. **Orient to a codebase**
    - build a verified working map of an unfamiliar repository before planning changes
 
-2. **Plan a feature**
-   - turn a vague requirement into a codebase-grounded implementation plan
-
-3. **Challenge a plan**
-   - ask the agent to attack assumptions, alternatives, risks, and missing cases before implementation
-
-4. **Break down a plan**
-   - evaluate an approved strategy and create coherent, reviewable milestones only when useful, without redesigning it
-
-5. **Execute one milestone**
-   - when a milestone sequence exists, authorize one bounded implementation slice and stop before later work
-
-6. **Control scope**
+2. **Control scope**
    - give the agent enough context to understand dependencies without authorizing adjacent work
 
-7. **Synchronize documentation**
+3. **Synchronize documentation**
    - keep durable documentation aligned with implemented behavior and authoritative ownership
 
-8. **Recover from agent drift**
+4. **Recover from agent drift**
    - stop a wandering implementation, preserve useful work, and restore a bounded contract
 
-9. **Investigate a failing test**
-   - determine intended behavior before changing production code or the expectation
+5. **Deepen a test strategy**
+   - design correctness evidence around realistic defects and meaningful integration boundaries
 
-10. **Deepen a test strategy**
-    - design correctness evidence around realistic defects and meaningful integration boundaries
+6. **Refine coding instructions**
+   - use the canonical refinement process to strengthen an existing `AGENTS.md`
 
-11. **Review a change**
-    - use `review` or `review <target-branch>` for the agent's findings-first evidence package, then require a developer to challenge the evidence and decide whether acceptance or a deeper audit is justified
-
-12. **Refine coding instructions**
-    - use the canonical refinement process to strengthen an existing `AGENTS.md`
-
-13. **Publish an authorized change**
-    - publish only an accepted state under separate explicit authority, exact destination resolution, complete state and unpublished-history inspection, repository signing policy, and an explicit one-branch refspec
-
-A later version MAY add recipes only when they cover a distinct, recurring engineering situation that the current playbook does not already handle.
+A later version MAY add recipes only when they cover a distinct, recurring situation that neither the cookbook nor a skill already handles.
 
 ### 16.3 Recipe content model
 
@@ -1369,15 +1362,19 @@ Recommended fields:
 
 - `title`
 - `description`
+- `situation`
+- `example`, a short transcript validated by the same schema as the site's other transcripts
+- `prompt`
 - `slug`
 - `order`
 - `category`
+- `relatedSlugs`
+- `publishedAt`
 - `updatedAt`
-- `readingTime` or a value derived at build time
 - `featured`
 - `draft`
 
-The body contains the recipe sections.
+The body contains the recipe sections. Reading time is derived at build time.
 
 Draft entries must not be rendered into public routes or the production sitemap.
 
@@ -1385,8 +1382,8 @@ Draft entries must not be rendered into public routes or the production sitemap.
 
 The `/cookbook` page MUST:
 
-- explain the purpose of the cookbook
-- help developers choose a recipe from their current engineering situation
+- explain that recipes cover situations no skill runs
+- help developers choose from their current engineering situation, routing situations a skill covers to the matching `/workflow` step
 - group recipes into understandable workflow tracks
 - show all published recipes
 - order recipes intentionally rather than by filename
@@ -1394,7 +1391,7 @@ The `/cookbook` page MUST:
 - expose stable links
 - remain useful without JavaScript
 
-Client-side filtering is optional and should not be added unless the initial recipe count justifies it.
+Client-side filtering is optional and should not be added unless the recipe count justifies it.
 
 ### 16.5 Recipe page
 
@@ -1403,19 +1400,30 @@ Every recipe page MUST include:
 - title
 - concise description
 - situation
-- common mistake
-- Agentic approach
-- context to provide before using the prompt
+- example transcript
 - copyable prompt
-- a worked example
-- what to inspect in the result
+- what good looks like
 - follow-up moves
 - warning signs
 - related recipes
-- last updated date
+- publication and update dates
 - canonical metadata
 
 Prompt copy controls must copy the exact canonical prompt text shown in the recipe.
+
+### 16.6 Workflow page
+
+The `/workflow` page shows the workflow running through jg skills. It MUST include:
+
+- an install command block with a copy control, the explicit-only verification note, one line on invocation syntax, and one line stating that skills defer engineering standards to the repository's `AGENTS.md`, linking to `/start`
+- one section per stage (Plan, Build, Ship) and one step per skill, anchored by the skill name: `jg-brainstorm`, `jg-plan`, `jg-challenge-plan`, `jg-breakdown`, `jg-execute`, `jg-debug`, `jg-pause`, `jg-review`, `jg-push`
+- for each step: a one-sentence purpose, an "Optional" or "When needed" marker where applicable, what the skill may change, a short example transcript with one artifact, and a link to the skill's page on jg-skills
+- a supervised/autonomous toggle on `jg-execute` that shows the autonomous cycle (implement, checks, review, fix, push) and its stop conditions
+- a `jg-debug` example with a failing test, the fix, and the passing test
+- the Correct, Continue, or Complete outcomes on `jg-review`, noting `jg-review <target-branch>` for branches
+- a closing section that lists `jg-feedback` and `jg-session` and points to the cookbook for situations no skill covers
+
+The examples continue one fictional feature across all steps. What each skill may change MUST match the "What it may change" column of the jg-skills README. The step catalog lives in the site configuration and MUST be updated when jg-skills adds, removes, or renames a skill, or changes what one may change.
 
 ## 17. Interaction requirements
 
@@ -1432,6 +1440,7 @@ Reusable copy controls are required for:
 - `AGENTS.md`
 - the refinement prompt
 - cookbook prompts
+- the jg-skills install command
 
 Copy behavior MUST:
 
@@ -1515,6 +1524,7 @@ Prefer:
 - generous whitespace
 - clear editorial rhythm
 - structured diagrams
+- static session transcripts and file artifacts that show real workflow output
 - restrained code and terminal surfaces
 - subtle borders and grids
 - purposeful asymmetry where it remains responsive
@@ -1771,6 +1781,7 @@ Do not create a large bespoke CSS framework.
 │   │   ├── AGENTS.md.ts
 │   │   ├── refine.astro
 │   │   ├── refine.txt.ts
+│   │   ├── workflow.astro
 │   │   ├── cookbook/
 │   │   │   ├── index.astro
 │   │   │   └── [slug].astro
@@ -1805,6 +1816,8 @@ Use one typed configuration module for:
 - social metadata
 - default Open Graph image
 - resource versions
+- the jg-skills URL, install command, and explicit-only verification note
+- the workflow step catalog
 
 Do not duplicate these values across layouts and pages.
 
@@ -1892,7 +1905,7 @@ Every public HTML route MUST include:
 The project MUST include:
 
 - `robots.txt`
-- a root `llms.txt` generated from canonical project content
+- a root `llms.txt` generated from canonical project content, linking the workflow page and the jg-skills index
 - generated sitemap
 - descriptive favicon
 - a default 1200×630 Open Graph image
@@ -1907,6 +1920,8 @@ The homepage should use website-level structured metadata.
 The cookbook index should use collection-page structured metadata. Public HTML pages should identify `/llms.txt` with `rel="describedby"`, and pages with canonical raw resources should expose them with `rel="alternate"` and an accurate media type.
 
 Every public content page below the homepage should expose a visible, navigable breadcrumb trail and matching `BreadcrumbList` structured data derived from the same route hierarchy.
+
+Every internal link with a fragment MUST point to an existing `id`.
 
 Do not add fabricated ratings, dates, organizations, or author profiles to structured data.
 
@@ -1976,7 +1991,7 @@ Add focused unit tests where they provide value, including:
 - theme preference parsing and resolution
 - copy-state logic if extracted into a reusable utility
 - any non-trivial workflow interaction logic
-- durable public command and cookbook contracts, including command-first dispatch, challenge identity and recommendations, review evidence, and publication authority
+- durable public foundation and refinement contracts, including skill-first dispatch, planning records, review evidence, and publication authority
 
 Do not test Astro, Tailwind, or browser behavior already guaranteed by those tools unless project integration adds meaningful risk.
 
@@ -1985,10 +2000,10 @@ Do not test Astro, Tailwind, or browser behavior already guaranteed by those too
 Use browser-level tests for important user-visible flows:
 
 - homepage loads and exposes all required major sections
-- homepage exposes the engineering-contract layers, Challenge stage, Correct/Continue/Complete outcomes, and separate publication gate
+- homepage exposes the engineering-contract layers, Challenge stage, Correct/Continue/Complete outcomes, and the supervised/autonomous publication toggle
 - direct navigation to every public route succeeds
 - a cookbook deep link works when loaded directly
-- the publication recipe works when loaded directly
+- the workflow page exposes nine skill steps with their jg-skills links and a working install-command copy control
 - `/AGENTS.md` returns the canonical foundation
 - `/refine.txt` returns the canonical prompt
 - copied resource text matches the canonical source
@@ -2014,8 +2029,8 @@ The build or test suite MUST verify:
 - cookbook slugs are unique
 - required route metadata exists
 - internal links are valid
-- the publication recipe appears in the sitemap and generated `llms.txt`
-- the foundation version, challenge command, review terminology, and publication exclusion remain synchronized
+- every internal fragment link matches an existing anchor
+- the foundation version, skill dispatch, review terminology, and publication authority remain synchronized
 
 ### 26.5 Required checks
 
@@ -2052,8 +2067,8 @@ Before the first release, inspect:
 - long prompt and code blocks
 - comparison readability
 - the engineering-contract visual
-- the per-change sequence and its three Review outcomes
-- the separate publication gate
+- the skill pipeline, its three Review outcomes, and the supervised/autonomous toggle
+- the workflow page and its transcripts at 320px
 - the project-maturity loop
 - Open Graph preview
 - GitHub Pages direct-route behavior
@@ -2075,6 +2090,7 @@ The root `README.md` MUST document:
 - custom-domain expectations
 - content organization
 - how to add a cookbook recipe
+- how the workflow step catalog stays synchronized with jg-skills
 - canonical sources for the public foundation and refinement prompt
 - the distinction between the repository's root `AGENTS.md` and the public `/AGENTS.md`
 - license
@@ -2116,7 +2132,7 @@ Do not add restrictive terms that undermine copying and adaptation of the practi
 When changing the project's philosophy or practical resources:
 
 - preserve the distinction between planning collaboration and implementation
-- preserve command-before-intent dispatch
+- preserve skill-before-intent dispatch
 - preserve adversarial plan challenge before approval
 - preserve developer accountability
 - preserve agent-operated Evidence and developer-governed acceptance
@@ -2125,15 +2141,16 @@ When changing the project's philosophy or practical resources:
 - preserve the warning against unrestricted authority
 - preserve wide context and narrow authority
 - preserve Correct, Continue, or Complete as explicit Review outcomes
-- preserve publication as a separate post-acceptance authority
+- preserve publication as an explicit grant, per change or per autonomous run, never implied by implementation authority
 - preserve the role of self-correcting mechanisms
 - keep Agentic Coding stack- and vendor-agnostic
+- keep skill descriptions consistent with the jg-skills README, state the explicit-only verification limit wherever installation is recommended, and link to jg-skills for full instructions
 - keep the public foundation neutral with respect to implementation technologies
 - keep the refinement prompt preservation-first and interactive
 - do not turn `/refine` into a builder
 - keep copied, raw, downloaded, and rendered resources synchronized
 - update versions intentionally
-- update related cookbook recipes when a workflow contract changes
+- update the workflow page when a jg skill is added, removed, renamed, or changes what it may change
 
 ## 31. Definition of done
 
@@ -2152,11 +2169,11 @@ The first production release is complete only when all of the following are true
 - Evidence is consistently shown as agent-operated and developer-governed
 - developer accountability remains explicit while code inspection is proportional and risk-triggered
 - the maturity path from direct code review to evidence-led acceptance is present
-- `challenge plan` is documented as read-only, advisory, and specific to one hashed plan version
-- both `review` and `review <target-branch>` are documented with their distinct scopes
+- the workflow page documents all nine skill steps, including `jg-challenge-plan` as read-only and advisory and both `jg-review` forms with their distinct scopes
+- publication is shown as an explicit grant, per change or per autonomous run, with the limits of autonomous runs
 - the ready-to-use foundation is complete
 - the refinement prompt is complete
-- all thirteen cookbook recipes are published
+- the six cookbook recipes are published
 - author attribution and source links are present
 
 ### 31.2 Functional
@@ -2212,8 +2229,8 @@ The finished project should allow a developer to:
 1. understand why Agentic Coding is different from both manual coding and vibe coding
 2. understand that coding agents can be powerful planning partners
 3. understand why developers must pave the way before broad delegation
-4. adopt a practical Plan → Challenge → Breakdown when useful → Execute → Review workflow
-5. distinguish Correct, Continue, or Complete from separately authorized publication
+4. adopt a practical Plan → Challenge → Breakdown when useful → Execute → Review workflow through explicit agent skills
+5. distinguish Correct, Continue, or Complete from explicitly granted publication, per change or per run
 6. begin immediately with a ready-to-use `AGENTS.md`
 7. safely refine existing instructions through their own coding agent
 8. learn practical techniques from a concise cookbook

@@ -1,0 +1,49 @@
+---
+import WorkflowGuide from '../components/workflow-guide/workflow-guide.astro';
+import ContentLayout from '../layouts/content-layout.astro';
+import { WORKFLOW_PAGE_DATES } from '../site.config.ts';
+
+const publishedAt = new Date(`${WORKFLOW_PAGE_DATES.publishedAt}T00:00:00.000Z`);
+const updatedAt = new Date(`${WORKFLOW_PAGE_DATES.updatedAt}T00:00:00.000Z`);
+const hasBeenUpdated = publishedAt.getTime() !== updatedAt.getTime();
+---
+
+<ContentLayout
+  articleSection="Workflow"
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Workflow', path: '/workflow/' },
+  ]}
+  canonicalPath="/workflow/"
+  description="Plan, build, and ship a change with coding agents one explicit skill at a time, with example output from every step."
+  eyebrow="The workflow"
+  publishedAt={publishedAt}
+  structuredDataType="article"
+  title="Run the workflow with skills."
+  updatedAt={updatedAt}
+>
+  <div
+    slot="metadata"
+    class="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-2 font-mono text-xs font-bold text-muted"
+  >
+    <span>
+      Published <time datetime={WORKFLOW_PAGE_DATES.publishedAt}
+        >{WORKFLOW_PAGE_DATES.publishedAt}</time
+      >
+    </span>
+    {
+      hasBeenUpdated && (
+        <span>
+          Updated{' '}
+          <time datetime={WORKFLOW_PAGE_DATES.updatedAt}>{WORKFLOW_PAGE_DATES.updatedAt}</time>
+        </span>
+      )
+    }
+  </div>
+
+  <section class="py-12 sm:py-16">
+    <div class="page-shell">
+      <WorkflowGuide />
+    </div>
+  </section>
+</ContentLayout>

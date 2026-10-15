@@ -40,8 +40,32 @@ describe('refinement prompt governance contract', () => {
 
   test('requires operational verification of the resulting instruction system', () => {
     expect(prompt).toContain('filenames, locations, scopes, frontmatter, glob patterns');
-    expect(prompt).toContain('command names, activation conditions, permissions');
+    expect(prompt).toContain('skill and command names, invocation conditions, permissions');
     expect(prompt).toContain('representative failure scenarios');
     expect(prompt).toContain('checks and scenarios evaluated, their results, and checks not run');
+  });
+
+  test('keeps instruction files consistent with installed workflow skills', () => {
+    expect(prompt).toContain('installed agent skills that define workflows');
+    expect(prompt).toContain(
+      'instruction files do not duplicate or contradict workflows that installed skills define',
+    );
+  });
+
+  test('injects explicit publication authority and the current engineering values', () => {
+    expect(prompt).toContain(
+      'explicit authority for external actions, granted per action or per explicitly invoked autonomous run',
+    );
+    expect(prompt).toContain('unambiguous skill or command invocation');
+    expect(prompt).toContain('retained as the task record');
+    expect(prompt).toContain('start from a test failing for the reported reason');
+    expect(prompt).toContain('whenever a root cause is a repeatable pattern');
+    expect(prompt).toContain('candor without flattery');
+    expect(prompt).toContain('presented as a few options for the developer to choose');
+    expect(prompt).toContain('error handling that fails loudly, preserves causes');
+    expect(prompt).toContain('growth-capable collections bounded at the source');
+    expect(prompt).toContain('cleanup of task-owned processes and temporary files');
+    expect(prompt).toContain('portable paths and scripts');
+    expect(prompt).toContain('coding-instruction files changed only on explicit request');
   });
 });

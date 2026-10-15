@@ -201,24 +201,24 @@ describe('static build artifact', () => {
     ],
     [
       'duplicate page description',
-      'Missing or duplicate page description in cookbook/challenge-a-plan/index.html',
+      'Missing or duplicate page description in cookbook/orient-to-a-codebase/index.html',
       async (buildDirectory) =>
         duplicateFirstMarkupMatch(
           buildDirectory,
-          'cookbook/break-down-a-plan/index.html',
-          'cookbook/challenge-a-plan/index.html',
+          'cookbook/control-scope/index.html',
+          'cookbook/orient-to-a-codebase/index.html',
           /<meta name="description" content="[^"]+">/u,
         ),
       false,
     ],
     [
       'duplicate page title',
-      'Missing or duplicate page title in cookbook/challenge-a-plan/index.html',
+      'Missing or duplicate page title in cookbook/orient-to-a-codebase/index.html',
       async (buildDirectory) =>
         duplicateFirstMarkupMatch(
           buildDirectory,
-          'cookbook/break-down-a-plan/index.html',
-          'cookbook/challenge-a-plan/index.html',
+          'cookbook/control-scope/index.html',
+          'cookbook/orient-to-a-codebase/index.html',
           /<title>[^<]+<\/title>/u,
         ),
       false,
@@ -281,6 +281,20 @@ describe('static build artifact', () => {
           '</body>',
           '<a href="/missing-route/">Broken fixture link</a></body>',
         ),
+      false,
+    ],
+    [
+      'broken page anchor',
+      'Broken internal anchor in workflow/index.html: #build-stage',
+      async (buildDirectory) =>
+        replaceBuildFileText(buildDirectory, 'workflow/index.html', 'id="build-stage"', ''),
+      false,
+    ],
+    [
+      'broken cross-page anchor',
+      'Broken internal anchor in cookbook/index.html: /workflow/#jg-plan',
+      async (buildDirectory) =>
+        replaceBuildFileText(buildDirectory, 'workflow/index.html', 'id="jg-plan"', ''),
       false,
     ],
     [
@@ -354,41 +368,29 @@ describe('static build artifact', () => {
     const sitemap = await readFile(resolve(repositoryRoot, 'dist/sitemap-0.xml'), 'utf8');
     const expectedSlugs = [
       'orient-to-a-codebase',
-      'plan-a-feature',
-      'challenge-a-plan',
-      'break-down-a-plan',
-      'execute-one-milestone',
       'control-scope',
       'synchronize-documentation',
       'recover-from-agent-drift',
-      'investigate-a-failing-test',
       'deepen-a-test-strategy',
-      'review-a-change',
       'refine-coding-instructions',
-      'publish-an-authorized-change',
     ];
 
     for (const slug of expectedSlugs) {
       expect(sitemap).toContain(`/cookbook/${slug}/`);
     }
+
+    expect(sitemap).toContain('<loc>https://agenticcoding.jesusgraterol.dev/workflow/</loc>');
   });
 
   test('publishes an LLM index synchronized with every cookbook recipe', async () => {
     const llmsText = await readFile(resolve(repositoryRoot, 'dist/llms.txt'), 'utf8');
     const expectedSlugs = [
       'orient-to-a-codebase',
-      'plan-a-feature',
-      'challenge-a-plan',
-      'break-down-a-plan',
-      'execute-one-milestone',
       'control-scope',
       'synchronize-documentation',
       'recover-from-agent-drift',
-      'investigate-a-failing-test',
       'deepen-a-test-strategy',
-      'review-a-change',
       'refine-coding-instructions',
-      'publish-an-authorized-change',
     ];
 
     expect(llmsText).toContain(
@@ -397,6 +399,8 @@ describe('static build artifact', () => {
     expect(llmsText).toContain(
       '[Instruction refinement prompt](https://agenticcoding.jesusgraterol.dev/refine.txt)',
     );
+
+    expect(llmsText).toContain('[Workflow](https://agenticcoding.jesusgraterol.dev/workflow/)');
 
     for (const slug of expectedSlugs) {
       expect(llmsText).toContain(`/cookbook/${slug}/`);

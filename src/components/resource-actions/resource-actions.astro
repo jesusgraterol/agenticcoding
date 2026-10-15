@@ -1,5 +1,5 @@
 ---
-import { ArrowRight, BookOpen, Braces, FilePenLine } from '@lucide/astro';
+import { ArrowRight, BookOpen, Braces, FilePenLine, Workflow } from '@lucide/astro';
 
 const resources = [
   {
@@ -10,6 +10,13 @@ const resources = [
     title: 'Start with the foundation',
   },
   {
+    description: 'Install the skills and see every step of a change with example output.',
+    href: '/workflow/',
+    icon: Workflow,
+    label: 'Open workflow',
+    title: 'Run the workflow with skills',
+  },
+  {
     description: 'Preserve project knowledge while strengthening the engineering process.',
     href: '/refine/',
     icon: FilePenLine,
@@ -18,17 +25,17 @@ const resources = [
   },
   {
     description:
-      'Practice planning, challenge, bounded execution, evidence, correction, and governed publication.',
+      'Orient, control scope, recover from drift, and deepen tests where no skill applies.',
     href: '/cookbook/',
     icon: BookOpen,
     label: 'Open cookbook',
-    title: 'Practice the workflow',
+    title: 'Handle the harder moments',
   },
 ] as const;
 ---
 
 <div
-  class="mt-12 grid gap-px overflow-hidden rounded-xl border border-border bg-border lg:grid-cols-3"
+  class="mt-12 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-4"
 >
   {
     resources.map(({ description, href, icon: Icon, label, title }) => (

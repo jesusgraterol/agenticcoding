@@ -1,4 +1,5 @@
 ---
+import InstallCommand from '../components/install-command/install-command.astro';
 import ResourceDocument from '../components/resource-document/resource-document.astro';
 import ContentLayout from '../layouts/content-layout.astro';
 import { RESOURCE_CONFIG, RESOURCE_IDS } from '../site.config.ts';
@@ -9,6 +10,7 @@ const { text } = await loadResource(resourceId);
 const resourceConfig = RESOURCE_CONFIG[resourceId];
 const publishedAt = new Date(`${resourceConfig.publishedAt}T00:00:00.000Z`);
 const updatedAt = new Date(`${resourceConfig.updatedAt}T00:00:00.000Z`);
+const hasBeenUpdated = publishedAt.getTime() !== updatedAt.getTime();
 ---
 
 <ContentLayout
@@ -38,17 +40,24 @@ const updatedAt = new Date(`${resourceConfig.updatedAt}T00:00:00.000Z`);
     <span>
       Published <time datetime={resourceConfig.publishedAt}>{resourceConfig.publishedAt}</time>
     </span>
-    <span>Updated <time datetime={resourceConfig.updatedAt}>{resourceConfig.updatedAt}</time></span>
+    {
+      hasBeenUpdated && (
+        <span>
+          Updated <time datetime={resourceConfig.updatedAt}>{resourceConfig.updatedAt}</time>
+        </span>
+      )
+    }
   </div>
 
   <section class="py-12 sm:py-16">
     <div class="prose-shell">
       <div class="mb-10 grid gap-5 rounded-xl border border-border bg-secondary/35 p-5 sm:p-7">
         <p class="text-lg leading-8">
-          This file establishes command-first authority, task intent, codebase-first reasoning,
-          collaborative planning, adversarial plan challenge, narrow authority, coherent execution,
-          agent-operated evidence, independent verification, developer-governed acceptance, separate
-          publication authority, transparency, and safety.
+          This file sets the standards an agent follows on every task: candor, skill-first
+          authority, codebase-first reasoning, collaborative planning, proportional tradeoffs,
+          narrow authority, clear error handling, resource efficiency, coherent execution,
+          failing-test-first bug fixes, agent-operated evidence, developer-governed acceptance,
+          explicit publication authority, cleanup, portability, and safety.
         </p>
         <p class="text-sm leading-6 text-muted">
           It deliberately does not prescribe a language, framework, folder structure, package
@@ -62,6 +71,28 @@ const updatedAt = new Date(`${resourceConfig.updatedAt}T00:00:00.000Z`);
             >preservation-first refinement workflow</a
           > instead of replacing them.
         </p>
+      </div>
+      <div class="mb-10 grid gap-5">
+        <section
+          class="grid gap-4 rounded-xl border border-border p-5 sm:p-7"
+          aria-labelledby="pair-skills-title"
+        >
+          <h2
+            id="pair-skills-title"
+            class="text-xl font-semibold tracking-tight"
+          >
+            Pair it with skills
+          </h2>
+          <p class="text-sm leading-6 text-muted">
+            This file sets the standards. The jg-skills collection runs the workflow on top of them:
+            plan, challenge, build, review, and push, each only when you invoke it. <a
+              class="font-semibold text-foreground underline underline-offset-4"
+              href="/workflow/"
+              >See every step</a
+            >.
+          </p>
+          <InstallCommand id="start-install-command" />
+        </section>
       </div>
       <ResourceDocument
         allowDownload

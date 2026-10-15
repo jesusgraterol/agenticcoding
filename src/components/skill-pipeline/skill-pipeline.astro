@@ -1,0 +1,160 @@
+---
+import { ArrowRight } from '@lucide/astro';
+
+import {
+  REVIEW_OUTCOMES,
+  WORKFLOW_STAGES,
+  WORKFLOW_STEP_MARKER_LABELS,
+  WORKFLOW_STEPS,
+  type IWorkflowStage,
+} from '../../site.config.ts';
+
+// how jg-execute runs in each mode, and who runs the Ship stage
+const PIPELINE_MODES = {
+  supervised: {
+    label: 'Supervised',
+    shipNote: 'You run these yourself when you are ready.',
+  },
+  autonomous: {
+    label: 'Autonomous',
+    shipNote: 'jg-execute autonomous runs these after each milestone, within its stop conditions.',
+  },
+} as const;
+
+const stages = (Object.keys(WORKFLOW_STAGES) as IWorkflowStage[]).map((stage, index) => ({
+  ...WORKFLOW_STAGES[stage],
+  position: String(index + 1).padStart(2, '0'),
+  stage,
+  steps: WORKFLOW_STEPS.filter((step) => step.stage === stage),
+}));
+---
+
+<div class="group/pipeline mt-12 grid gap-6">
+  <fieldset
+    class="inline-flex w-fit items-center gap-1 justify-self-center rounded-full border border-border bg-surface p-1"
+  >
+    <legend class="sr-only">How the agent runs the change</legend>
+    {
+      (['supervised', 'autonomous'] as const).map((mode) => (
+        <label class="cursor-pointer rounded-full px-4 py-1.5 text-sm font-semibold text-muted transition-colors hover:text-foreground has-checked:bg-primary has-checked:text-primary-foreground has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-focus motion-reduce:transition-none">
+          <input
+            class="sr-only"
+            type="radio"
+            name="pipeline-mode"
+            value={mode}
+            checked={mode === 'supervised'}
+            data-pipeline-mode={mode}
+          />
+          {PIPELINE_MODES[mode].label}
+        </label>
+      ))
+    }
+  </fieldset>
+
+  <ol class="grid gap-px overflow-hidden rounded-xl border border-border bg-border lg:grid-cols-3">
+    {
+      stages.map(({ label, position, stage, steps, summary }) => (
+        <li
+          class="flex flex-col bg-background p-5 sm:p-6"
+          data-pipeline-stage={stage}
+        >
+          <div class="flex items-baseline gap-3">
+            <span class="font-mono text-xs font-bold text-accent">{position}</span>
+            <h3 class="text-xl font-semibold tracking-tight">{label}</h3>
+          </div>
+          <p class="mt-2 text-sm leading-6 text-muted">{summary}</p>
+          <ul class="mt-5 grid gap-2">
+            {steps.map((step) => (
+              <li>
+                <a
+                  class="group flex items-center justify-between gap-3 rounded-lg border border-border bg-surface px-3 py-2.5 no-underline transition-colors hover:border-border-strong hover:bg-secondary motion-reduce:transition-none"
+                  href={`/workflow/#${step.skill}`}
+                >
+                  <span class="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                    {step.skill === 'jg-execute' ? (
+                      <code class="text-sm font-bold text-accent">
+                        <span class="group-has-[[data-pipeline-mode=autonomous]:checked]/pipeline:hidden">
+                          jg-execute
+                        </span>
+                        <span class="hidden group-has-[[data-pipeline-mode=autonomous]:checked]/pipeline:inline">
+                          jg-execute autonomous
+                        </span>
+                      </code>
+                    ) : (
+                      <code class="text-sm font-bold text-accent">{step.skill}</code>
+                    )}
+                    {step.marker && (
+                      <span class="text-xs text-muted">
+                        {WORKFLOW_STEP_MARKER_LABELS[step.marker]}
+                      </span>
+                    )}
+                  </span>
+                  <ArrowRight
+                    class="size-4 shrink-0 text-muted transition-transform group-hover:translate-x-0.5 motion-reduce:transform-none"
+                    aria-hidden="true"
+                  />
+                </a>
+              </li>
+            ))}
+          </ul>
+          {stage === 'ship' && (
+            <p class="mt-4 text-sm leading-6 font-semibold">
+              <span class="group-has-[[data-pipeline-mode=autonomous]:checked]/pipeline:hidden">
+                {PIPELINE_MODES.supervised.shipNote}
+              </span>
+              <span class="hidden group-has-[[data-pipeline-mode=autonomous]:checked]/pipeline:inline">
+                {PIPELINE_MODES.autonomous.shipNote}
+              </span>
+            </p>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+
+  <div
+    class="grid gap-px overflow-hidden rounded-xl border border-border bg-border lg:grid-cols-[1.4fr_1fr]"
+  >
+    <div class="bg-surface p-5 sm:p-6">
+      <p class="font-mono text-xs font-bold text-muted uppercase">After review, you choose</p>
+      <dl class="mt-4 grid gap-3 sm:grid-cols-3">
+        {
+          REVIEW_OUTCOMES.map(({ label, text }) => (
+            <div class="border-l-2 border-accent pl-3">
+              <dt class="font-semibold">{label}</dt>
+              <dd class="mt-1 text-sm leading-6 text-muted">{text}</dd>
+            </div>
+          ))
+        }
+      </dl>
+      <p
+        class="mt-4 hidden text-sm leading-6 text-muted group-has-[[data-pipeline-mode=autonomous]:checked]/pipeline:block"
+      >
+        In an autonomous run, the review gate settles each milestone and you judge the published
+        result.
+      </p>
+    </div>
+    <div class="bg-primary p-5 text-primary-foreground sm:p-6">
+      <p class="font-mono text-xs font-bold text-white/60 uppercase">Publication</p>
+      <p class="mt-3 leading-7 font-semibold">
+        Publish only when explicitly authorized: <code class="text-accent-on-primary">jg-push</code
+        >{' '}for one change, or <code class="text-accent-on-primary">jg-execute autonomous</code> for
+        a whole run.
+      </p>
+      <p class="mt-2 text-sm leading-6 text-white/70">
+        Implementation authority alone never publishes.
+      </p>
+    </div>
+  </div>
+
+  <a
+    class="inline-flex items-center gap-2 justify-self-center text-sm font-semibold underline-offset-4 hover:underline"
+    href="/workflow/"
+  >
+    See every step with example output
+    <ArrowRight
+      class="size-4"
+      aria-hidden="true"
+    />
+  </a>
+</div>

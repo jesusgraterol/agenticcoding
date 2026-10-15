@@ -11,6 +11,7 @@ const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/u;
 const VERIFY_BUILD_ERROR_MESSAGES = {
   ArticleStructuredDataIncomplete: 'Article structured data is incomplete',
   BreadcrumbHierarchyIncomplete: 'Breadcrumb hierarchy is incomplete',
+  BrokenInternalAnchor: 'Broken internal anchor',
   BrokenInternalLink: 'Broken internal link',
   BrokenInternalLlmsTextLink: 'Broken internal llms.txt link',
   CanonicalUrlMissingFromSitemap: 'Canonical URL is missing from the sitemap',
@@ -33,6 +34,7 @@ const REQUIRED_BUILD_PATHS = [
   'refine.txt',
   'start/index.html',
   'refine/index.html',
+  'workflow/index.html',
   'cookbook/index.html',
   'favicon.svg',
   'llms.txt',
@@ -83,6 +85,19 @@ const resolveInternalArtifact = (href: string): string => {
 
   return `${path.replace(/^\//u, '').replace(/\/$/u, '')}/index.html`;
 };
+
+/** Splits an internal link into its path and fragment; a same-page link has an empty path. */
+const splitInternalLink = (href: string): { fragment: string; path: string } => {
+  const fragmentIndex = href.indexOf('#');
+
+  return fragmentIndex < 0
+    ? { fragment: '', path: href }
+    : { fragment: href.slice(fragmentIndex + 1), path: href.slice(0, fragmentIndex) };
+};
+
+/** Checks whether generated HTML declares an element with the given id. */
+const hasElementId = (html: string, id: string): boolean =>
+  new RegExp(`\\sid="${escapeRegularExpression(id)}"`, 'u').test(html);
 
 /** Resolves a generated HTML artifact to its canonical public URL. */
 const resolveCanonicalUrl = (htmlPath: string): string => {
@@ -166,6 +181,7 @@ const extractStructuredDataEntities = (
  * - Article structured data is incomplete
  * - Breadcrumb hierarchy is incomplete
  * - Broken internal link
+ * - Broken internal anchor
  * - The custom 404 page must remain excluded from search indexes.
  * - llms.txt does not follow the required project index structure.
  * - Broken internal llms.txt link
@@ -189,6 +205,7 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
 
   const htmlFiles = buildFiles.filter((filePath) => filePath.endsWith('.html'));
   const publicHtmlFiles = htmlFiles.filter((filePath) => filePath !== '404.html');
+  const htmlByPath = new Map<string, string>();
   const descriptions = new Set<string>();
   const titles = new Set<string>();
   const sitemapFiles = buildFiles.filter((filePath) => /^sitemap-\d+\.xml$/u.test(filePath));
@@ -202,8 +219,49 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
     )
   ).join('\n');
 
-  for (const htmlPath of publicHtmlFiles) {
+  /** Reads one generated HTML artifact once, reusing it for later anchor checks. */
+  const readBuildHtml = async (htmlPath: string): Promise<string> => {
+    const cachedHtml = htmlByPath.get(htmlPath);
+
+    if (cachedHtml !== undefined) return cachedHtml;
+
     const html = await readFile(resolve(buildDirectory, htmlPath), 'utf8');
+
+    htmlByPath.set(htmlPath, html);
+
+    return html;
+  };
+
+  /**
+   * Verifies that an internal link resolves to a generated artifact and, when it names a
+   * fragment, to an element with that id.
+   * @throws
+   * - Broken internal link
+   * - Broken internal anchor
+   */
+  const verifyInternalLink = async (href: string, htmlPath: string): Promise<void> => {
+    const { fragment, path } = splitInternalLink(href);
+    const artifactPath = path === '' ? htmlPath : resolveInternalArtifact(path);
+
+    if (!buildFiles.includes(artifactPath)) {
+      throw new Error(
+        `${VERIFY_BUILD_ERROR_MESSAGES.BrokenInternalLink} in ${htmlPath}: ${href} -> ${artifactPath}`,
+      );
+    }
+
+    if (
+      fragment !== '' &&
+      artifactPath.endsWith('.html') &&
+      !hasElementId(await readBuildHtml(artifactPath), fragment)
+    ) {
+      throw new Error(
+        `${VERIFY_BUILD_ERROR_MESSAGES.BrokenInternalAnchor} in ${htmlPath}: ${href}`,
+      );
+    }
+  };
+
+  for (const htmlPath of publicHtmlFiles) {
+    const html = await readBuildHtml(htmlPath);
     const canonicalUrl = resolveCanonicalUrl(htmlPath);
     const expectedStructuredDataType =
       htmlPath === 'index.html'
@@ -351,20 +409,13 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
       }
     }
 
-    const internalLinks = [...html.matchAll(/href="(\/(?!\/)[^"]*)"/gu)].map(
+    // root-relative and same-page links; external and protocol-relative links are out of scope
+    const internalLinks = [...html.matchAll(/href="((?:\/(?!\/)|#)[^"]*)"/gu)].map(
       (match) => match[1] ?? '/',
     );
 
     for (const href of internalLinks) {
-      if (href.startsWith('/#')) continue;
-
-      const artifactPath = resolveInternalArtifact(href);
-
-      if (!buildFiles.includes(artifactPath)) {
-        throw new Error(
-          `${VERIFY_BUILD_ERROR_MESSAGES.BrokenInternalLink} in ${htmlPath}: ${href} -> ${artifactPath}`,
-        );
-      }
+      await verifyInternalLink(href, htmlPath);
     }
   }
 

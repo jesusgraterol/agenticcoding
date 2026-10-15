@@ -1,5 +1,5 @@
 ---
-import { GitBranch, Menu } from '@lucide/astro';
+import { ArrowUpRight, GitBranch, Menu } from '@lucide/astro';
 
 import { SITE_CONFIG } from '../../site.config.ts';
 import BrandLogo from '../brand-logo/brand-logo.astro';
@@ -53,6 +53,19 @@ const isActivePath = (href: string): boolean =>
         ))
       }
       <a
+        href={SITE_CONFIG.skills.url}
+        class="inline-flex items-center gap-1 rounded-full border border-transparent px-3 py-2 text-sm font-medium text-muted no-underline hover:bg-secondary hover:text-foreground"
+        target="_blank"
+        rel="noreferrer"
+      >
+        Skills
+        <span class="sr-only"> (opens in a new tab)</span>
+        <ArrowUpRight
+          class="size-3.5"
+          aria-hidden="true"
+        />
+      </a>
+      <a
         href={SITE_CONFIG.repositoryUrl}
         class="inline-flex size-9 items-center justify-center rounded-full text-muted no-underline hover:bg-secondary hover:text-foreground"
         target="_blank"
@@ -100,6 +113,19 @@ const isActivePath = (href: string): boolean =>
               </a>
             ))
           }
+          <a
+            href={SITE_CONFIG.skills.url}
+            class="flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold no-underline hover:bg-secondary"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <ArrowUpRight
+              class="size-4"
+              aria-hidden="true"
+            />
+            Skills
+            <span class="sr-only"> (opens in a new tab)</span>
+          </a>
           <a
             href={SITE_CONFIG.repositoryUrl}
             class="flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold no-underline hover:bg-secondary"

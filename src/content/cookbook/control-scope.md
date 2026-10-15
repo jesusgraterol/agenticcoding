@@ -2,16 +2,43 @@
 title: Control scope
 description: Give the agent enough context to understand the full path without authorizing every dependency it discovers.
 slug: control-scope
-order: 6
+order: 2
 category: execution
-publishedAt: 2026-08-19
-updatedAt: 2026-08-19
+publishedAt: 2026-10-15
+updatedAt: 2026-10-15
 featured: false
 draft: false
 relatedSlugs:
   - orient-to-a-codebase
-  - execute-one-milestone
   - recover-from-agent-drift
+situation: A focused change depends on surrounding authentication, persistence, or shared contracts. The agent has to read them to work safely, but most of them should not change. Reading a dependency is not permission to refactor it.
+example:
+  - speaker: developer
+    text: Add timeout handling to the payment status lookup. Do not touch payment creation, retries, or the provider SDK version.
+  - speaker: agent
+    text: The provider client cannot cancel a request, so a safe timeout needs one shared change. Approve it, or should I stop here?
+    artifact:
+      title: Scope map
+      status:
+        label: Waiting for approval
+        tone: warning
+      lines:
+        - kind: heading
+          text: Editable
+        - kind: text
+          text: status handler, provider lookup, timeout error, focused tests, error docs
+        - kind: heading
+          text: Inspect only
+        - kind: text
+          text: payment creation, retry policy, error mapping
+        - kind: heading
+          text: Out of scope
+        - kind: text
+          text: provider SDK version
+        - kind: heading
+          text: Needs your approval
+        - kind: text
+          text: an abort signal in the shared HTTP client
 prompt: |
   Work on this bounded deliverable:
 
@@ -24,65 +51,19 @@ prompt: |
   If repository evidence shows that the requested boundary is unsafe or incomplete, stop before expanding it. Explain the evidence, the smallest required deviation, its risks, and the decision I need to make. Report valuable unrelated findings separately without implementing them.
 ---
 
-## Situation
+## What good looks like
 
-A focused change depends on surrounding authentication, persistence, shared utilities, or public contracts. The agent must inspect those areas to work safely, but most of them should not change.
-
-This is where “wide context, narrow authority” becomes operational. Reading a dependency is not permission to refactor it.
-
-## Common mistake
-
-Overly narrow instructions starve the agent of context, producing local patches that break callers or bypass existing ownership. Overly broad instructions turn every discovery into a deliverable and produce large diffs filled with cleanup unrelated to the objective.
-
-The false choice is “inspect only the target file” versus “fix everything nearby.” A strong workflow separates what the agent may understand from what it may modify.
-
-## Agentic approach
-
-Make scope a visible artifact before editing:
-
-- **Editable:** paths and contracts directly required for the requested outcome.
-- **Inspect-only:** dependencies needed to understand correctness but not expected to change.
-- **Out of scope:** areas that should not influence or enter the current work.
-- **Escalate:** a possible supporting change that requires evidence and developer approval before crossing the boundary.
-
-This classification can change only when new evidence demonstrates that the original boundary cannot produce a safe, complete result.
-
-## Before you send the prompt
-
-State the observable deliverable and exclusions. If you already know that a directory, contract, dependency, or migration must remain untouched, say so and explain whether that is a hard constraint or a current expectation.
-
-Tell the agent about pre-existing worktree changes so it can distinguish them from the task. Avoid listing editable files unless ownership is already established.
-
-## Worked example
-
-Suppose the task is: “Add timeout handling to the payment-provider status lookup. Do not change payment creation, retries, or the provider SDK version.”
-
-The agent may need to inspect:
-
-- the public status endpoint
-- the payment service that orchestrates the lookup
-- the provider client and installed SDK contract
-- error mapping and documented exceptions
-- retry configuration
-- tests for status polling and timeout behavior
-
-That does not authorize refactoring payment creation, replacing the HTTP client, normalizing every provider error, or upgrading the SDK.
-
-A useful scope map might classify the status handler, provider lookup method, timeout error contract, focused tests, and error documentation as editable. Payment creation and retry paths are inspect-only because they establish shared behavior. The SDK is out of scope because the request excludes upgrades.
-
-If the provider client has no way to cancel or bound a request, adding safe timeout handling may require a shared client change. The agent should show that evidence and ask whether to expand scope. It should not simulate a timeout with a UI timer while the server request continues consuming resources.
-
-## What a good result contains
-
-- an explicit editable, inspect-only, and out-of-scope map
+- an explicit editable, inspect-only, and out-of-scope map before any edit
 - enough surrounding inspection to understand the complete affected path
-- only required supporting changes, each justified by correctness evidence
-- preservation of unrelated code and worktree changes
-- separately reported opportunities rather than opportunistic fixes
-- a clear stop before material scope expansion
-- a final diff that can be traced back to the task contract
+- only the supporting changes correctness requires, each justified by evidence
+- a clear stop before any material scope expansion, with the decision you need to make
+- unrelated findings reported, not fixed
+- pre-existing work left untouched
+- a final diff you can trace back to the request
 
-## Useful follow-ups
+Grant more authority only after you understand why the current boundary fails and what the smallest safe expansion is.
+
+## If the result drifts
 
 When a broad change is proposed:
 
@@ -98,14 +79,9 @@ When a nearby defect appears:
 
 ## Warning signs
 
-- “while here” refactors
+- "while here" refactors
 - shared modules changed only for stylistic consistency
-- a broad diff justified solely by broad inspection
-- an unsafe local workaround used to avoid reporting a necessary contract change
-- inspect-only dependencies treated as task deliverables
-- unrelated user changes reformatted or overwritten
-- a material scope expansion disclosed only after implementation
-
-## Developer review responsibility
-
-Confirm that the field of view is wide enough for correctness and the edit boundary remains faithful to the objective. Grant additional authority only after understanding why the current boundary fails and what the smallest safe expansion entails.
+- a broad diff justified by broad inspection
+- an unsafe local workaround used to avoid asking for a necessary contract change
+- inspect-only dependencies treated as deliverables
+- a scope expansion disclosed only after it was implemented
