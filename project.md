@@ -799,11 +799,12 @@ The section must:
 
 - keep the brand name lowercase
 - use the approved light- and dark-theme Moldea lockups without modifying their artwork
-- connect the project to durable context, instructions as production assets, and deterministic verification
-- link to `https://moldea.ai/`
+- describe `moldea` with its own canonical category and promise: "Git-native project context for coding agents" and "Keep project knowledge in Git. Bring relevant context into coding-agent work."
+- connect the project to project knowledge in Git, task-relevant context for coding agents, and deterministic checks
+- link to a live `moldea` destination; while `https://moldea.ai/` is under construction, link to the Agent Skill documentation at `https://skill.moldea.ai/`
 - remain an understated evidence section rather than a product advertisement
 
-The section MUST NOT claim customer adoption, general availability, or outcomes that the current Moldea project does not establish. It must not invent a Moldea tagline or use an under-construction product screenshot as evidence.
+The section MUST NOT claim customer adoption, general availability, hosted-platform availability, or outcomes that the current Moldea project does not establish. It must not invent a Moldea tagline or use an under-construction product screenshot as evidence.
 
 ### 13.14 Practical resources
 

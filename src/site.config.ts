@@ -43,7 +43,8 @@ export const SITE_CONFIG = {
     'Plan, challenge, build, and review production software with coding agents while developers retain acceptance and publication authority.',
   language: 'en',
   license: 'MIT',
-  moldeaUrl: 'https://moldea.ai/',
+  // the live moldea destination; moldea.ai itself is under construction
+  moldeaUrl: 'https://skill.moldea.ai/',
   name: 'Agentic Coding',
   navigation: [
     { href: '/', label: 'Agentic Coding' },

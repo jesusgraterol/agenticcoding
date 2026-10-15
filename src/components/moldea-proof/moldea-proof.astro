@@ -3,21 +3,22 @@ import { ArrowUpRight } from '@lucide/astro';
 
 import { SITE_CONFIG } from '../../site.config.ts';
 
+// what moldea demonstrates, following its own product foundation; no hosted-platform claims
 const evidenceItems = [
   {
     description:
-      'Project context, decisions, instructions, and relationships live beside the code they guide.',
-    title: 'Context in Git',
+      'Purpose, constraints, rules, and decisions live beside the code and go through ordinary review.',
+    title: 'Project knowledge in Git',
   },
   {
     description:
-      'Reusable instruction systems are structured, versioned, and kept visible to the team.',
-    title: 'Instructions as production assets',
+      'The open-source Agent Skill loads what the task needs and leaves planning, implementation, review, and publication to your agent and workflow.',
+    title: 'Only relevant context',
   },
   {
     description:
-      'Repository tooling, adversarial tests, and reproducible agent evidence make behavioral alignment inspectable instead of assumed.',
-    title: 'Deterministic verification',
+      'Packages check repository state without model calls, network access, or writes, leaving model judgment for real alignment questions.',
+    title: 'Deterministic checks',
   },
 ] as const;
 ---
@@ -28,7 +29,7 @@ const evidenceItems = [
   <div class="flex flex-col border-b border-border p-6 sm:p-8 lg:border-r lg:border-b-0">
     <div class="flex items-center justify-between gap-4 font-mono text-xs text-muted">
       <span>field-application/01</span>
-      <span>moldea.ai</span>
+      <span>skill.moldea.ai</span>
     </div>
     <div class="flex flex-1 flex-col justify-center py-12 sm:py-16">
       <img
@@ -51,9 +52,11 @@ const evidenceItems = [
         alt=""
         data-moldea-logo="dark"
       />
-      <p class="mt-8 max-w-md text-base leading-7 text-muted">
-        A Git-native platform for structuring project context, building complete agent instructions,
-        and keeping the resulting system aligned with code.
+      <p class="mt-8 max-w-md text-lg leading-7 font-semibold">
+        Git-native project context for coding agents.
+      </p>
+      <p class="mt-2 max-w-md text-base leading-7 text-muted">
+        Keep project knowledge in Git. Bring relevant context into coding-agent work.
       </p>
     </div>
     <a
@@ -62,7 +65,8 @@ const evidenceItems = [
       target="_blank"
       rel="noreferrer"
     >
-      Explore moldea
+      Explore the moldea Agent Skill
+      <span class="sr-only"> (opens in a new tab)</span>
       <ArrowUpRight
         class="size-4"
         aria-hidden="true"

@@ -208,10 +208,10 @@ test.describe('production website', () => {
     await expect(
       page.getByRole('heading', { name: 'Give the work a stronger operating system.' }),
     ).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Explore moldea' })).toHaveAttribute(
-      'href',
-      'https://moldea.ai/',
-    );
+    await expect(
+      page.getByRole('link', { name: 'Explore the moldea Agent Skill (opens in a new tab)' }),
+    ).toHaveAttribute('href', 'https://skill.moldea.ai/');
+    await expect(page.getByText('Git-native project context for coding agents.')).toBeVisible();
     await expect(page.getByText(/Skills run\s+the workflow\./u)).toBeVisible();
 
     const heroSession = page.getByRole('list', {

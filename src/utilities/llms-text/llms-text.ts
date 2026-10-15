@@ -41,7 +41,7 @@ export const buildLlmsText = (recipes: ILlmsRecipe[]): string => {
     '',
     `- [Source repository](${SITE_CONFIG.repositoryUrl}): Source code, content, and issue tracker for this website.`,
     `- [Author](${SITE_CONFIG.author.url}): More work by ${SITE_CONFIG.author.name}.`,
-    `- [Moldea](${SITE_CONFIG.moldeaUrl}): The project work through which these principles were developed and tested.`,
+    `- [moldea Agent Skill](${SITE_CONFIG.moldeaUrl}): Git-native project context for coding agents, from the project work through which these principles were developed and tested.`,
     '',
   ].join('\n');
 };

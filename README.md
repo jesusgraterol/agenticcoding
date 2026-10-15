@@ -12,7 +12,7 @@ The website is organized around one idea: `AGENTS.md` sets the standards, skills
 
 jg-skills is a separate project that owns the installable skills and their full instructions. This site links to it and never duplicates the skill text.
 
-The landing page also identifies [`moldea`](https://moldea.ai/) as the real project work through which these principles were developed and tested.
+The landing page also identifies [`moldea`](https://skill.moldea.ai/), Git-native project context for coding agents, as the real project work through which these principles were developed and tested.
 
 Evidence is agent-operated and developer-governed. The coding agent carries the verification workload through findings-first review, tests, checks, failure investigation, and reproducible reporting tied to an exact repository state. The developer builds the proving system, challenges whether the evidence is independent and sufficient, decides when risk warrants code inspection, and grants publication explicitly, either per change or for an autonomous run.
 
