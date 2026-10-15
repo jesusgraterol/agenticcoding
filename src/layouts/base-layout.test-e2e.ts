@@ -282,9 +282,15 @@ test.describe('production website', () => {
     await page.getByRole('link', { name: /The agent has drifted/u }).click();
 
     await expect(page).toHaveURL('/cookbook/recover-from-agent-drift/');
+    await expect(page.getByText(/^The agent went past a checkpoint/u)).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Example', exact: true })).toBeVisible();
+    await expect(
+      page.getByRole('list', { name: 'Example conversation: Recover from agent drift' }),
+    ).toContainText('Recovery audit');
     await expect(page.getByRole('heading', { name: 'Working prompt' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Worked example' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Useful follow-ups' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'What good looks like' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'If the result drifts' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Warning signs' })).toBeVisible();
   });
 
   test('content pages do not overflow at 320 pixels', async ({ page }) => {

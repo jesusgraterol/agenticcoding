@@ -5,15 +5,20 @@ import { CookbookEntrySchema, TranscriptMessageSchema } from './types.ts';
 
 const BASE_ENTRY = {
   category: 'planning',
-  description: 'Turn a requirement into an implementation strategy.',
+  description: 'Build a verified working map before changing an unfamiliar repository.',
   draft: false,
+  example: [
+    { speaker: 'developer', text: 'Map this repository before I change invitations.' },
+    { speaker: 'agent', text: 'One invitation, traced from the form to the database.' },
+  ],
   featured: true,
   order: 1,
-  prompt: 'Plan this feature.',
+  prompt: 'Help me build a working map of this repository.',
   relatedSlugs: [],
-  slug: 'plan-a-feature',
-  title: 'Plan a feature',
-} as const;
+  situation: 'The repository is new to you.',
+  slug: 'orient-to-a-codebase',
+  title: 'Orient to a codebase',
+};
 
 describe('CookbookEntrySchema', () => {
   test.each([

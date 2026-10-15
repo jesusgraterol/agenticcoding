@@ -69,10 +69,11 @@ The root `/llms.txt` endpoint is generated from the site configuration and publi
 
 Cookbook recipes live in `src/content/cookbook/`. To add one:
 
-1. Create a kebab-case Markdown file in that directory.
-2. Provide the frontmatter required by `src/content.config.ts`, including a unique slug and order.
-3. Add reciprocal `relatedSlugs` where the relationship is useful.
-4. Run `npm run check` to validate the content, generated route, internal links, metadata, and browser behavior.
+1. Create a kebab-case Markdown file in that directory. Add a recipe only for a recurring situation that no workflow skill runs.
+2. Provide the frontmatter required by `src/content.config.ts`, including a unique slug and order, a one-to-three-sentence `situation`, an `example` transcript of at least two messages, and the copyable `prompt`.
+3. Write the body as `## What good looks like`, `## If the result drifts`, and `## Warning signs`, keeping it at or below about 440 words.
+4. Add reciprocal `relatedSlugs` where the relationship is useful.
+5. Run `npm run check` to validate the content, generated route, internal links, metadata, and browser behavior.
 
 ## Project blueprint
 

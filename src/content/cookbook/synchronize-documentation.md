@@ -2,14 +2,40 @@
 title: Synchronize documentation
 description: Update durable documentation from the implemented behavior without turning the task into a documentation rewrite.
 slug: synchronize-documentation
-order: 7
+order: 3
 category: execution
 publishedAt: 2026-08-19
-updatedAt: 2026-08-19
+updatedAt: 2026-10-15
 featured: false
 draft: false
 relatedSlugs:
+  - control-scope
   - refine-coding-instructions
+situation: A change altered a contract, error, setup step, or module responsibility. The work is not done while the repository still describes the previous state, but prose the change did not affect should stay as it is.
+example:
+  - speaker: developer
+    text: Synchronize the documentation for the new audit-log export.
+  - speaker: agent
+    text: Three sources would become false without an update. One stale section is unrelated, so I only reported it.
+    artifact:
+      title: Change-to-document map
+      lines:
+        - kind: heading
+          text: Update
+        - kind: text
+          text: 'API reference source: endpoint, admin permission, CSV fields, row limit'
+        - kind: text
+          text: 'errors/: export timeout and authorization contracts'
+        - kind: text
+          text: 'audit-log README: export reuses the list filters'
+        - kind: heading
+          text: Regenerate, never hand-edit
+        - kind: text
+          text: API reference output from the schemas
+        - kind: heading
+          text: Report only
+        - kind: text
+          text: retention section in docs/operations.md is stale and unrelated
 prompt: |
   Synchronize state-bearing documentation for the current implementation change. First inspect the complete diff, the repository's documentation ownership and generation workflows, and every current-state document directly affected by the changed behavior.
 
@@ -20,62 +46,20 @@ prompt: |
   Verify documentation in both directions: every documented changed contract matches implementation, and every implementation change that developers or operators must know is documented. Run existing documentation, link, build, and generated-reference checks. Report stale documentation outside scope without rewriting it.
 ---
 
-## Situation
+## What good looks like
 
-Implementation changed a behavior, contract, module responsibility, setup step, error, migration, or operational workflow. The code is not complete if the repository still teaches the previous state.
-
-Documentation synchronization is not the same as adding a changelog sentence. It updates the durable sources people and agents rely on to understand or operate the current system.
-
-## Common mistake
-
-Documentation is either skipped as “non-code work” or expanded into a broad cleanup. The first leaves stale contracts. The second rewrites nearby prose that the implementation did not affect, creating a noisy diff and new review risk.
-
-Another failure is editing generated references or protected instruction files directly, only for a later generator or governance workflow to overwrite the result.
-
-## Agentic approach
-
-Map implementation changes to documentation obligations before editing.
-
-Classify each potential update:
-
-- **Required state synchronization:** existing documentation would become false or incomplete without the change.
-- **Required new durable knowledge:** future developers or operators need a new concept or process that has no current home.
-- **Generated or governed:** update the authoritative source or follow the required handoff.
-- **Task detail:** useful in a review summary but not durable enough for repository documentation.
-- **Unrelated stale content:** report separately unless the current change directly affects it.
-
-## Before you send the prompt
-
-Provide the exact implementation scope and verification state. Identify generated docs, protected instruction files, API reference generators, migration tooling, and external documentation systems if known.
-
-If the implementation is still changing, synchronize after its contracts stabilize. Otherwise the agent may document an intermediate state.
-
-## Worked example
-
-Suppose the audit-log export adds a new administrator-only endpoint, a CSV field contract, a synchronous export limit, and a documented timeout error.
-
-The documentation map might require:
-
-- API reference source: endpoint, permission, filters, media type, field order, result limit, and error contract
-- audit-log module documentation: export ownership and reuse of the list filter contract
-- canonical error registry and affected `@throws` entries: stable timeout and authorization behavior
-- operator documentation: request limit and diagnostic signals if exports fail
-- root README blueprint: only if module responsibility or setup meaningfully changed
-
-It should not add internal helper names, narrate the implementation sequence, or rewrite unrelated audit-log prose. If API reference is generated from schemas, the agent should update schemas and generator inputs, then regenerate and review the artifact through the established command.
-
-## What a good result contains
-
-- a traceable map from changed behavior to documentation owners
-- direct updates to every affected current-state contract
-- no task diary, speculative roadmap, or unrelated prose cleanup
+- a traceable map from each changed behavior to the document that owns it
+- every affected current-state contract updated
 - authoritative sources updated instead of generated output
-- protected or external documentation handled through the required workflow
-- examples and commands verified against current behavior
-- link, build, generator, and documentation checks actually run when available
-- stale out-of-scope documentation reported separately
+- protected or external documentation handled through its required workflow
+- no task diary, speculative roadmap, or rewrite of unaffected prose
+- examples and commands checked against current behavior
+- documentation, link, and generator checks actually run
+- stale, out-of-scope documentation reported separately
 
-## Useful follow-ups
+Review externally visible contracts and operating guidance with the same care as code. Stale instructions cause failures even when the implementation is correct.
+
+## If the result drifts
 
 To find missing obligations:
 
@@ -83,23 +67,18 @@ To find missing obligations:
 
 To reduce noise:
 
-> Remove documentation edits that only restate implementation details or improve unrelated prose. Keep changes required to describe the current system truthfully.
+> Remove documentation edits that only restate implementation details or improve unrelated prose. Keep the changes required to describe the current system truthfully.
 
 To audit both directions:
 
-> Compare the final implementation with affected documentation in both directions. Find documented behavior no longer reachable and reachable durable behavior not yet documented.
+> Compare the final implementation with the affected documentation in both directions. Find documented behavior that is no longer reachable and reachable behavior that is not yet documented.
 
 ## Warning signs
 
-- “no documentation needed” without inspecting current state-bearing sources
-- a changelog entry used as a substitute for contract documentation
+- "no documentation needed" without inspecting current-state sources
+- a changelog entry used instead of contract documentation
 - generated files edited directly
-- protected instructions changed outside their handoff workflow
-- internal class and helper details copied into public docs
-- examples or commands added without verification
+- protected instructions changed outside their handoff
+- internal helper names copied into public docs
 - unrelated stale documentation rewritten because it was nearby
 - documentation checks claimed but not run
-
-## Developer review responsibility
-
-Confirm which knowledge must remain durable and who owns it. Review externally visible contracts and operational guidance with the same care as production code, because stale instructions can create failures even when the implementation is correct.
