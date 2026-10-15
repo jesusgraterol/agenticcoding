@@ -32,7 +32,7 @@ When no skill is invoked, determine whether the developer requested:
 - a review
 - an implementation or source-code change
 
-Do not modify files for an answer, investigation, planning-only, breakdown-only, or review-only request, except for planning artifacts written by an invoked planning or execution skill. That narrow exception does not authorize changes to implementation files, ordinary documentation, or Git state.
+Do not modify files for an answer, investigation, planning-only, breakdown-only, or review-only request.
 
 Treat the developer's stated objective, constraints, exclusions, decisions, and acceptance criteria as the task contract. Do not silently reinterpret the request into a broader or different task.
 
@@ -133,7 +133,7 @@ When two or more viable approaches differ materially in complexity, guarantees, 
 - Fail loudly and clearly when an assumption is violated.
 - Use the project's established error types. Raise specific, actionable errors, never bare strings or loosely shaped values.
 - Let errors propagate unless you can recover from them or translate them into a clearer error at a boundary. Do not catch an error only to restate it.
-- When translating an error, keep the original as its cause and include its message after operation-specific context.
+- When translating an error, keep the original as its cause and include its message after operation-specific context, unless that would expose internal or sensitive details across that boundary.
 - Never swallow errors or catch everything only to log and continue.
 - Do not expose internal errors, stack traces, or provider details to users.
 - Keep documented error contracts, such as codes, messages, and the errors each public function can raise, synchronized with the implementation in both directions.
@@ -235,7 +235,7 @@ None of these outcomes authorizes a commit, push, merge, deployment, release, ex
 
 Treat cleanup as part of finishing the task. Before creating temporary files or starting services, know how they will be removed or stopped.
 
-- Stop the servers, watchers, browsers, and other processes the task started, and confirm they stopped.
+- Stop the servers, watchers, browsers, and other processes the task started, and confirm they stopped. Keep one running only when the developer asks, and report how to stop it.
 - Delete scratch scripts, downloads, logs, and generated verification output once they are no longer needed.
 - Preserve deliverables, planning records, evidence needed to investigate unresolved failures, and anything the task did not create.
 - Never clean up broadly: no repository-wide cleaning, killing processes by name or port, or pruning shared resources.
@@ -257,7 +257,7 @@ Before a high-blast-radius change, explain why it is required, what contracts or
 
 Unless the repository documents a narrower set of supported platforms, assume Windows, macOS, and Linux.
 
-- Name new files and directories with lowercase ASCII letters, digits, `-`, `_`, and `.`, following the project's own naming conventions. Avoid spaces, reserved characters, Windows reserved names such as `con` or `nul`, names that differ only by case, and very long paths.
+- Follow the project's naming conventions for new files and directories. Where they leave the choice open, use lowercase ASCII letters, digits, `-`, `_`, and `.`. Always avoid spaces, reserved characters, Windows reserved names such as `con` or `nul`, names that differ only by case, and very long paths.
 - Build paths with the runtime's path APIs instead of hard-coded separators, drive letters, or home and temporary directories.
 - Treat user-supplied paths as untrusted. Reject absolute paths and `..` traversal where a relative path is expected, and confirm that the resolved path stays inside its intended root before reading, writing, or deleting.
 - Prefer scripts written in the project's main language over shell-specific syntax for workflows that must run everywhere. Start processes with an argument list rather than a shell command string, and never interpolate untrusted values into a shell command.
@@ -285,4 +285,4 @@ Implementation, plan approval, milestone completion, review readiness, and devel
 
 Publication requires an explicit developer request or an invoked skill whose workflow includes it, such as an autonomous run that reviews and publishes each milestone within its stopping conditions. That authority covers only the actions, destination, and scope that the request or skill defines. Staging, signing, history inspection, remote selection, and destination follow repository policy or the invoked skill.
 
-Rules that limit review and publication to the current task's files belong to the skills that perform them. This foundation does not restate them.
+Rules that limit review and publication to the current task's files belong to the skills that perform them. These instructions do not restate them.

@@ -4,7 +4,7 @@ description: Give the agent enough context to understand the full path without a
 slug: control-scope
 order: 2
 category: execution
-publishedAt: 2026-08-19
+publishedAt: 2026-10-15
 updatedAt: 2026-10-15
 featured: false
 draft: false

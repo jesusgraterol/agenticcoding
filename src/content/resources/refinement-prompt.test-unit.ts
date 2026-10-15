@@ -60,5 +60,12 @@ describe('refinement prompt governance contract', () => {
     expect(prompt).toContain('retained as the task record');
     expect(prompt).toContain('start from a test failing for the reported reason');
     expect(prompt).toContain('whenever a root cause is a repeatable pattern');
+    expect(prompt).toContain('candor without flattery');
+    expect(prompt).toContain('presented as a few options for the developer to choose');
+    expect(prompt).toContain('error handling that fails loudly, preserves causes');
+    expect(prompt).toContain('growth-capable collections bounded at the source');
+    expect(prompt).toContain('cleanup of task-owned processes and temporary files');
+    expect(prompt).toContain('portable paths and scripts');
+    expect(prompt).toContain('coding-instruction files changed only on explicit request');
   });
 });

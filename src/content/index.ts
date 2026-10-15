@@ -7,4 +7,4 @@ export {
 } from './types.ts';
 
 // types
-export type { IArtifact, IArtifactLine, ITranscriptMessage } from './types.ts';
+export type { IArtifact, IArtifactLine, ICookbookCategory, ITranscriptMessage } from './types.ts';

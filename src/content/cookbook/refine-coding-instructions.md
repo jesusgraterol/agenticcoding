@@ -4,7 +4,7 @@ description: Strengthen an existing instruction system without erasing repositor
 slug: refine-coding-instructions
 order: 6
 category: instructions
-publishedAt: 2026-08-19
+publishedAt: 2026-10-15
 updatedAt: 2026-10-15
 featured: false
 draft: false

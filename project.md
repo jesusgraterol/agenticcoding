@@ -890,7 +890,7 @@ Only when no skill is invoked, determine whether the developer requested:
 - a review
 - an implementation
 
-Do not modify files for a planning-only or review-only request, except for planning artifacts written by an invoked planning or execution skill.
+Do not modify files for a planning-only or review-only request.
 
 Treat the stated objective, constraints, exclusions, and acceptance criteria as the task contract.
 
@@ -963,7 +963,7 @@ For substantial work:
 
 - fail loudly when an assumption is violated, using the project's established error types
 - let errors propagate unless they can be recovered from or translated at a boundary
-- keep the original error as the cause when translating, and never swallow errors
+- keep the original error as the cause when translating, without exposing internal details across that boundary, and never swallow errors
 - keep documented error contracts synchronized with the implementation
 
 #### Resource efficiency
@@ -1025,7 +1025,7 @@ For substantial work:
 
 #### Task cleanup
 
-- stop the processes the task started and delete its scratch output once it is no longer needed
+- stop the processes the task started unless the developer asks to keep them, and delete its scratch output once it is no longer needed
 - preserve deliverables, planning records, failure evidence, and anything the task did not create
 - never clean up broadly, and report anything that could not be cleaned up
 
@@ -1039,7 +1039,7 @@ For substantial work:
 #### Portable paths and scripts
 
 - assume Windows, macOS, and Linux unless the repository documents otherwise
-- use portable file names and the runtime's path APIs
+- follow the project's naming conventions, use portable names where they leave the choice open, and build paths with the runtime's path APIs
 - treat user-supplied paths as untrusted and keep resolved paths inside their intended root
 - prefer scripts in the project's main language, start processes without a shell, and never interpolate untrusted values into shell commands
 
@@ -1260,13 +1260,13 @@ The prompt MUST ask the coding agent to assess and, when appropriate, introduce 
 9. wide context and narrow authority
 10. reuse of existing architecture and ownership
 11. avoidance of adjacent refactors and duplicate implementations
-12. meaningful tests and self-correction
+12. meaningful tests and self-correction, with independent evidence where tests and implementation may share an assumption
 13. test-failure triage instead of blindly changing expectations
 14. adversarial review
 15. preservation of developer-authored and pre-existing work
 16. security, privacy, authorization, data integrity, and destructive-action safety
 17. deliberate handling of high-blast-radius changes and conditional production safeguards
-18. state-bearing documentation synchronization and instruction governance
+18. state-bearing documentation synchronization, with coding-instruction files changed only on explicit request
 19. unambiguous skill or command invocation, permissions, approval boundaries, and stopping conditions
 20. transparent assumptions, blockers, skipped checks, and uncertainty
 21. progressive delegation after the project has established clear rails
@@ -1274,6 +1274,12 @@ The prompt MUST ask the coding agent to assess and, when appropriate, introduce 
 23. planning records retained as the task record
 24. bug fixes that start from a test failing for the reported reason
 25. a search for other instances of a repeatable root cause
+26. evidence over agreement: candor without flattery, invented objections, or scope expansion
+27. rigor proportional to the consequences of failure, with materially different approaches presented as a few options for the developer to choose
+28. error handling that fails loudly, preserves causes, never swallows errors, and keeps documented error contracts current
+29. resource efficiency, with growth-capable collections bounded at the source and caching only where reuse justifies it
+30. cleanup of task-owned processes and temporary files without broad or destructive cleanup
+31. portable paths and scripts, with untrusted paths kept inside their intended root
 
 The prompt must not blindly impose:
 

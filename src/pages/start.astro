@@ -10,6 +10,7 @@ const { text } = await loadResource(resourceId);
 const resourceConfig = RESOURCE_CONFIG[resourceId];
 const publishedAt = new Date(`${resourceConfig.publishedAt}T00:00:00.000Z`);
 const updatedAt = new Date(`${resourceConfig.updatedAt}T00:00:00.000Z`);
+const hasBeenUpdated = publishedAt.getTime() !== updatedAt.getTime();
 ---
 
 <ContentLayout
@@ -39,7 +40,13 @@ const updatedAt = new Date(`${resourceConfig.updatedAt}T00:00:00.000Z`);
     <span>
       Published <time datetime={resourceConfig.publishedAt}>{resourceConfig.publishedAt}</time>
     </span>
-    <span>Updated <time datetime={resourceConfig.updatedAt}>{resourceConfig.updatedAt}</time></span>
+    {
+      hasBeenUpdated && (
+        <span>
+          Updated <time datetime={resourceConfig.updatedAt}>{resourceConfig.updatedAt}</time>
+        </span>
+      )
+    }
   </div>
 
   <section class="py-12 sm:py-16">

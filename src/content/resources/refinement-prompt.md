@@ -197,13 +197,13 @@ Introduce or strengthen these values only in forms that fit the repository:
 9. wide context and narrow modification authority
 10. reuse of existing architecture, abstractions, and ownership boundaries
 11. avoidance of adjacent refactors, speculative abstractions, and duplicate implementations
-12. meaningful tests, verification, and self-correction
+12. meaningful tests, verification, and self-correction, with independent evidence where tests and implementation may share an assumption
 13. test-failure triage before changing production code or expectations
 14. adversarial, findings-first review
 15. preservation of developer-authored, unrelated, and pre-existing work
 16. security, privacy, authorization, data integrity, and safe handling of destructive actions
 17. deliberate handling of high-blast-radius changes and domain-specific production safeguards
-18. synchronization of state-bearing documentation and governance files with current behavior
+18. synchronization of state-bearing documentation with current behavior, with coding-instruction files changed only on explicit request
 19. unambiguous skill or command invocation, permissions, approval boundaries, and stopping conditions
 20. transparent assumptions, blockers, skipped checks, deviations, and uncertainty
 21. progressively broader delegation only after the project establishes clear rails
@@ -211,6 +211,12 @@ Introduce or strengthen these values only in forms that fit the repository:
 23. planning records that change only through an invoked planning or execution workflow and are retained as the task record
 24. bug fixes that start from a test failing for the reported reason, with expected values from an independent source
 25. a search for other instances whenever a root cause is a repeatable pattern
+26. evidence over agreement: candor without flattery, invented objections, or scope expansion
+27. rigor proportional to the consequences of failure, with materially different approaches presented as a few options for the developer to choose
+28. error handling that fails loudly, preserves causes, never swallows errors, and keeps documented error contracts current
+29. resource efficiency, with growth-capable collections bounded at the source and caching only where reuse justifies it
+30. cleanup of task-owned processes and temporary files without broad or destructive cleanup
+31. portable paths and scripts, with untrusted paths kept inside their intended root
 
 Do not blindly impose:
 

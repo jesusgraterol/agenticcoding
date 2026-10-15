@@ -2,7 +2,12 @@
 import { ArrowRight } from '@lucide/astro';
 
 import ContentLayout from '../../layouts/content-layout.astro';
-import { calculateReadingTime, loadPublishedRecipes } from '../../utilities/cookbook/index.ts';
+import type { ICookbookCategory } from '../../content/index.ts';
+import {
+  calculateReadingTime,
+  COOKBOOK_TRACKS,
+  loadPublishedRecipes,
+} from '../../utilities/cookbook/index.ts';
 
 const recipes = await loadPublishedRecipes();
 
@@ -29,29 +34,10 @@ const startingPoints = [
   },
 ] as const;
 
-const tracks = [
-  {
-    category: 'planning',
-    description: 'Map the system before deciding where a change belongs.',
-    label: 'Understand the system',
-  },
-  {
-    category: 'execution',
-    description:
-      'Keep implementation inside its scope, keep documentation current, and recover when work drifts.',
-    label: 'Execute with control',
-  },
-  {
-    category: 'review',
-    description: 'Demand test evidence that matches the real production risks.',
-    label: 'Verify and correct',
-  },
-  {
-    category: 'instructions',
-    description: 'Improve the durable rules that shape every future agent conversation.',
-    label: 'Govern the workflow',
-  },
-] as const;
+const tracks = (Object.keys(COOKBOOK_TRACKS) as ICookbookCategory[]).map((category) => ({
+  ...COOKBOOK_TRACKS[category],
+  category,
+}));
 ---
 
 <ContentLayout

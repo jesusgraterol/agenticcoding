@@ -10,14 +10,14 @@ export type IResourceId = (typeof RESOURCE_IDS)[keyof typeof RESOURCE_IDS];
 export const RESOURCE_CONFIG = {
   [RESOURCE_IDS.AgentsFoundation]: {
     fileName: 'AGENTS.md',
-    publishedAt: '2026-08-19',
+    publishedAt: '2026-10-15',
     rawPath: '/AGENTS.md',
     updatedAt: '2026-10-15',
     version: '1.0.0',
   },
   [RESOURCE_IDS.RefinementPrompt]: {
     fileName: 'refine.txt',
-    publishedAt: '2026-08-19',
+    publishedAt: '2026-10-15',
     rawPath: '/refine.txt',
     updatedAt: '2026-10-15',
     version: '1.0.0',

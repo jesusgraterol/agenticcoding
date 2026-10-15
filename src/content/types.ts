@@ -58,3 +58,5 @@ export const CookbookEntrySchema = z
     message: 'updatedAt must not precede publishedAt',
     path: ['updatedAt'],
   });
+
+export type ICookbookCategory = z.infer<typeof CookbookEntrySchema>['category'];
