@@ -2,6 +2,10 @@
 
 `/docs` is reserved for essential, durable project concepts and processes. This page records the provenance and usage boundaries for copied brand assets.
 
+## JG mark
+
+`src/components/jg-skills-mark/jg-skills-mark.astro` is an unchanged copy of the `JG/` monogram that the sibling jg-skills website draws with its theme tokens. The monogram itself comes from `jesusgraterol.dev/public/favicon.svg`. The homepage's jg-skills bridge shows it only beside the `jg-skills` label. Do not alter its letterforms or the accent slash.
+
 ## Coding-agent marks
 
 The assets under `public/coding-agents/` identify compatible coding-agent hosts. Their presence does not imply vendor endorsement, partnership, or sponsorship. Keep their geometry unchanged and preserve intrinsic dimensions.
