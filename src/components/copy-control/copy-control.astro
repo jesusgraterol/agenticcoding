@@ -59,6 +59,11 @@ const statusId = `${sourceId}-copy-status`;
         const label = control.querySelector<HTMLElement>('[data-copy-label]');
         const status = document.getElementById(`${sourceId ?? ''}-copy-status`);
 
+        // hold the resting width, so a shorter status label never reflows the layout around it
+        if (!control.style.minWidth) {
+          control.style.minWidth = `${control.getBoundingClientRect().width}px`;
+        }
+
         try {
           if (!source || !navigator.clipboard) {
             throw new Error('Clipboard writing is unavailable.');
@@ -78,6 +83,7 @@ const statusId = `${sourceId}-copy-status`;
 
         window.setTimeout(() => {
           delete control.dataset['copyState'];
+          control.style.removeProperty('min-width');
 
           if (label) label.textContent = defaultLabel;
           if (status) status.textContent = '';

@@ -29,7 +29,7 @@ test.describe('skill pipeline', () => {
     const shipStage = page.locator('[data-pipeline-stage="ship"]');
     const supervisedNote = shipStage.getByText('You run these yourself when you are ready.');
     const autonomousNote = shipStage.getByText(
-      'jg-execute autonomous runs these after each milestone, within its stop conditions.',
+      'jg-execute auto runs these after each milestone, within its stop conditions.',
     );
     const executeLink = page.locator(
       '[data-pipeline-stage="build"] a[href="/workflow/#jg-execute"]',
@@ -46,7 +46,7 @@ test.describe('skill pipeline', () => {
     await expect(page.getByRole('radio', { name: 'Autonomous' })).toBeChecked();
     await expect(autonomousNote).toBeVisible();
     await expect(supervisedNote).toBeHidden();
-    await expect(executeLink).toHaveAccessibleName('jg-execute autonomous');
+    await expect(executeLink).toHaveAccessibleName('jg-execute auto');
     await expect(
       page.getByText('In an autonomous run, the review gate settles each milestone'),
     ).toBeVisible();

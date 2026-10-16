@@ -12,6 +12,9 @@ const WORKFLOW_SKILLS = [
   'jg-push',
 ] as const;
 
+// skills that support the workflow without being one of its steps, in display order
+const SUPPORTING_SKILLS = ['jg-command', 'jg-feedback', 'jg-session'] as const;
+
 test.describe('workflow guide', () => {
   test('presents every skill step with a link to its jg-skills page', async ({ page }) => {
     await page.goto('/workflow/');
@@ -40,8 +43,30 @@ test.describe('workflow guide', () => {
       'npx skills add jesusgraterol/jg-skills --skill "*" -y',
     );
     await expect(
-      page.getByText('Explicit-only invocation is verified with Claude Code and Codex.'),
+      page.getByText(
+        'Explicit-only invocation and implicit loading are verified with Claude Code and Codex.',
+      ),
     ).toBeVisible();
+  });
+
+  test('lists the supporting skills with a link to each jg-skills page', async ({ page }) => {
+    await page.goto('/workflow/');
+
+    const skills = page.locator('#more-skills').getByRole('listitem');
+
+    await expect(skills).toHaveCount(SUPPORTING_SKILLS.length);
+
+    for (const [index, skill] of SUPPORTING_SKILLS.entries()) {
+      const link = skills
+        .nth(index)
+        .getByRole('link', { name: `${skill} on jg-skills (opens in a new tab)` });
+
+      await expect(link).toHaveAttribute(
+        'href',
+        `https://jg-skills.jesusgraterol.dev/skills/${skill}/`,
+      );
+      await expect(link).toHaveAttribute('target', '_blank');
+    }
   });
 
   test('switches jg-execute modes by keyboard while both stay in the page', async ({ page }) => {

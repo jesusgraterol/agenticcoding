@@ -107,9 +107,9 @@ The `/docs` directory is reserved for essential, durable project concepts and pr
 
 The semantic color tokens in `src/styles/global.css` derive from the Moldea base palette and include accessible light and dark modes. The site uses the variable Ubuntu Sans package locally rather than loading a remote webfont.
 
-The Agentic Coding logo is a code-mark SVG with a wordmark variant. The paired Moldea lockups under `public/moldea/` are unmodified copies of the authoritative theme assets from the sibling Moldea app UI package. The open-graph image is committed at `public/og/agentic-coding.png` so normal builds remain deterministic. After changing its template, regenerate it with `npm run assets:generate` and commit both the template and PNG.
+The Agentic Coding logo is a code-mark SVG with a wordmark variant. The homepage's jg-skills bridge also shows the `JG/` monogram that the jg-skills website uses. The paired Moldea lockups under `public/moldea/` are unmodified copies of the authoritative theme assets from the sibling Moldea app UI package. The open-graph image is committed at `public/og/agentic-coding.png` so normal builds remain deterministic. After changing its template, regenerate it with `npm run assets:generate` and commit both the template and PNG.
 
-Coding-agent marks are copied from the Moldea skill project. Their origin and use are recorded in `docs/asset-attribution.md`.
+Coding-agent marks are copied from the Moldea skill project. Their origin and use, and the `JG/` monogram's, are recorded in `docs/asset-attribution.md`.
 
 ## Verification
 

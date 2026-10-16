@@ -13,14 +13,14 @@ export const RESOURCE_CONFIG = {
     publishedAt: '2026-10-15',
     rawPath: '/AGENTS.md',
     updatedAt: '2026-10-15',
-    version: '1.0.0',
+    version: '1.1.0',
   },
   [RESOURCE_IDS.RefinementPrompt]: {
     fileName: 'refine.txt',
     publishedAt: '2026-10-15',
     rawPath: '/refine.txt',
     updatedAt: '2026-10-15',
-    version: '1.0.0',
+    version: '1.1.0',
   },
 } as const satisfies Record<
   IResourceId,
@@ -71,7 +71,8 @@ export const SITE_CONFIG = {
     installCommand: 'npx skills add jesusgraterol/jg-skills --skill "*" -y',
     name: 'jg-skills',
     url: 'https://jg-skills.jesusgraterol.dev/',
-    verificationNote: 'Explicit-only invocation is verified with Claude Code and Codex.',
+    verificationNote:
+      'Explicit-only invocation and implicit loading are verified with Claude Code and Codex.',
   },
   themeColors: {
     dark: '#1e2939',
@@ -127,7 +128,8 @@ export const WORKFLOW_STEPS = [
   {
     marker: undefined,
     mayChange: 'Writes plan.md under coding-agent-planning/ and removes a stale milestones.md.',
-    purpose: 'Creates or revises an implementation-ready plan for the change under discussion.',
+    purpose:
+      'Settles your decisions with you, then creates or revises an implementation-ready plan.',
     skill: 'jg-plan',
     stage: 'plan',
   },
@@ -149,9 +151,8 @@ export const WORKFLOW_STEPS = [
   {
     marker: undefined,
     mayChange:
-      "Code and milestone status lines. In autonomous mode it also commits and pushes each milestone's files.",
-    purpose:
-      'Builds an agreed task, a plan, or its milestones; supervised by default, or autonomous.',
+      "Code, milestone status lines, and the overview table. In autonomous mode it also commits and pushes each milestone's files.",
+    purpose: 'Builds an agreed task, a plan, or its milestones; supervised by default, or auto.',
     skill: 'jg-execute',
     stage: 'build',
   },
@@ -174,7 +175,8 @@ export const WORKFLOW_STEPS = [
   {
     marker: undefined,
     mayChange: "No files. With a target branch, it may refresh that branch's remote-tracking ref.",
-    purpose: "Reviews the current task's uncommitted changes, or the branch against a target.",
+    purpose:
+      "Reviews the task's changes and how they follow its plan, or the branch against a target.",
     skill: 'jg-review',
     stage: 'ship',
   },
@@ -193,6 +195,13 @@ export type IWorkflowSkill = (typeof WORKFLOW_STEPS)[number]['skill'];
 
 // skills that support the workflow without being one of its steps
 export const SUPPORTING_SKILLS = [
+  {
+    mayChange:
+      'Nothing until you pick; then runs that command. Irreversible ones ask again; sudo ones are printed.',
+    purpose:
+      'Turns a task into a few checked shell commands for your machine and explains each one.',
+    skill: 'jg-command',
+  },
   {
     mayChange: 'Nothing.',
     purpose: 'Assesses feedback independently and recommends what to adopt, reject, or adjust.',

@@ -207,9 +207,9 @@ export const SUPERVISED_EXECUTE_EXAMPLE: ITranscriptMessage[] = [
   },
 ];
 
-// jg-execute autonomous reviews and publishes every remaining milestone in order
+// jg-execute auto reviews and publishes every remaining milestone in order
 export const AUTONOMOUS_EXECUTE_EXAMPLE: ITranscriptMessage[] = [
-  { invocation: 'jg-execute autonomous', speaker: 'developer' },
+  { invocation: 'jg-execute auto', speaker: 'developer' },
   {
     artifact: {
       lines: [

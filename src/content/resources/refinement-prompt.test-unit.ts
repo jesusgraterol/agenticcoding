@@ -50,6 +50,17 @@ describe('refinement prompt governance contract', () => {
     expect(prompt).toContain(
       'instruction files do not duplicate or contradict workflows that installed skills define',
     );
+    expect(prompt).toContain('installed implicit skills that hold stack-specific standards');
+    expect(prompt).toContain(
+      'the instructions state how they rank against installed implicit skills and do not restate a skill',
+    );
+  });
+
+  test('collects material decisions in one numbered message', () => {
+    expect(prompt).toContain(
+      'Ask about the decisions that would materially change the proposal in one numbered message, each question with your recommended answer',
+    );
+    expect(prompt).not.toContain('one focused question at a time');
   });
 
   test('injects explicit publication authority and the current engineering values', () => {
@@ -67,5 +78,22 @@ describe('refinement prompt governance contract', () => {
     expect(prompt).toContain('cleanup of task-owned processes and temporary files');
     expect(prompt).toContain('portable paths and scripts');
     expect(prompt).toContain('coding-instruction files changed only on explicit request');
+    expect(prompt).toContain('or as a necessary step of an explicitly requested delivery');
+    expect(prompt).toContain(
+      'implicit skills that hold stack-specific standards, read when they match',
+    );
+    expect(prompt).toContain("the repository's testing guidelines first, with floors");
+    expect(prompt).toContain('deterministic tests that wait for conditions');
+    expect(prompt).toContain('validated at its boundary with the repository');
+    expect(prompt).toContain('no guessed or placeholder contracts');
+    expect(prompt).toContain('at-least-once delivery, authenticated payloads, and bounded retries');
+  });
+
+  test('does not impose a schema library, test runner, timing values, or named skills', () => {
+    expect(prompt).toContain(
+      '- a specific schema library, test runner, or retry and timeout values',
+    );
+    expect(prompt).toContain('- specific named skills');
+    expect(prompt).not.toMatch(/jg-/u);
   });
 });

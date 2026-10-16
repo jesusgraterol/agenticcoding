@@ -245,7 +245,7 @@ The coding agent must assume the implementation may contain mistakes and inspect
 Publication is not a sixth lifecycle stage. It requires its own explicit grant, given in one of two ways:
 
 - **per change:** the developer invokes `jg-push` after `jg-review`
-- **per run:** the developer invokes `jg-execute autonomous`, which reviews and publishes each milestone and stops when a decision, scope change, repeated failure, incomplete review, merge conflict, or failed push needs the developer
+- **per run:** the developer invokes `jg-execute auto`, which reviews and publishes each milestone and stops when a decision, scope change, repeated failure, incomplete review, merge conflict, or failed push needs the developer
 
 Implementation authority, plan approval, and milestone completion never imply publication. Staging, signing, and destination follow the repository's own policy or the invoked skill.
 
@@ -658,7 +658,7 @@ The visualization MUST expose five ordered stages:
 - avoid adjacent cleanup
 - verify each logical step
 - stop before beginning the next unauthorized milestone
-- run supervised by default; when the developer invokes `jg-execute autonomous`, build, review, and publish each remaining milestone within the run's stop conditions
+- run supervised by default; when the developer invokes `jg-execute auto`, build, review, and publish each remaining milestone within the run's stop conditions
 
 #### Review
 
@@ -679,7 +679,7 @@ Review must lead to one of three explicit outcomes:
 - **Continue** when an accepted milestone is complete and another authorized slice remains
 - **Complete** when the accepted state satisfies the task contract and no implementation work remains
 
-Publication MUST appear beside this sequence as an explicit grant, not as a numbered stage. A supervised/autonomous toggle MUST show who runs `jg-review` and `jg-push` in each mode: the developer invokes them in supervised mode, and `jg-execute autonomous` runs them after each milestone once the developer has granted the run. Publication must never appear to follow automatically from Review, plan approval, implementation authority, or milestone completion.
+Publication MUST appear beside this sequence as an explicit grant, not as a numbered stage. A supervised/autonomous toggle MUST show who runs `jg-review` and `jg-push` in each mode: the developer invokes them in supervised mode, and `jg-execute auto` runs them after each milestone once the developer has granted the run. Publication must never appear to follow automatically from Review, plan approval, implementation authority, or milestone completion.
 
 The toggle MUST work without JavaScript, keep both modes in the static HTML, and remain keyboard operable.
 
@@ -802,6 +802,8 @@ The homepage MUST conclude the main narrative with four clear destinations:
 - **Refine existing instructions** → `/refine`
 - **Handle the harder moments** → `/cookbook`
 
+After these destinations, a jg-skills bridge section mirrors the `AGENTS.md` section on the jg-skills site. It shows `AGENTS.md` setting the standards and jg-skills running the workflow, each beside its project's mark, with a "Browse the skills" card linking to the jg-skills skill catalog and an "Install them" card holding the copyable install command and the verification note.
+
 ### 13.15 Author section and footer
 
 The footer MUST include:
@@ -882,6 +884,8 @@ When a skill is invoked:
 - apply the rest of the foundation to the work the skill performs
 - do not ask for confirmation before actions the skill already authorizes
 
+Loading an implicit skill is not an invocation, and naming one only loads its guidance; the accompanying text is classified as an ordinary request.
+
 Only when no skill is invoked, determine whether the developer requested:
 
 - an explanation or investigation
@@ -892,9 +896,13 @@ Only when no skill is invoked, determine whether the developer requested:
 
 Do not modify files for a planning-only or review-only request.
 
+Describing a change, reporting a defect, stating a preference, asking for an opinion, or requesting a plan does not by itself authorize implementation; a clear action request does. Intent is reassessed with each message, and doubt about authorization is never resolved by assuming it.
+
 Treat the stated objective, constraints, exclusions, and acceptance criteria as the task contract.
 
-Implementation authority does not automatically authorize commits, pushes, pull requests, deployments, releases, migrations in production or shared environments, external messages, or account and service changes.
+Material ambiguities are asked about together in one numbered message, each with a recommended answer. Safe assumptions settle details of authorized work, never whether work is authorized.
+
+Implementation authority does not automatically authorize commits, pushes, pull requests, deployments, releases, migrations in production or shared environments, external messages, or account and service changes. A delivery the developer explicitly requested, such as opening a pull request, also covers the commits and pushes it requires.
 
 #### Decision precedence and instruction scope
 
@@ -904,10 +912,19 @@ The foundation MUST establish this conflict order:
 2. safety, security, privacy, data integrity, and production correctness
 3. existing behavior, public contracts, and established architecture
 4. repository tooling, tests, configuration, and framework conventions
-5. general foundation guidance
+5. general foundation guidance and the implicit skills that match the task
 6. official documentation matching the installed version
 
+For the factual behavior of an installed dependency, its official documentation for the installed major version overrides examples and general preferences. A rule that looks outdated for the installed version is reported with the current guidance.
+
 The foundation MUST require agents to follow every instruction file applicable to the affected path and respect more specific scoped instructions within their scope.
+
+#### Implicit skills
+
+- implicit skills hold stack-specific standards, not workflows, and the foundation names no specific skill
+- read every installed implicit skill that matches the task before planning, writing, or reviewing, and say so when a matching skill is unavailable
+- loading or naming one never authorizes an action
+- they rank with the foundation's general guidance, which wins except where a skill states an exception for its own area
 
 #### Codebase-first workflow
 
@@ -931,7 +948,7 @@ For substantial work:
 
 #### Planning records
 
-- change planning files only through an invoked planning or execution skill
+- change planning files only through an invoked planning or execution skill, except a named milestone's status when the developer asks for that milestone without invoking a skill
 - retain planning files as the task record after completion
 - treat another task's planning files as history, not evidence of current behavior
 
@@ -952,6 +969,8 @@ For substantial work:
 - avoid parallel implementations and duplicate ownership
 - place new behavior with the module that owns it
 - prefer the smallest correct solution consistent with the codebase
+- fit new code to the closest stable local pattern, and use the form the installed version documents as current in code the task adds or rewrites, without migrating existing code
+- add dependencies only when justified, with the existing package manager, lockfile, and version-pinning convention
 
 #### Proportional rigor and tradeoffs
 
@@ -965,12 +984,19 @@ For substantial work:
 - let errors propagate unless they can be recovered from or translated at a boundary
 - keep the original error as the cause when translating, without exposing internal details across that boundary, and never swallow errors
 - keep documented error contracts synchronized with the implementation
+- never emit guessed or placeholder contracts; report a contract that cannot be established as a blocker
+
+#### Validation and schemas
+
+- validate external and untrusted data at its boundary with the repository's schema or validation library
+- derive types from schemas and reuse existing ones
+- choose strictness for compatibility, and model nullable and optional values explicitly
 
 #### Resource efficiency
 
 - consider how cost grows with input size, frequency, and concurrency
 - make operations efficient before caching them, and cache only with a defined source of truth, keys, isolation, freshness, invalidation, and size limits
-- bound or paginate growth-capable collections at the source, preferring cursor-based pagination for new database-backed lists
+- bound or paginate growth-capable collections at the source, preferring keyset or seek-backed cursor pagination for new database-backed lists
 
 #### Coherent execution
 
@@ -983,8 +1009,12 @@ For substantial work:
 
 #### Tests and self-correction
 
+- follow the repository's testing guidelines on every topic they cover, then its established test conventions, with the foundation's testing rules as defaults
+- hold three floors regardless: never weaken a test to get a passing run, report material risk a repository rule leaves untested, and keep tests out of production artifacts
 - add or update tests when they provide meaningful confidence
-- choose the test level that exercises the real correctness property
+- choose the test level that exercises the real correctness property, combining levels when they protect distinct risks
+- mock only external boundaries that cannot be exercised safely, and never drop essential tests for CI cost
+- keep tests deterministic: wait for conditions, control sources of nondeterminism, repeat new or changed end-to-end and integration tests with retries off, keep timeouts narrow, and report tests that passed only on retry
 - cover realistic failure modes and boundaries
 - identify when implementation and tests may share the same mistaken assumption
 - use independent oracles and adversarial verification techniques when risk justifies them
@@ -1009,6 +1039,7 @@ For substantial work:
 
 - implementation, plan approval, milestone completion, review readiness, and acceptance do not by themselves authorize publication
 - publication requires an explicit developer request or an invoked skill whose workflow includes it, such as an autonomous run that reviews and publishes each milestone within its stop conditions
+- an explicitly requested delivery, such as opening a pull request, also covers the commits and pushes it requires
 - staging, signing, and destination follow repository policy or the invoked skill
 - task-scoped review and push belong to the skills that perform them; the foundation does not restate them
 
@@ -1021,20 +1052,22 @@ For substantial work:
 - disclose unverified behavior
 - preserve user-authored work
 - do not reset, clean, stash, revert, or overwrite unrelated changes to simplify the worktree
+- format only the files the task changed, and report pre-existing drift
 - do not hide failures
+- finish with a completion summary unless an invoked skill defines its own report
 
 #### Task cleanup
 
-- stop the processes the task started unless the developer asks to keep them, and delete its scratch output once it is no longer needed
+- stop the processes the task started unless the developer asks to keep them or an established workflow requires them, and delete its scratch output once it is no longer needed
 - preserve deliverables, planning records, failure evidence, and anything the task did not create
 - never clean up broadly, and report anything that could not be cleaned up
 
 #### Safety
 
-- do not expose secrets
+- do not expose secrets, and keep tokens, credentials, cookies, payment data, and full provider payloads out of logs
 - avoid destructive actions without explicit authorization
-- validate security-sensitive and data-integrity-sensitive paths
-- do not make high-blast-radius contract, dependency, schema, deployment, or infrastructure changes casually
+- validate security-sensitive and data-integrity-sensitive paths, never trusting client-provided ids, roles, or balances, and allowlisting dynamic SQL identifiers
+- do not make high-blast-radius contract, dependency, schema, configuration, CI/CD, deployment, infrastructure, event or queue name, cache key, or durable storage format changes casually
 
 #### Portable paths and scripts
 
@@ -1049,8 +1082,9 @@ The foundation MUST include concise, conditional safeguards for:
 
 - frontend accessibility, keyboard operation, responsive behavior, theme support, and reduced motion
 - established migration workflows, compatibility, rollback, and explicit authority before executing migrations in production or shared environments
-- external-response validation, bounded timeouts or cancellation, safe retries, and idempotent side effects
-- server-side authorization, exact value-bearing arithmetic where required, and transactional integrity
+- external-response validation, bounded timeouts or cancellation, safe and bounded retries, and idempotent side effects
+- at-least-once delivery for queues, jobs, and webhooks, with authenticated and validated payloads before any side effect
+- server-side authorization, integer minor units or decimal types for money and credits, and transactional integrity
 
 #### Documentation and instruction governance
 
@@ -1060,7 +1094,7 @@ Coding-instruction files MUST be treated as governance files. Agents must not cr
 
 ### 14.4 Workflows come from skills
 
-The public foundation MUST NOT define agent commands or skill workflows. Executable workflows for planning, plan challenge, breakdown, execution, debugging, review, and publication live in skills that the repository installs. The foundation states only how an invoked skill relates to the rest of the instructions.
+The public foundation MUST NOT define agent commands or skill workflows. Executable workflows for planning, plan challenge, breakdown, execution, debugging, review, and publication live in skills that the repository installs. The foundation states only how an invoked skill, or an implicit skill that matches the task, relates to the rest of the instructions.
 
 ### 14.5 Foundation page behavior
 
@@ -1121,6 +1155,9 @@ Inspect:
 - architecture and tooling evidence needed to understand existing rules
 - the hierarchy and precedence of instruction files
 - installed agent skills that define workflows, so proposals neither duplicate nor contradict them in instruction files
+- installed implicit skills and their triggers, so proposals neither restate nor contradict their standards
+- the repository's testing guidelines and its test-runner retry and timeout configuration
+- the schema or validation library the repository uses at its boundaries
 - the current worktree state and pre-existing instruction-file changes
 
 Keep inspection proportional, respect repository context exclusions and sensitive-data boundaries, and do not edit files, install dependencies, create artifacts, or change Git state.
@@ -1141,7 +1178,7 @@ Summarize:
 
 #### Stage 2: Collaborate interactively
 
-Ask one focused question at a time only when the answer materially affects the result.
+Ask the questions that materially affect the result together in one numbered message, each with a recommended answer.
 
 Do not use a generic questionnaire when repository evidence already answers the issue.
 
@@ -1228,7 +1265,7 @@ Approval to edit instructions does not authorize commits, pushes, pull requests,
 
 After editing, compare the result with the original files, pre-existing worktree state, instruction map, and approved proposal. Verify supported filenames, locations, scopes, syntax, ownership, synchronization, precedence, skill and command invocation semantics, and every original rule's final disposition. Run existing instruction-specific checks when available without installing new tooling.
 
-Review representative failure scenarios when applicable, including answer-only and planning-only requests, partial proposal approval, scoped conflicts, pre-existing changes, high-blast-radius changes, and unauthorized external actions.
+Review representative failure scenarios when applicable, including answer-only and planning-only requests, a defect report or opinion request without an action request, partial proposal approval, scoped conflicts, a conflict with an implicit skill, a rule outdated for the installed version, a timing-dependent test, pre-existing changes, high-blast-radius changes, and unauthorized external actions.
 
 Report:
 
@@ -1250,7 +1287,7 @@ Report:
 The prompt MUST ask the coding agent to assess and, when appropriate, introduce or strengthen these values:
 
 1. quality, clarity, maintainability, and correctness over cleverness
-2. task intent and explicit authorization boundaries, including explicit authority for external actions, granted per action or per explicitly invoked autonomous run
+2. task intent and explicit authorization boundaries, including explicit authority for external actions, granted per action or per explicitly invoked autonomous run, or as a necessary step of an explicitly requested delivery
 3. decision precedence and correct scoped-instruction handling
 4. codebase-first reasoning
 5. collaborative planning
@@ -1280,6 +1317,17 @@ The prompt MUST ask the coding agent to assess and, when appropriate, introduce 
 29. resource efficiency, with growth-capable collections bounded at the source and caching only where reuse justifies it
 30. cleanup of task-owned processes and temporary files without broad or destructive cleanup
 31. portable paths and scripts, with untrusted paths kept inside their intended root
+32. implicit skills that hold stack-specific standards, read when they match the task, ranked with the general instructions, and never treated as authorization
+33. the questions that decide the work asked together in one numbered message, each with a recommended answer
+34. the repository's testing guidelines first, with floors that forbid weakening tests to pass, require reporting material risk left untested, and keep tests out of production artifacts
+35. deterministic tests that wait for conditions, control time and other sources of nondeterminism, and are repeated before they count as done
+36. external and untrusted data validated at its boundary with the repository's schema library, with types derived from schemas
+37. official documentation for the installed version as the authority on factual behavior, current API forms in new code, and outdated rules reported instead of silently followed
+38. no guessed or placeholder contracts, with a blocker reported instead
+39. at-least-once delivery, authenticated payloads, and bounded retries for queues, jobs, and webhooks
+40. sensitive values kept out of logs, exact representations for money, and no trust in client-provided ids, roles, or balances
+41. dependencies added only when justified, with the existing package manager and lockfile
+42. formatting limited to the files a task changed
 
 The prompt must not blindly impose:
 
@@ -1288,6 +1336,8 @@ The prompt must not blindly impose:
 - a folder structure
 - a package manager
 - exact test filenames
+- a specific schema library, test runner, or retry and timeout values
+- specific named skills
 - a database convention
 - a particular model or vendor
 - specific dependencies, personal packages, or third-party libraries
@@ -1421,7 +1471,7 @@ The `/workflow` page shows the workflow running through jg skills. It MUST inclu
 - a supervised/autonomous toggle on `jg-execute` that shows the autonomous cycle (implement, checks, review, fix, push) and its stop conditions
 - a `jg-debug` example with a failing test, the fix, and the passing test
 - the Correct, Continue, or Complete outcomes on `jg-review`, noting `jg-review <target-branch>` for branches
-- a closing section that lists `jg-feedback` and `jg-session` and points to the cookbook for situations no skill covers
+- a closing section that lists `jg-command`, `jg-feedback`, and `jg-session` and points to the cookbook for situations no skill covers
 
 The examples continue one fictional feature across all steps. What each skill may change MUST match the "What it may change" column of the jg-skills README. The step catalog lives in the site configuration and MUST be updated when jg-skills adds, removes, or renames a skill, or changes what one may change.
 

@@ -236,7 +236,7 @@ test.describe('production website', () => {
   }) => {
     await page.goto('/start/');
 
-    await expect(page.getByText('Version 1.0.0', { exact: true })).toBeVisible();
+    await expect(page.getByText('Version 1.1.0', { exact: true })).toBeVisible();
     await expect(page.locator('time[datetime="2026-10-15"]').first()).toBeVisible();
     await expect(page.locator('#agents-foundation-source')).toContainText(
       'determine whether the developer invoked a skill',
@@ -246,7 +246,7 @@ test.describe('production website', () => {
   test('refine page publishes the current refinement prompt version', async ({ page }) => {
     await page.goto('/refine/');
 
-    await expect(page.getByText('Version 1.0.0', { exact: true })).toBeVisible();
+    await expect(page.getByText('Version 1.1.0', { exact: true })).toBeVisible();
     await expect(page.locator('#refinement-prompt-source')).toContainText(
       'installed agent skills that define workflows',
     );
