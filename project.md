@@ -802,7 +802,7 @@ The homepage MUST conclude the main narrative with four clear destinations:
 - **Refine existing instructions** → `/refine`
 - **Handle the harder moments** → `/cookbook`
 
-After these destinations, a jg-skills bridge section mirrors the `AGENTS.md` section on the jg-skills site. It shows `AGENTS.md` setting the standards and jg-skills running the workflow, with a "Browse the skills" card linking to the jg-skills skill catalog and an "Install them" card holding the copyable install command and the verification note.
+After these destinations, a jg-skills bridge section mirrors the `AGENTS.md` section on the jg-skills site. It shows `AGENTS.md` setting the standards and jg-skills running the workflow, each beside its project's mark, with a "Browse the skills" card linking to the jg-skills skill catalog and an "Install them" card holding the copyable install command and the verification note.
 
 ### 13.15 Author section and footer
 

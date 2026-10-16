@@ -22,6 +22,20 @@ const CARDS = [
 const topOf = async (locator: Locator): Promise<number> =>
   locator.evaluate((element) => element.getBoundingClientRect().top + window.scrollY);
 
+/**
+ * Reads an element's box in page coordinates, so scrolling between two reads does not change it.
+ * @param locator The element to measure.
+ * @returns Its position from the page's top-left corner, and its size, in pixels.
+ */
+const pageBoxOf = async (
+  locator: Locator,
+): Promise<{ height: number; width: number; x: number; y: number }> =>
+  locator.evaluate((element) => {
+    const { height, left, top, width } = element.getBoundingClientRect();
+
+    return { height, width, x: left + window.scrollX, y: top + window.scrollY };
+  });
+
 test.describe('skills bridge', () => {
   test('closes the home page between Put it into practice and the coding-agent strip', async ({
     page,
@@ -98,6 +112,25 @@ test.describe('skills bridge', () => {
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
       'npx skills add jesusgraterol/jg-skills --skill "*" -y',
     );
+  });
+
+  test('keeps the install card still while the copy label changes', async ({ context, page }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/');
+
+    const installCard = page.locator('[data-skills-bridge-card]').nth(1);
+    const copyControl = installCard.getByRole('button');
+
+    // the short "Copied" label once let the button rejoin the caption's row and shrink the card
+    const cardBefore = await pageBoxOf(installCard);
+    const buttonBefore = await pageBoxOf(copyControl);
+
+    await copyControl.click();
+    await expect(copyControl).toHaveAccessibleName('Copied');
+
+    expect(await pageBoxOf(installCard)).toStrictEqual(cardBefore);
+    expect(await pageBoxOf(copyControl)).toStrictEqual(buttonBefore);
   });
 
   test('places the cards side by side on wide screens and stacks them on narrow ones', async ({

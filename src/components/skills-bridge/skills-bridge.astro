@@ -2,7 +2,9 @@
 import { ArrowUpRight, LayoutGrid, Link2, Terminal } from '@lucide/astro';
 
 import { SITE_CONFIG } from '../../site.config.ts';
+import BrandMark from '../brand-mark/brand-mark.astro';
 import InstallCommand from '../install-command/install-command.astro';
+import JgSkillsMark from '../jg-skills-mark/jg-skills-mark.astro';
 
 // the jg-skills home page sections each card opens
 const BROWSE_URL = new URL('#skills', SITE_CONFIG.skills.url);
@@ -49,9 +51,15 @@ const installDestination = toDestination(INSTALL_URL);
       aria-label="How AGENTS.md and jg-skills fit together"
       data-skills-bridge-strip
     >
-      <li class="rounded-xl border border-border bg-surface p-5 shadow-surface">
-        <code class="font-mono text-base font-bold">AGENTS.md</code>
-        <span class="mt-1 block text-sm text-muted">Sets the standards</span>
+      {/* each item carries the mark of the project that provides it */}
+      <li
+        class="flex items-center gap-4 rounded-xl border border-border bg-surface p-5 shadow-surface"
+      >
+        <BrandMark class="size-10 shrink-0" />
+        <div class="min-w-0">
+          <code class="font-mono text-base font-bold">AGENTS.md</code>
+          <span class="mt-1 block text-sm text-muted">Sets the standards</span>
+        </div>
       </li>
       <li
         class="flex flex-col items-center justify-center text-muted sm:flex-row"
@@ -68,9 +76,14 @@ const installDestination = toDestination(INSTALL_URL);
         </span>
         <span class="h-3 w-px bg-border-strong sm:h-px sm:w-4"></span>
       </li>
-      <li class="rounded-xl bg-primary p-5 text-primary-foreground shadow-raised">
-        <code class="font-mono text-base font-bold">jg-skills</code>
-        <span class="mt-1 block text-sm text-accent-on-primary">Runs the workflow</span>
+      <li
+        class="flex items-center gap-4 rounded-xl bg-primary p-5 text-primary-foreground shadow-raised"
+      >
+        <JgSkillsMark class="size-10 shrink-0" />
+        <div class="min-w-0">
+          <code class="font-mono text-base font-bold">jg-skills</code>
+          <span class="mt-1 block text-sm text-accent-on-primary">Runs the workflow</span>
+        </div>
       </li>
     </ol>
     <ul class="mt-10 grid gap-4 sm:grid-cols-2">
