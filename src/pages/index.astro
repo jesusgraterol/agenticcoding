@@ -10,6 +10,7 @@ import MaturitySystem from '../components/maturity-system/maturity-system.astro'
 import MoldeaProof from '../components/moldea-proof/moldea-proof.astro';
 import ResourceActions from '../components/resource-actions/resource-actions.astro';
 import SkillPipeline from '../components/skill-pipeline/skill-pipeline.astro';
+import SkillsBridge from '../components/skills-bridge/skills-bridge.astro';
 import BaseLayout from '../layouts/base-layout.astro';
 import { SITE_CONFIG } from '../site.config.ts';
 
@@ -319,6 +320,8 @@ const leverageItems = [
       <ResourceActions />
     </div>
   </section>
+
+  <SkillsBridge />
 
   <CodingAgentStrip />
 </BaseLayout>

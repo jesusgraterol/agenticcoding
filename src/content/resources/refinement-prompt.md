@@ -21,6 +21,9 @@ Inspect the current instruction system and the smallest complete set of reposito
 - the scope, hierarchy, precedence, and ownership of each instruction source
 - whether a file is authoritative, mirrored, generated, protected, or managed elsewhere
 - installed agent skills that define workflows, such as planning, review, or publication, so the proposal neither duplicates nor contradicts them in instruction files
+- installed implicit skills that hold stack-specific standards, and what triggers each, so the proposal neither restates nor contradicts them
+- the repository's testing guidelines and its test-runner retry and timeout configuration
+- the schema or validation library the repository uses at its boundaries
 - relevant root documentation and architecture guidance
 - tooling, tests, and repository conventions needed to interpret existing rules
 - the current worktree state and any pre-existing changes in instruction files
@@ -53,7 +56,7 @@ Base every conclusion on the current repository. Distinguish evidence from infer
 
 ## Stage 2: Collaborate interactively
 
-Ask one focused question at a time only when the answer would materially change the proposal.
+Ask about the decisions that would materially change the proposal in one numbered message, each question with your recommended answer, so I can accept them together or answer only the ones I disagree with.
 
 Do not use a generic questionnaire when repository evidence already answers the issue. Do not ask stylistic questions that do not affect behavior.
 
@@ -160,10 +163,11 @@ Verify that:
 - authoritative and approved mirrored instruction surfaces are synchronized without creating competing owners
 - precedence is unambiguous and no applicable lower-scope rule silently contradicts the result
 - skill and command names, invocation conditions, permissions, approval boundaries, and stopping conditions are explicit where skills or commands exist, and instruction files do not duplicate or contradict workflows that installed skills define
+- the instructions state how they rank against installed implicit skills and do not restate a skill's standards
 - every meaningful original rule has an intentional final disposition
 - existing instruction-specific linters, formatters, or repository checks pass when available, without installing new tooling
 
-Review the resulting system against representative failure scenarios when they apply: an answer-only request, planning without implementation approval, partial proposal approval, a scoped-instruction conflict, pre-existing developer changes, a high-blast-radius change, and an unauthorized commit, push, deployment, or external action.
+Review the resulting system against representative failure scenarios when they apply: an answer-only request, a defect report or opinion request without an action request, planning without implementation approval, partial proposal approval, a scoped-instruction conflict, a conflict with an implicit skill, a rule that looks outdated for the installed version, a timing-dependent test, pre-existing developer changes, a high-blast-radius change, and an unauthorized commit, push, deployment, or external action.
 
 Report:
 
@@ -187,7 +191,7 @@ Review the final diff and do not claim success if the result diverges from the a
 Introduce or strengthen these values only in forms that fit the repository:
 
 1. correctness, clarity, maintainability, consistency, and reviewability over cleverness
-2. task-intent classification and explicit authorization boundaries, including explicit authority for external actions, granted per action or per explicitly invoked autonomous run
+2. task-intent classification and explicit authorization boundaries, including explicit authority for external actions, granted per action or per explicitly invoked autonomous run, or as a necessary step of an explicitly requested delivery
 3. a clear decision-precedence model and correct handling of scoped instruction files
 4. codebase-first reasoning grounded in the smallest complete affected path
 5. collaborative planning in which the agent may investigate, propose, and challenge
@@ -217,6 +221,17 @@ Introduce or strengthen these values only in forms that fit the repository:
 29. resource efficiency, with growth-capable collections bounded at the source and caching only where reuse justifies it
 30. cleanup of task-owned processes and temporary files without broad or destructive cleanup
 31. portable paths and scripts, with untrusted paths kept inside their intended root
+32. implicit skills that hold stack-specific standards, read when they match the task, ranked with the general instructions, and never treated as authorization
+33. the questions that decide the work asked together in one numbered message, each with a recommended answer
+34. the repository's testing guidelines first, with floors that forbid weakening tests to pass, require reporting material risk left untested, and keep tests out of production artifacts
+35. deterministic tests that wait for conditions, control time and other sources of nondeterminism, and are repeated before they count as done
+36. external and untrusted data validated at its boundary with the repository's schema library, with types derived from schemas
+37. official documentation for the installed version as the authority on factual behavior, current API forms in new code, and outdated rules reported instead of silently followed
+38. no guessed or placeholder contracts, with a blocker reported instead
+39. at-least-once delivery, authenticated payloads, and bounded retries for queues, jobs, and webhooks
+40. sensitive values kept out of logs, exact representations for money, and no trust in client-provided ids, roles, or balances
+41. dependencies added only when justified, with the existing package manager and lockfile
+42. formatting limited to the files a task changed
 
 Do not blindly impose:
 
@@ -224,6 +239,8 @@ Do not blindly impose:
 - a folder structure or naming scheme
 - a package manager
 - exact test filenames or scripts
+- a specific schema library, test runner, or retry and timeout values
+- specific named skills
 - database conventions
 - a coding-agent vendor or model
 - specific dependencies, personal packages, or third-party libraries

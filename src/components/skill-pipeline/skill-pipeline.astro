@@ -17,7 +17,7 @@ const PIPELINE_MODES = {
   },
   autonomous: {
     label: 'Autonomous',
-    shipNote: 'jg-execute autonomous runs these after each milestone, within its stop conditions.',
+    shipNote: 'jg-execute auto runs these after each milestone, within its stop conditions.',
   },
 } as const;
 
@@ -77,7 +77,7 @@ const stages = (Object.keys(WORKFLOW_STAGES) as IWorkflowStage[]).map((stage, in
                           jg-execute
                         </span>
                         <span class="hidden group-has-[[data-pipeline-mode=autonomous]:checked]/pipeline:inline">
-                          jg-execute autonomous
+                          jg-execute auto
                         </span>
                       </code>
                     ) : (
@@ -138,8 +138,8 @@ const stages = (Object.keys(WORKFLOW_STAGES) as IWorkflowStage[]).map((stage, in
       <p class="font-mono text-xs font-bold text-white/60 uppercase">Publication</p>
       <p class="mt-3 leading-7 font-semibold">
         Publish only when explicitly authorized: <code class="text-accent-on-primary">jg-push</code
-        >{' '}for one change, or <code class="text-accent-on-primary">jg-execute autonomous</code> for
-        a whole run.
+        >{' '}for one change, or <code class="text-accent-on-primary">jg-execute auto</code> for a whole
+        run.
       </p>
       <p class="mt-2 text-sm leading-6 text-white/70">
         Implementation authority alone never publishes.
