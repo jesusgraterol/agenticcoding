@@ -1,4 +1,6 @@
 ---
+import Badge from 'jg-personal-astro-ui/badge';
+
 import type { IArtifact, IArtifactLine } from '../../content/index.ts';
 
 interface Props {
@@ -10,7 +12,7 @@ const LINE_STYLES = {
   added: { className: 'bg-success/10', label: 'Added: ', marker: '+' },
   heading: { className: 'font-bold', label: '', marker: '' },
   muted: { className: 'text-muted', label: '', marker: '' },
-  removed: { className: 'bg-error/10', label: 'Removed: ', marker: '-' },
+  removed: { className: 'bg-danger/10', label: 'Removed: ', marker: '-' },
   text: { className: '', label: '', marker: '' },
 } as const satisfies Record<
   IArtifactLine['kind'],
@@ -19,7 +21,7 @@ const LINE_STYLES = {
 
 // status dot color for each tone; the visible label carries the meaning
 const STATUS_DOTS = {
-  error: 'bg-error',
+  error: 'bg-danger',
   neutral: 'bg-muted',
   success: 'bg-success',
   warning: 'bg-warning',
@@ -35,13 +37,18 @@ const { artifact } = Astro.props;
     <span class="min-w-0 font-mono text-xs font-semibold wrap-anywhere">{artifact.title}</span>
     {
       artifact.status && (
-        <span class="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border-strong bg-background px-2 py-0.5 text-xs font-semibold">
+        <Badge
+          class="shrink-0"
+          mono={false}
+          variant="neutral"
+        >
+          {/* a neutral badge on the code surface, so the label keeps its contrast in every tone */}
           <span
             class:list={['size-1.5 rounded-full', STATUS_DOTS[artifact.status.tone]]}
             aria-hidden="true"
           />
           {artifact.status.label}
-        </span>
+        </Badge>
       )
     }
   </figcaption>

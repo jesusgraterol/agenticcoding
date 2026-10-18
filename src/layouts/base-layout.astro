@@ -1,9 +1,17 @@
 ---
-import { ClientRouter } from 'astro:transitions';
+import { GitBranch } from '@lucide/astro';
+import AgenticCodingMark from 'jg-personal-astro-ui/agentic-coding-mark';
+import BrandLogo from 'jg-personal-astro-ui/brand-logo';
+import Button from 'jg-personal-astro-ui/button';
+import DocumentHead from 'jg-personal-astro-ui/document-head';
+import NavigationProgress from 'jg-personal-astro-ui/navigation-progress';
+import SiteFooter from 'jg-personal-astro-ui/site-footer';
+import SiteHeader from 'jg-personal-astro-ui/site-header';
+import SkipLink from 'jg-personal-astro-ui/skip-link';
+import TextLink from 'jg-personal-astro-ui/text-link';
+import ThemeControl from 'jg-personal-astro-ui/theme-control';
+import ThemeInitScript from 'jg-personal-astro-ui/theme-init-script';
 
-import NavigationProgress from '../components/navigation-progress/navigation-progress.astro';
-import SiteFooter from '../components/site-footer/site-footer.astro';
-import SiteNavigation from '../components/site-navigation/site-navigation.astro';
 import { SITE_CONFIG } from '../site.config.ts';
 import {
   buildStructuredData,
@@ -12,7 +20,6 @@ import {
   type IBreadcrumbItem,
   type IStructuredDataType,
 } from '../utilities/seo/index.ts';
-import { THEME_STORAGE_KEY } from '../utilities/theme-preference/index.ts';
 import '../styles/global.css';
 
 interface Props {
@@ -42,14 +49,9 @@ const {
   structuredDataTitle = title,
   updatedAt,
 } = Astro.props;
-const canonicalUrl = new URL(canonicalPath, SITE_CONFIG.url).toString();
-const alternateDocumentUrl = alternateDocument
-  ? new URL(alternateDocument.href, SITE_CONFIG.url).toString()
-  : undefined;
-const llmsTextUrl = new URL('/llms.txt', SITE_CONFIG.url).toString();
-const openGraphImageUrl = new URL(SITE_CONFIG.openGraph.image, SITE_CONFIG.url).toString();
-const publishedDate = publishedAt ? formatIsoDate(publishedAt) : undefined;
-const updatedDate = updatedAt ? formatIsoDate(updatedAt) : undefined;
+const toSiteUrl = (path: string): string => new URL(path, SITE_CONFIG.url).toString();
+const canonicalUrl = toSiteUrl(canonicalPath);
+const isArticle = structuredDataType === 'article';
 const structuredData = structuredDataType
   ? buildStructuredData({
       articleSection,
@@ -62,245 +64,146 @@ const structuredData = structuredDataType
       updatedAt,
     })
   : undefined;
-const serializedStructuredData = structuredData
-  ? JSON.stringify(structuredData).replaceAll('<', '\\u003c')
-  : undefined;
+const { openGraph } = SITE_CONFIG;
+// the site's pages after the home page, with the cookbook current on its recipes too, and the
+// skills site, which opens in a new tab
+const navigationItems = [
+  ...SITE_CONFIG.navigation
+    .slice(1)
+    .map((item) => (item.href === '/cookbook/' ? { ...item, match: 'prefix' as const } : item)),
+  { external: true, href: SITE_CONFIG.skills.url, label: 'Skills' },
+];
+const footerColumns = [
+  { title: 'Resources', links: SITE_CONFIG.navigation.slice(1) },
+  {
+    title: 'Project',
+    links: [
+      { external: true, href: SITE_CONFIG.repositoryUrl, label: 'Source repository' },
+      { external: true, href: SITE_CONFIG.skills.url, label: SITE_CONFIG.skills.name },
+      { href: '/llms.txt', label: 'llms.txt' },
+    ],
+  },
+];
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={SITE_CONFIG.language}>
   <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1"
-    />
-    <meta
-      name="generator"
-      content={Astro.generator}
-    />
-    <meta
-      name="description"
-      content={description}
-    />
-    <meta
-      name="author"
-      content={SITE_CONFIG.author.name}
-    />
-    <meta
-      name="theme-color"
-      content={SITE_CONFIG.themeColors.light}
-      media="(prefers-color-scheme: light)"
-    />
-    <meta
-      name="theme-color"
-      content={SITE_CONFIG.themeColors.dark}
-      media="(prefers-color-scheme: dark)"
-    />
-    <meta
-      name="robots"
-      content={noIndex ? 'noindex, follow' : 'index, follow, max-image-preview:large'}
-    />
-    <link
-      rel="canonical"
-      href={canonicalUrl}
-    />
-    <link
-      rel="describedby"
-      href={llmsTextUrl}
-    />
-    {
-      alternateDocument && alternateDocumentUrl && (
-        <link
-          rel="alternate"
-          type={alternateDocument.mediaType}
-          title={alternateDocument.title}
-          href={alternateDocumentUrl}
-        />
-      )
-    }
-    <link
-      rel="icon"
-      type="image/svg+xml"
-      href="/favicon.svg"
-    />
-
-    <meta
-      property="og:site_name"
-      content={SITE_CONFIG.name}
-    />
-    <meta
-      property="og:locale"
-      content={SITE_CONFIG.openGraph.locale}
-    />
-    <meta
-      property="og:type"
-      content={structuredDataType === 'article' ? 'article' : 'website'}
-    />
-    <meta
-      property="og:title"
-      content={title}
-    />
-    <meta
-      property="og:description"
-      content={description}
-    />
-    <meta
-      property="og:url"
-      content={canonicalUrl}
-    />
-    <meta
-      property="og:image"
-      content={openGraphImageUrl}
-    />
-    <meta
-      property="og:image:secure_url"
-      content={openGraphImageUrl}
-    />
-    <meta
-      property="og:image:type"
-      content={SITE_CONFIG.openGraph.imageType}
-    />
-    <meta
-      property="og:image:width"
-      content={String(SITE_CONFIG.openGraph.width)}
-    />
-    <meta
-      property="og:image:height"
-      content={String(SITE_CONFIG.openGraph.height)}
-    />
-    <meta
-      property="og:image:alt"
-      content={SITE_CONFIG.openGraph.imageAlt}
-    />
-    {
-      structuredDataType === 'article' && (
-        <meta
-          property="article:author"
-          content={SITE_CONFIG.author.url}
-        />
-      )
-    }
-    {
-      structuredDataType === 'article' && articleSection && (
-        <meta
-          property="article:section"
-          content={articleSection}
-        />
-      )
-    }
-    {
-      structuredDataType === 'article' && publishedDate && (
-        <meta
-          property="article:published_time"
-          content={publishedDate}
-        />
-      )
-    }
-    {
-      structuredDataType === 'article' && updatedDate && (
-        <meta
-          property="article:modified_time"
-          content={updatedDate}
-        />
-      )
-    }
-
-    <meta
-      name="twitter:card"
-      content="summary_large_image"
-    />
-    <meta
-      name="twitter:title"
-      content={title}
-    />
-    <meta
-      name="twitter:description"
-      content={description}
-    />
-    <meta
-      name="twitter:image"
-      content={openGraphImageUrl}
-    />
-    <meta
-      name="twitter:image:alt"
-      content={SITE_CONFIG.openGraph.imageAlt}
-    />
-
-    <title>{title}</title>
-    <ClientRouter fallback="swap" />
-    {
-      serializedStructuredData && (
-        <script
-          is:inline
-          type="application/ld+json"
-          set:html={serializedStructuredData}
-        />
-      )
-    }
-    <script
-      is:inline
-      define:vars={{
-        darkThemeColor: SITE_CONFIG.themeColors.dark,
-        lightThemeColor: SITE_CONFIG.themeColors.light,
-        themeStorageKey: THEME_STORAGE_KEY,
-      }}
-    >
-      (() => {
-        const themeValues = ['system', 'light', 'dark'];
-        const media = window.matchMedia('(prefers-color-scheme: dark)');
-        const getPreference = () => {
-          try {
-            const storedPreference = localStorage.getItem(themeStorageKey);
-            return themeValues.includes(storedPreference) ? storedPreference : 'system';
-          } catch {
-            return 'system';
+    <DocumentHead
+      alternate={alternateDocument === undefined
+        ? undefined
+        : {
+            href: toSiteUrl(alternateDocument.href),
+            title: alternateDocument.title,
+            type: alternateDocument.mediaType,
+          }}
+      article={isArticle
+        ? {
+            author: SITE_CONFIG.author.url,
+            modifiedTime: updatedAt ? formatIsoDate(updatedAt) : undefined,
+            publishedTime: publishedAt ? formatIsoDate(publishedAt) : undefined,
+            section: articleSection,
           }
-        };
-        const resolveTheme = (preference) =>
-          preference === 'system' ? (media.matches ? 'dark' : 'light') : preference;
-        const applyTheme = (root = document.documentElement, preference = getPreference()) => {
-          const resolvedTheme = resolveTheme(preference);
-          root.classList.toggle('dark', resolvedTheme === 'dark');
-          root.classList.toggle('light', resolvedTheme === 'light');
-          root.dataset.resolvedTheme = resolvedTheme;
-          root.dataset.themePreference = preference;
-          document
-            .querySelectorAll('meta[name="theme-color"]')
-            .forEach((meta) =>
-              meta.setAttribute(
-                'content',
-                resolvedTheme === 'dark' ? darkThemeColor : lightThemeColor,
-              ),
-            );
-          window.dispatchEvent(new Event('agentic-theme-applied'));
-        };
-
-        applyTheme();
-        media.addEventListener('change', () => {
-          if (getPreference() === 'system') applyTheme();
-        });
-        window.addEventListener('agentic-theme-change', (event) => {
-          applyTheme(document.documentElement, event.detail.preference);
-        });
-        document.addEventListener('astro:before-swap', (event) => {
-          applyTheme(event.newDocument.documentElement);
-        });
-      })();
-    </script>
+        : undefined}
+      author={SITE_CONFIG.author.name}
+      canonicalUrl={canonicalUrl}
+      description={description}
+      icons={[{ href: '/favicon.svg', rel: 'icon', type: 'image/svg+xml' }]}
+      llmsTextUrl={toSiteUrl('/llms.txt')}
+      locale={openGraph.locale}
+      noIndex={noIndex}
+      openGraphImage={{
+        alt: openGraph.imageAlt,
+        height: openGraph.height,
+        type: openGraph.imageType,
+        url: toSiteUrl(openGraph.image),
+        width: openGraph.width,
+      }}
+      openGraphType={isArticle ? 'article' : 'website'}
+      siteName={SITE_CONFIG.name}
+      structuredData={structuredData}
+      themeColors={SITE_CONFIG.themeColors}
+      title={title}
+    />
+    <ThemeInitScript
+      storageKey={SITE_CONFIG.storageKeys.theme}
+      themeColors={SITE_CONFIG.themeColors}
+    />
   </head>
   <body>
+    <SkipLink />
     <NavigationProgress />
-    <a
-      class="fixed top-2 left-2 z-[100] -translate-y-20 rounded-md bg-primary px-4 py-2 font-bold text-primary-foreground focus:translate-y-0"
-      href="#main-content"
+    <SiteHeader
+      currentPath={Astro.url.pathname}
+      homeLabel={`${SITE_CONFIG.name} home`}
+      items={navigationItems}
     >
-      Skip to main content
-    </a>
-    <SiteNavigation />
+      <BrandLogo
+        slot="brand"
+        name={SITE_CONFIG.name}
+      >
+        <AgenticCodingMark
+          slot="mark"
+          class="size-8 shrink-0"
+        />
+      </BrandLogo>
+      <Fragment slot="actions">
+        <Button
+          href={SITE_CONFIG.repositoryUrl}
+          external
+          externalIcon={false}
+          size="icon"
+          variant="ghost"
+          title="Source repository"
+        >
+          <GitBranch
+            class="size-4"
+            aria-hidden="true"
+          />
+          <span class="sr-only">Source repository</span>
+        </Button>
+        <ThemeControl storageKey={SITE_CONFIG.storageKeys.theme} />
+      </Fragment>
+      <Fragment slot="mobile-actions">
+        <Button
+          href={SITE_CONFIG.repositoryUrl}
+          external
+          externalIcon={false}
+          size="sm"
+          variant="outline"
+        >
+          <GitBranch
+            class="size-4"
+            aria-hidden="true"
+          />
+          Source
+        </Button>
+        <ThemeControl
+          class="ml-auto"
+          storageKey={SITE_CONFIG.storageKeys.theme}
+        />
+      </Fragment>
+    </SiteHeader>
     <main id="main-content">
       <slot />
     </main>
-    <SiteFooter />
+    <SiteFooter
+      columns={footerColumns}
+      notes={[SITE_CONFIG.url.replace('https://', ''), `${SITE_CONFIG.license} License, © 2026`]}
+    >
+      <BrandLogo
+        slot="brand"
+        name={SITE_CONFIG.name}
+      >
+        <AgenticCodingMark
+          slot="mark"
+          class="size-8 shrink-0"
+        />
+      </BrandLogo>
+      <Fragment slot="about">
+        Built by <TextLink href={SITE_CONFIG.author.url}>{SITE_CONFIG.author.name}</TextLink> using Agentic
+        Coding. This project reflects how professional software development should evolve.
+      </Fragment>
+    </SiteFooter>
   </body>
 </html>

@@ -66,6 +66,10 @@ export const SITE_CONFIG = {
     width: 1200,
   },
   repositoryUrl: 'https://github.com/jesusgraterol/agenticcoding',
+  // the key the visitor's theme preference is stored under, unchanged so saved themes carry over
+  storageKeys: {
+    theme: 'agentic-coding-theme',
+  },
   // companion skill collection that runs the workflow; its site owns the full skill instructions
   skills: {
     installCommand: 'npx skills add jesusgraterol/jg-skills --skill "*" -y',

@@ -294,10 +294,6 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
         'u',
       ),
       new RegExp(
-        `<meta property="og:image:secure_url" content="${escapeRegularExpression(openGraphImageUrl)}"`,
-        'u',
-      ),
-      new RegExp(
         `<meta property="og:image:type" content="${escapeRegularExpression(SITE_CONFIG.openGraph.imageType)}"`,
         'u',
       ),
@@ -401,7 +397,8 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
             breadcrumbItem['position'] === index + 1,
         ) ||
         breadcrumbItems.at(-1)?.['item'] !== canonicalUrl ||
-        !html.includes('<nav aria-label="Breadcrumb">')
+        // the breadcrumb navigation, which may carry a class for its spacing
+        !/<nav aria-label="Breadcrumb"(?: class="[^"]*")?>/u.test(html)
       ) {
         throw new Error(
           `${VERIFY_BUILD_ERROR_MESSAGES.BreadcrumbHierarchyIncomplete} in ${htmlPath}`,

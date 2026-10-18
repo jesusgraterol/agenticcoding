@@ -1,4 +1,6 @@
 ---
+import Table from 'jg-personal-astro-ui/table';
+
 const comparisonRows = [
   {
     category: 'Planning',
@@ -57,77 +59,54 @@ const comparisonRows = [
 ] as const;
 ---
 
-<div class="mt-12 overflow-hidden rounded-xl border border-border bg-surface">
-  <div
-    class="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4 font-mono text-xs text-muted sm:px-6"
-  >
+<div class="mt-12 grid gap-3">
+  <div class="flex flex-wrap items-center justify-between gap-3 font-mono text-xs text-muted">
     <span>operating-model.matrix</span>
     <span>control determines the mode</span>
   </div>
-  <div
-    class="overflow-x-auto overscroll-x-contain focus-visible:ring-2 focus-visible:ring-focus focus-visible:outline-none focus-visible:ring-inset"
-    data-coding-mode-comparison-scroll
-    role="region"
-    aria-label="Coding mode comparison"
-    tabindex="0"
+  {/* wider than a phone, so it scrolls on its own, with the dimension column pinned */}
+  <Table
+    caption="How manual coding, Agentic Coding, and vibe coding differ across the engineering lifecycle."
+    captionHidden
+    class="overscroll-x-contain [&_table]:min-w-[44rem] [&_table]:table-fixed [&_tbody_th]:whitespace-normal"
+    scrollLabel="Coding mode comparison"
+    stickyFirstColumn
   >
-    <table class="w-full min-w-[44rem] table-fixed border-collapse text-left">
-      <caption class="sr-only">
-        How manual coding, Agentic Coding, and vibe coding differ across the engineering lifecycle.
-      </caption>
-      <colgroup>
-        <col class="w-32" />
-        <col />
-        <col />
-        <col />
-      </colgroup>
-      <thead class="border-b border-border bg-secondary/70 text-sm font-semibold">
-        <tr>
-          <th
-            class="sticky left-0 z-20 border-r border-border bg-secondary p-4"
-            scope="col"
-          >
-            Dimension
-          </th>
-          <th
-            class="p-4"
-            scope="col"
-          >
-            Manual coding
-          </th>
-          <th
-            class="border-l border-border bg-accent/10 p-4 text-accent"
-            scope="col"
-          >
-            Agentic Coding
-          </th>
-          <th
-            class="border-l border-border p-4"
-            scope="col"
-          >
-            Vibe coding
-          </th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-border">
-        {
-          comparisonRows.map(({ agentic, category, manual, vibe }) => (
-            <tr class="bg-background align-top">
-              <th
-                class="sticky left-0 z-10 border-r border-border bg-background p-4 text-sm font-semibold"
-                scope="row"
-              >
-                {category}
-              </th>
-              <td class="p-4 text-sm leading-6 text-muted">{manual}</td>
-              <td class="border-l border-border bg-accent/8 p-4 text-sm leading-6 font-semibold">
-                {agentic}
-              </td>
-              <td class="border-l border-border p-4 text-sm leading-6 text-muted">{vibe}</td>
-            </tr>
-          ))
-        }
-      </tbody>
-    </table>
-  </div>
+    <colgroup>
+      <col class="w-32" />
+      <col />
+      <col />
+      <col />
+    </colgroup>
+    <thead>
+      <tr>
+        <th scope="col">Dimension</th>
+        <th scope="col">Manual coding</th>
+        <th
+          class="border-l border-border bg-accent/10"
+          scope="col"
+        >
+          Agentic Coding
+        </th>
+        <th
+          class="border-l border-border"
+          scope="col"
+        >
+          Vibe coding
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        comparisonRows.map(({ agentic, category, manual, vibe }) => (
+          <tr>
+            <th scope="row">{category}</th>
+            <td class="leading-6 text-muted">{manual}</td>
+            <td class="border-l border-border bg-accent/8 leading-6 font-semibold">{agentic}</td>
+            <td class="border-l border-border leading-6 text-muted">{vibe}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </Table>
 </div>

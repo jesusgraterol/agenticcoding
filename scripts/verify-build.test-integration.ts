@@ -266,8 +266,8 @@ describe('static build artifact', () => {
         replaceBuildFileText(
           buildDirectory,
           'start/index.html',
-          '<nav aria-label="Breadcrumb">',
-          '<nav aria-label="Trail">',
+          '<nav aria-label="Breadcrumb" class="mb-10">',
+          '<nav aria-label="Trail" class="mb-10">',
         ),
       false,
     ],

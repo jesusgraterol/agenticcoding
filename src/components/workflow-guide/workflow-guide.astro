@@ -1,5 +1,9 @@
 ---
-import { ArrowUpRight, ChevronRight } from '@lucide/astro';
+import { ChevronRight } from '@lucide/astro';
+import Badge from 'jg-personal-astro-ui/badge';
+import Card from 'jg-personal-astro-ui/card';
+import SegmentedControl from 'jg-personal-astro-ui/segmented-control';
+import TextLink from 'jg-personal-astro-ui/text-link';
 
 import {
   REVIEW_OUTCOMES,
@@ -10,8 +14,8 @@ import {
   WORKFLOW_STEPS,
   type IWorkflowStage,
 } from '../../site.config.ts';
-import InstallCommand from '../install-command/install-command.astro';
 import SessionTranscript from '../session-transcript/session-transcript.astro';
+import SkillsInstall from '../skills-install/skills-install.astro';
 
 import {
   AUTONOMOUS_CYCLE,
@@ -63,14 +67,14 @@ const buildSkillUrl = (skill: string): string =>
         > in Claude Code, <code class="rounded-md bg-code px-1.5 py-0.5 text-sm text-accent"
           >$jg-plan</code
         > in Codex. Skills defer engineering standards to your repository's <code>AGENTS.md</code>,
-        so <a
-          class="font-semibold underline underline-offset-4"
+        so <TextLink
+          class="text-foreground"
           href="/start/"
-          >start with the foundation</a
+          >start with the foundation</TextLink
         >.
       </p>
     </div>
-    <InstallCommand id="workflow-install-command" />
+    <SkillsInstall id="workflow-install-command" />
   </section>
 
   <nav
@@ -135,9 +139,12 @@ const buildSkillUrl = (skill: string): string =>
                     {step.skill}
                   </h3>
                   {step.marker && (
-                    <span class="rounded-full border border-border-strong px-2 py-0.5 text-xs font-semibold text-muted">
+                    <Badge
+                      mono={false}
+                      variant="outline"
+                    >
                       {WORKFLOW_STEP_MARKER_LABELS[step.marker]}
-                    </span>
+                    </Badge>
                   )}
                 </div>
                 <p class="mt-3 leading-7">{step.purpose}</p>
@@ -169,41 +176,29 @@ const buildSkillUrl = (skill: string): string =>
                     run.
                   </p>
                 )}
-                <a
-                  class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
-                  href={buildSkillUrl(step.skill)}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Full instructions on {SITE_CONFIG.skills.name}
-                  <span class="sr-only"> (opens in a new tab)</span>
-                  <ArrowUpRight
-                    class="size-4"
-                    aria-hidden="true"
-                  />
-                </a>
+                <p class="mt-5 text-sm">
+                  <TextLink
+                    href={buildSkillUrl(step.skill)}
+                    external
+                  >
+                    Full instructions on {SITE_CONFIG.skills.name}
+                  </TextLink>
+                </p>
               </div>
               <div class="min-w-0">
                 {step.skill === 'jg-execute' ? (
                   <div class="group/execute grid gap-5">
-                    <fieldset class="inline-flex w-fit items-center gap-1 rounded-full border border-border bg-surface p-1">
-                      <legend class="sr-only">How jg-execute runs</legend>
-                      {(['supervised', 'autonomous'] as const).map((mode) => (
-                        <label class="cursor-pointer rounded-full px-4 py-1.5 text-sm font-semibold text-muted transition-colors hover:text-foreground has-checked:bg-primary has-checked:text-primary-foreground has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-focus motion-reduce:transition-none">
-                          <input
-                            class="sr-only"
-                            type="radio"
-                            name="execute-mode"
-                            value={mode}
-                            checked={mode === 'supervised'}
-                            data-execute-mode={mode}
-                          />
-                          {EXECUTE_MODES[mode].label}
-                        </label>
-                      ))}
-                    </fieldset>
+                    <SegmentedControl
+                      legend="How jg-execute runs"
+                      legendHidden
+                      name="execute-mode"
+                      options={(['supervised', 'autonomous'] as const).map((mode) => ({
+                        label: EXECUTE_MODES[mode].label,
+                        value: mode,
+                      }))}
+                    />
                     <div
-                      class="grid gap-4 group-has-[[data-execute-mode=autonomous]:checked]/execute:hidden"
+                      class="grid gap-4 group-has-[[data-segment=autonomous]:checked]/execute:hidden"
                       data-execute-panel="supervised"
                     >
                       <p class="text-sm leading-6 text-muted">{EXECUTE_MODES.supervised.text}</p>
@@ -213,7 +208,7 @@ const buildSkillUrl = (skill: string): string =>
                       />
                     </div>
                     <div
-                      class="hidden gap-5 group-has-[[data-execute-mode=autonomous]:checked]/execute:grid"
+                      class="hidden gap-5 group-has-[[data-segment=autonomous]:checked]/execute:grid"
                       data-execute-panel="autonomous"
                     >
                       <p class="text-sm leading-6 text-muted">{EXECUTE_MODES.autonomous.text}</p>
@@ -283,33 +278,31 @@ const buildSkillUrl = (skill: string): string =>
     <ul class="mt-6 grid gap-4 lg:grid-cols-3">
       {
         SUPPORTING_SKILLS.map(({ mayChange, purpose, skill }) => (
-          <li class="grid content-start gap-2 rounded-xl border border-border p-5">
+          <Card
+            as="li"
+            class="grid content-start gap-2"
+          >
             <p class="font-mono text-lg font-bold text-accent">{skill}</p>
             <p class="leading-7">{purpose}</p>
             <p class="text-sm text-muted">May change: {mayChange}</p>
-            <a
-              class="inline-flex items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
-              href={buildSkillUrl(skill)}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {`${skill} on ${SITE_CONFIG.skills.name}`}
-              <span class="sr-only"> (opens in a new tab)</span>
-              <ArrowUpRight
-                class="size-4"
-                aria-hidden="true"
-              />
-            </a>
-          </li>
+            <p class="text-sm">
+              <TextLink
+                href={buildSkillUrl(skill)}
+                external
+              >
+                {`${skill} on ${SITE_CONFIG.skills.name}`}
+              </TextLink>
+            </p>
+          </Card>
         ))
       }
     </ul>
     <p class="mt-8 leading-7">
       For recurring situations no skill covers, such as orienting in a new codebase or recovering
-      from drift, use the <a
-        class="font-semibold underline underline-offset-4"
+      from drift, use the <TextLink
+        class="text-foreground"
         href="/cookbook/"
-        >cookbook</a
+        >cookbook</TextLink
       >.
     </p>
   </section>

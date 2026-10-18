@@ -2,9 +2,12 @@
 
 `/docs` is reserved for essential, durable project concepts and processes. This page records the provenance and usage boundaries for copied brand assets.
 
-## jg/ mark
+## Package marks
 
-The lowercase `jg/` mark comes from [`jg-personal-astro-ui`](https://jg-packages.jesusgraterol.dev/packages/jg-personal-astro-ui/), which documents its source and license; the homepage's jg-skills bridge draws it with the package's `JgMark` component, only beside the `jg-skills` label. The site's own header, favicon, `logo.svg`, and open-graph image keep the Agentic Coding mark. Never keep a copy of the `jg/` mark here: change it in the package.
+[`jg-personal-astro-ui`](https://jg-packages.jesusgraterol.dev/packages/jg-personal-astro-ui/) owns both marks this site shows, and documents their source and license. Never keep a copy of either here: change it in the package.
+
+- **The Agentic Coding mark.** The header and footer draw it with the package's `AgenticCodingMark` component. `npm run assets:generate` writes the package's `agentic-coding-mark.svg` to `public/favicon.svg`, which the open-graph image draws too. `public/logo.svg`, the wordmark variant, stays in this repository.
+- **The lowercase `jg/` mark.** The homepage's jg-skills bridge draws it with the package's `JgMark` component, only beside the `jg-skills` label.
 
 ## Coding-agent marks
 

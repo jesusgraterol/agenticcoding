@@ -1,5 +1,7 @@
 ---
 import { ArrowRight } from '@lucide/astro';
+import Button from 'jg-personal-astro-ui/button';
+import SegmentedControl from 'jg-personal-astro-ui/segmented-control';
 
 import {
   REVIEW_OUTCOMES,
@@ -30,26 +32,16 @@ const stages = (Object.keys(WORKFLOW_STAGES) as IWorkflowStage[]).map((stage, in
 ---
 
 <div class="group/pipeline mt-12 grid gap-6">
-  <fieldset
-    class="inline-flex w-fit items-center gap-1 justify-self-center rounded-full border border-border bg-surface p-1"
-  >
-    <legend class="sr-only">How the agent runs the change</legend>
-    {
-      (['supervised', 'autonomous'] as const).map((mode) => (
-        <label class="cursor-pointer rounded-full px-4 py-1.5 text-sm font-semibold text-muted transition-colors hover:text-foreground has-checked:bg-primary has-checked:text-primary-foreground has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-focus motion-reduce:transition-none">
-          <input
-            class="sr-only"
-            type="radio"
-            name="pipeline-mode"
-            value={mode}
-            checked={mode === 'supervised'}
-            data-pipeline-mode={mode}
-          />
-          {PIPELINE_MODES[mode].label}
-        </label>
-      ))
-    }
-  </fieldset>
+  <SegmentedControl
+    class="justify-self-center"
+    legend="How the agent runs the change"
+    legendHidden
+    name="pipeline-mode"
+    options={(['supervised', 'autonomous'] as const).map((mode) => ({
+      label: PIPELINE_MODES[mode].label,
+      value: mode,
+    }))}
+  />
 
   <ol class="grid gap-px overflow-hidden rounded-xl border border-border bg-border lg:grid-cols-3">
     {
@@ -73,10 +65,10 @@ const stages = (Object.keys(WORKFLOW_STAGES) as IWorkflowStage[]).map((stage, in
                   <span class="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
                     {step.skill === 'jg-execute' ? (
                       <code class="text-sm font-bold text-accent">
-                        <span class="group-has-[[data-pipeline-mode=autonomous]:checked]/pipeline:hidden">
+                        <span class="group-has-[[data-segment=autonomous]:checked]/pipeline:hidden">
                           jg-execute
                         </span>
-                        <span class="hidden group-has-[[data-pipeline-mode=autonomous]:checked]/pipeline:inline">
+                        <span class="hidden group-has-[[data-segment=autonomous]:checked]/pipeline:inline">
                           jg-execute auto
                         </span>
                       </code>
@@ -99,10 +91,10 @@ const stages = (Object.keys(WORKFLOW_STAGES) as IWorkflowStage[]).map((stage, in
           </ul>
           {stage === 'ship' && (
             <p class="mt-4 text-sm leading-6 font-semibold">
-              <span class="group-has-[[data-pipeline-mode=autonomous]:checked]/pipeline:hidden">
+              <span class="group-has-[[data-segment=autonomous]:checked]/pipeline:hidden">
                 {PIPELINE_MODES.supervised.shipNote}
               </span>
-              <span class="hidden group-has-[[data-pipeline-mode=autonomous]:checked]/pipeline:inline">
+              <span class="hidden group-has-[[data-segment=autonomous]:checked]/pipeline:inline">
                 {PIPELINE_MODES.autonomous.shipNote}
               </span>
             </p>
@@ -128,33 +120,34 @@ const stages = (Object.keys(WORKFLOW_STAGES) as IWorkflowStage[]).map((stage, in
         }
       </dl>
       <p
-        class="mt-4 hidden text-sm leading-6 text-muted group-has-[[data-pipeline-mode=autonomous]:checked]/pipeline:block"
+        class="mt-4 hidden text-sm leading-6 text-muted group-has-[[data-segment=autonomous]:checked]/pipeline:block"
       >
         In an autonomous run, the review gate settles each milestone and you judge the published
         result.
       </p>
     </div>
-    <div class="bg-primary p-5 text-primary-foreground sm:p-6">
-      <p class="font-mono text-xs font-bold text-white/60 uppercase">Publication</p>
+    <div class="bg-inverse p-5 text-inverse-foreground sm:p-6">
+      <p class="font-mono text-xs font-bold text-inverse-foreground/60 uppercase">Publication</p>
       <p class="mt-3 leading-7 font-semibold">
-        Publish only when explicitly authorized: <code class="text-accent-on-primary">jg-push</code
-        >{' '}for one change, or <code class="text-accent-on-primary">jg-execute auto</code> for a whole
-        run.
+        Publish only when explicitly authorized: <code class="text-inverse-accent">jg-push</code>{
+          ' '
+        }for one change, or <code class="text-inverse-accent">jg-execute auto</code> for a whole run.
       </p>
-      <p class="mt-2 text-sm leading-6 text-white/70">
+      <p class="mt-2 text-sm leading-6 text-inverse-foreground/70">
         Implementation authority alone never publishes.
       </p>
     </div>
   </div>
 
-  <a
-    class="inline-flex items-center gap-2 justify-self-center text-sm font-semibold underline-offset-4 hover:underline"
+  <Button
+    class="justify-self-center"
     href="/workflow/"
+    variant="link"
   >
     See every step with example output
     <ArrowRight
       class="size-4"
       aria-hidden="true"
     />
-  </a>
+  </Button>
 </div>

@@ -1,6 +1,8 @@
 ---
-import InstallCommand from '../components/install-command/install-command.astro';
+import TextLink from 'jg-personal-astro-ui/text-link';
+
 import ResourceDocument from '../components/resource-document/resource-document.astro';
+import SkillsInstall from '../components/skills-install/skills-install.astro';
 import ContentLayout from '../layouts/content-layout.astro';
 import { RESOURCE_CONFIG, RESOURCE_IDS } from '../site.config.ts';
 import { loadResource } from '../utilities/resource-text/index.ts';
@@ -50,7 +52,7 @@ const hasBeenUpdated = publishedAt.getTime() !== updatedAt.getTime();
   </div>
 
   <section class="py-12 sm:py-16">
-    <div class="prose-shell">
+    <div class="jg-container-prose">
       <div class="mb-10 grid gap-5 rounded-xl border border-border bg-secondary/35 p-5 sm:p-7">
         <p class="text-lg leading-8">
           This file sets the standards an agent follows on every task: candor, skill-first
@@ -66,10 +68,10 @@ const hasBeenUpdated = publishedAt.getTime() !== updatedAt.getTime();
           rules to your repository after the foundation is in place.
         </p>
         <p class="text-sm leading-6 text-muted">
-          Already have useful instructions? Use the <a
-            class="font-bold underline underline-offset-4"
+          Already have useful instructions? Use the <TextLink
+            class="text-foreground"
             href="/refine/"
-            >preservation-first refinement workflow</a
+            >preservation-first refinement workflow</TextLink
           > instead of replacing them.
         </p>
       </div>
@@ -86,18 +88,18 @@ const hasBeenUpdated = publishedAt.getTime() !== updatedAt.getTime();
           </h2>
           <p class="text-sm leading-6 text-muted">
             This file sets the standards. The jg-skills collection runs the workflow on top of them:
-            plan, challenge, build, review, and push, each only when you invoke it. <a
-              class="font-semibold text-foreground underline underline-offset-4"
+            plan, challenge, build, review, and push, each only when you invoke it. <TextLink
+              class="text-foreground"
               href="/workflow/"
-              >See every step</a
+              >See every step</TextLink
             >.
           </p>
-          <InstallCommand id="start-install-command" />
+          <SkillsInstall id="start-install-command" />
         </section>
       </div>
       <ResourceDocument
         allowDownload
-        copyLabel="Copy AGENTS.md"
+        copyContext="AGENTS.md"
         fileName={resourceConfig.fileName}
         rawPath={resourceConfig.rawPath}
         sourceId="agents-foundation-source"
