@@ -1,10 +1,10 @@
 ---
 import { ArrowUpRight, LayoutGrid, Link2, Terminal } from '@lucide/astro';
+import JgMark from 'jg-personal-astro-ui/jg-mark';
 
 import { SITE_CONFIG } from '../../site.config.ts';
 import BrandMark from '../brand-mark/brand-mark.astro';
 import InstallCommand from '../install-command/install-command.astro';
-import JgSkillsMark from '../jg-skills-mark/jg-skills-mark.astro';
 
 // the jg-skills home page sections each card opens
 const BROWSE_URL = new URL('#skills', SITE_CONFIG.skills.url);
@@ -79,7 +79,7 @@ const installDestination = toDestination(INSTALL_URL);
       <li
         class="flex items-center gap-4 rounded-xl bg-primary p-5 text-primary-foreground shadow-raised"
       >
-        <JgSkillsMark class="size-10 shrink-0" />
+        <JgMark class="size-10 shrink-0" />
         <div class="min-w-0">
           <code class="font-mono text-base font-bold">jg-skills</code>
           <span class="mt-1 block text-sm text-accent-on-primary">Runs the workflow</span>
