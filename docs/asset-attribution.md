@@ -2,9 +2,9 @@
 
 `/docs` is reserved for essential, durable project concepts and processes. This page records the provenance and usage boundaries for copied brand assets.
 
-## JG mark
+## jg/ mark
 
-`src/components/jg-skills-mark/jg-skills-mark.astro` is an unchanged copy of the `JG/` monogram that the sibling jg-skills website draws with its theme tokens. The monogram itself comes from `jesusgraterol.dev/public/favicon.svg`. The homepage's jg-skills bridge shows it only beside the `jg-skills` label. Do not alter its letterforms or the accent slash.
+The lowercase `jg/` mark comes from [`jg-personal-astro-ui`](https://jg-packages.jesusgraterol.dev/packages/jg-personal-astro-ui/), which documents its source and license; the homepage's jg-skills bridge draws it with the package's `JgMark` component, only beside the `jg-skills` label. The site's own header, favicon, `logo.svg`, and open-graph image keep the Agentic Coding mark. Never keep a copy of the `jg/` mark here: change it in the package.
 
 ## Coding-agent marks
 
