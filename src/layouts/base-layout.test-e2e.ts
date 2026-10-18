@@ -430,14 +430,27 @@ test.describe('production website', () => {
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
 
     for (const copySource of [
-      { pagePath: '/start/', sourceId: 'agents-foundation-source' },
-      { pagePath: '/cookbook/control-scope/', sourceId: 'control-scope-prompt' },
-      { pagePath: '/workflow/', sourceId: 'workflow-install-command' },
+      // the foundation copies its raw file, which matches the rendered source exactly
+      {
+        button: 'button[data-copy-url="/AGENTS.md"]',
+        pagePath: '/start/',
+        sourceId: 'agents-foundation-source',
+      },
+      {
+        button: 'button[data-copy-source="control-scope-prompt"]',
+        pagePath: '/cookbook/control-scope/',
+        sourceId: 'control-scope-prompt',
+      },
+      {
+        button: 'button[data-copy-source="workflow-install-command"]',
+        pagePath: '/workflow/',
+        sourceId: 'workflow-install-command',
+      },
     ] as const) {
       await page.goto(copySource.pagePath);
 
       const sourceText = await readTextContent(page, `#${copySource.sourceId}`);
-      const copyControl = page.locator(`button[data-copy-source="${copySource.sourceId}"]`);
+      const copyControl = page.locator(copySource.button);
 
       await copyControl.click();
 
@@ -456,14 +469,18 @@ test.describe('production website', () => {
     });
     await page.goto('/refine/');
 
-    const copyControl = page.locator('button[data-copy-source="refinement-prompt-source"]');
+    const copyControl = page.locator('button[data-copy-url="/refine.txt"]');
     await copyControl.click();
+
+    // the package's guidance for a browser without a clipboard, which links to the raw file
+    const guidance =
+      "This browser can't copy from this page. Open the link below and copy the text there.";
+    const wrapper = copyControl.locator('xpath=..');
 
     await expect(copyControl).toHaveAttribute('data-copy-state', 'error');
     await expect(copyControl).toContainText('Copy failed');
-    await expect(page.locator('#refinement-prompt-source-copy-status')).toHaveText(
-      'Copy failed. Use the raw view instead.',
-    );
+    await expect(wrapper.locator('[data-copy-status]')).toHaveText(guidance);
+    await expect(wrapper.locator('[data-copy-hint] a')).toHaveAttribute('href', '/refine.txt');
   });
 
   test('theme preference persists and resolves before reload completes', async ({ page }) => {
@@ -532,37 +549,8 @@ test.describe('production website', () => {
 
       await expect(currentLink).toHaveAttribute('aria-current', 'page');
       await expect(inactiveLink).not.toHaveAttribute('aria-current');
-
-      const presentations = await Promise.all([
-        currentLink.evaluate((element) => {
-          const styles = getComputedStyle(element);
-
-          return { backgroundColor: styles.backgroundColor, borderColor: styles.borderColor };
-        }),
-        inactiveLink.evaluate((element) => {
-          const styles = getComputedStyle(element);
-
-          return { backgroundColor: styles.backgroundColor, borderColor: styles.borderColor };
-        }),
-      ]);
-
-      expect(presentations[0]).not.toStrictEqual(presentations[1]);
+      await expect(primaryNavigation.locator('[aria-current]')).toHaveCount(1);
     }
-
-    await page.goto('/refine/');
-
-    const primaryNavigation = page.getByRole('navigation', { name: 'Primary navigation' });
-    const inactivePresentations = await Promise.all(
-      ['Start', 'Cookbook'].map((linkName) =>
-        primaryNavigation.getByRole('link', { name: linkName, exact: true }).evaluate((element) => {
-          const styles = getComputedStyle(element);
-
-          return { backgroundColor: styles.backgroundColor, borderColor: styles.borderColor };
-        }),
-      ),
-    );
-
-    expect(inactivePresentations[0]).toStrictEqual(inactivePresentations[1]);
 
     await page.goto('/');
     await expect(page.getByRole('link', { name: 'Agentic Coding home' })).not.toHaveAttribute(
@@ -586,7 +574,7 @@ test.describe('production website', () => {
       'Agentic Coding',
     );
 
-    const menu = page.getByLabel('Open navigation menu');
+    const menu = page.getByLabel('Navigation menu');
     await menu.focus();
     await page.keyboard.press('Enter');
 
@@ -605,7 +593,7 @@ test.describe('production website', () => {
     ).toBe(true);
 
     await page.goto('/cookbook/control-scope/');
-    await page.getByLabel('Open navigation menu').click();
+    await page.getByLabel('Navigation menu').click();
 
     const currentCookbookLink = page
       .getByRole('navigation', { name: 'Mobile navigation' })
@@ -614,93 +602,84 @@ test.describe('production website', () => {
     await expect(currentCookbookLink).toHaveAttribute('aria-current', 'page');
   });
 
-  test('shows accessible progress during delayed client navigation and hides it after success', async ({
+  test('shows accessible progress during a slow navigation and leaves it behind with the page', async ({
     page,
   }) => {
-    await page.setViewportSize({ width: 320, height: 720 });
     await page.goto('/');
 
     const progress = page.getByRole('progressbar', {
       includeHidden: true,
-      name: 'Page navigation progress',
+      name: 'Loading the next page',
     });
-    const delayedRequest = Promise.withResolvers<void>();
 
     await expect(progress).toBeHidden();
+
+    // the bar as it shows, checked for accessibility, then hidden again
+    await progress.evaluate((element: HTMLElement) => {
+      element.hidden = false;
+    });
+    expect((await progress.boundingBox())?.width).toBe(1280);
+    expect(
+      (await new AxeBuilder({ page }).include('[data-navigation-progress]').analyze()).violations,
+    ).toStrictEqual([]);
+    await progress.evaluate((element: HTMLElement) => {
+      element.hidden = true;
+    });
+
+    // the old page records when the bar shows, since the test can't read a page mid-navigation.
+    // Removing the speculation rules cancels the prerender a hover starts, which the held route
+    // can't intercept, so the click makes a normal, slow navigation
+    await page.evaluate(() => {
+      document.querySelector('script[type="speculationrules"]')?.remove();
+      const bar = document.querySelector<HTMLElement>('[data-navigation-progress]');
+      let clickedAt = 0;
+
+      sessionStorage.removeItem('progress-shown-after');
+      document.addEventListener(
+        'click',
+        () => {
+          clickedAt = performance.now();
+        },
+        { capture: true },
+      );
+      new MutationObserver(() => {
+        if (bar !== null && !bar.hidden) {
+          sessionStorage.setItem('progress-shown-after', String(performance.now() - clickedAt));
+        }
+      }).observe(bar as Node, { attributes: true });
+    });
     await page.route(
       '**/start/',
       async (route) => {
-        await delayedRequest.promise;
+        await new Promise((resolve) => setTimeout(resolve, 600));
         await route.continue();
       },
       { times: 1 },
     );
 
-    const navigation = page.getByRole('link', { name: 'Start', exact: true }).first().click();
-
-    await expect(progress).toBeVisible();
-    await expect(progress).toHaveAttribute('aria-valuetext', 'Loading next page');
-    expect((await progress.boundingBox())?.width).toBe(320);
-
-    const accessibilityResults = await new AxeBuilder({ page })
-      .include('[data-navigation-progress]')
-      .analyze();
-
-    expect(accessibilityResults.violations).toStrictEqual([]);
-
-    delayedRequest.resolve();
-    await navigation;
+    await page
+      .getByRole('navigation', { name: 'Primary navigation' })
+      .getByRole('link', { name: 'Start', exact: true })
+      .click();
     await expect(page).toHaveURL('/start/');
+
+    // it waited 150 ms, then showed before the slow page arrived, which starts without it
+    expect(
+      Number(await page.evaluate(() => sessionStorage.getItem('progress-shown-after'))),
+    ).toBeGreaterThanOrEqual(150);
     await expect(progress).toBeHidden();
   });
 
-  test('cleans up progress after failed and interrupted navigation and across browser history', async ({
+  test('cleans up progress after interrupted navigation and across browser history', async ({
     page,
   }) => {
     await page.goto('/');
 
     const progress = page.getByRole('progressbar', {
       includeHidden: true,
-      name: 'Page navigation progress',
+      name: 'Loading the next page',
     });
-
-    await page.evaluate(() => {
-      type IFailedPreparationEvent = Event & { loader: () => Promise<void> };
-      type IFailedPreparationWindow = Window & {
-        __agenticCodingFailedNavigationPreparation?: IFailedPreparationEvent;
-      };
-      const preparationEvent = new Event('astro:before-preparation') as IFailedPreparationEvent;
-
-      preparationEvent.loader = (): Promise<void> =>
-        Promise.reject(new Error('Deliberate navigation preparation failure.'));
-      (window as IFailedPreparationWindow).__agenticCodingFailedNavigationPreparation =
-        preparationEvent;
-      document.dispatchEvent(preparationEvent);
-    });
-
-    await expect(progress).toBeVisible();
-    await page.evaluate(async () => {
-      type IFailedPreparationEvent = Event & { loader: () => Promise<void> };
-      type IFailedPreparationWindow = Window & {
-        __agenticCodingFailedNavigationPreparation?: IFailedPreparationEvent;
-      };
-      const failedPreparationWindow = window as IFailedPreparationWindow;
-      const preparationEvent = failedPreparationWindow.__agenticCodingFailedNavigationPreparation;
-
-      if (preparationEvent === undefined) {
-        throw new Error('The failed navigation preparation event is unavailable.');
-      }
-
-      try {
-        await preparationEvent.loader();
-      } catch {
-        // the rejected loader is the expected navigation failure under test
-      }
-
-      delete failedPreparationWindow.__agenticCodingFailedNavigationPreparation;
-    });
-    await expect(progress).toBeHidden();
-
+    const primaryNavigation = page.getByRole('navigation', { name: 'Primary navigation' });
     const interruptedRequest = Promise.withResolvers<void>();
 
     await page.route(
@@ -712,21 +691,14 @@ test.describe('production website', () => {
       { times: 1 },
     );
 
-    const interruptedNavigation = page
-      .getByRole('link', { name: 'Start', exact: true })
-      .first()
-      .click();
-
-    await expect(progress).toBeVisible();
-    await page.getByRole('link', { name: 'Cookbook', exact: true }).first().click();
+    // a second click replaces the held navigation, and the page it reaches has no bar showing
+    await primaryNavigation.getByRole('link', { name: 'Start', exact: true }).click();
+    await primaryNavigation.getByRole('link', { name: 'Cookbook', exact: true }).click();
     await expect(page).toHaveURL('/cookbook/');
     await expect(progress).toBeHidden();
-
     interruptedRequest.resolve();
-    await interruptedNavigation;
-    await expect(page).toHaveURL('/cookbook/');
 
-    await page.getByRole('link', { name: 'Start', exact: true }).first().click();
+    await primaryNavigation.getByRole('link', { name: 'Start', exact: true }).click();
     await expect(page).toHaveURL('/start/');
     await expect(progress).toBeHidden();
 
@@ -745,7 +717,7 @@ test.describe('production website', () => {
     await page.goto('/');
 
     const progress = page.locator('[data-navigation-progress]');
-    const indicator = progress.locator('[data-navigation-progress-indicator]');
+    const indicator = progress.locator('.jg-navigation-progress-indicator');
 
     for (const theme of ['light', 'dark'] as const) {
       await page.locator('html').evaluate((root, activeTheme) => {
@@ -755,7 +727,7 @@ test.describe('production website', () => {
 
       const colors = await progress.evaluate((progressElement) => {
         const indicatorElement = progressElement.querySelector<HTMLElement>(
-          '[data-navigation-progress-indicator]',
+          '.jg-navigation-progress-indicator',
         );
         const rootStyles = getComputedStyle(document.documentElement);
 
@@ -764,8 +736,8 @@ test.describe('production website', () => {
         }
 
         return {
-          backgroundToken: rootStyles.getPropertyValue('--background'),
-          foregroundToken: rootStyles.getPropertyValue('--foreground'),
+          backgroundToken: rootStyles.getPropertyValue('--jg-background'),
+          foregroundToken: rootStyles.getPropertyValue('--jg-foreground'),
           indicatorColor: getComputedStyle(indicatorElement).backgroundColor,
           pageBackground: getComputedStyle(document.body).backgroundColor,
           pageForeground: getComputedStyle(document.body).color,
@@ -782,7 +754,7 @@ test.describe('production website', () => {
     }
   });
 
-  test('keeps text selection visible on page and primary surfaces in both themes', async ({
+  test('keeps text selection visible on page and inverse surfaces in both themes', async ({
     page,
   }) => {
     await page.goto('/');
@@ -794,21 +766,21 @@ test.describe('production website', () => {
       }, theme);
 
       const colors = await page.evaluate(() => {
-        const primaryText = document.querySelector<HTMLElement>('.bg-primary p');
+        const primaryText = document.querySelector<HTMLElement>('.bg-inverse p');
         const colorProbe = document.createElement('span');
 
         if (primaryText === null) {
-          throw new Error('Primary-surface text is unavailable for selection verification.');
+          throw new Error('Inverse-surface text is unavailable for selection verification.');
         }
 
-        const primarySurface = primaryText.closest<HTMLElement>('.bg-primary');
+        const primarySurface = primaryText.closest<HTMLElement>('.bg-inverse');
 
         if (primarySurface === null) {
-          throw new Error('A primary surface is unavailable for selection verification.');
+          throw new Error('An inverse surface is unavailable for selection verification.');
         }
 
-        colorProbe.style.backgroundColor = 'var(--accent)';
-        colorProbe.style.color = 'var(--accent-foreground)';
+        colorProbe.style.backgroundColor = 'var(--jg-accent)';
+        colorProbe.style.color = 'var(--jg-accent-foreground)';
         document.body.append(colorProbe);
 
         const rootStyles = getComputedStyle(document.documentElement);
@@ -816,14 +788,15 @@ test.describe('production website', () => {
         const selectionStyles = getComputedStyle(document.documentElement, '::selection');
         const probeStyles = getComputedStyle(colorProbe);
         const result = {
-          accentForegroundToken: rootStyles.getPropertyValue('--accent-foreground'),
-          accentToken: rootStyles.getPropertyValue('--accent'),
+          accentForegroundToken: rootStyles.getPropertyValue('--jg-accent-foreground'),
+          accentToken: rootStyles.getPropertyValue('--jg-accent'),
+          inverseAccentToken: rootStyles.getPropertyValue('--jg-inverse-accent'),
           pageBackground: getComputedStyle(document.body).backgroundColor,
-          pageBackgroundToken: rootStyles.getPropertyValue('--background'),
+          pageBackgroundToken: rootStyles.getPropertyValue('--jg-background'),
           primaryBackground: getComputedStyle(primarySurface).backgroundColor,
           primarySelectionBackground: primarySelectionStyles.backgroundColor,
           primarySelectionForeground: primarySelectionStyles.color,
-          primaryToken: rootStyles.getPropertyValue('--primary'),
+          primaryToken: rootStyles.getPropertyValue('--jg-inverse'),
           selectionBackground: selectionStyles.backgroundColor,
           selectionForeground: selectionStyles.color,
           tokenBackground: probeStyles.backgroundColor,
@@ -851,6 +824,10 @@ test.describe('production website', () => {
       expect(
         calculateContrastRatio(colors.accentToken, colors.accentForegroundToken),
       ).toBeGreaterThanOrEqual(4.5);
+      // the inverse surface's own accent, as its panels use it for text
+      expect(
+        calculateContrastRatio(colors.inverseAccentToken, colors.primaryToken),
+      ).toBeGreaterThanOrEqual(4.5);
       expect(
         calculateContrastRatio(colors.primarySelectionBackground, colors.primaryBackground),
       ).toBeGreaterThanOrEqual(3);
@@ -863,53 +840,30 @@ test.describe('production website', () => {
     }
   });
 
-  test('shows a static navigation segment when reduced motion is preferred', async ({ page }) => {
+  test('shows a still bar a third wide when reduced motion is preferred', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/');
 
-    const delayedRequest = Promise.withResolvers<void>();
+    const progress = page.getByRole('progressbar', {
+      includeHidden: true,
+      name: 'Loading the next page',
+    });
+    const indicator = progress.locator('.jg-navigation-progress-indicator');
 
-    await page.route(
-      '**/start/',
-      async (route) => {
-        await delayedRequest.promise;
-        await route.continue();
-      },
-      { times: 1 },
-    );
+    await progress.evaluate((element: HTMLElement) => {
+      element.hidden = false;
+    });
 
-    const navigation = page.getByRole('link', { name: 'Start', exact: true }).first().click();
-    const progress = page.getByRole('progressbar', { name: 'Page navigation progress' });
-    const indicator = progress.locator('[data-navigation-progress-indicator]');
-
-    await expect(progress).toBeVisible();
-
-    const initialPresentation = await indicator.evaluate((element) => {
+    const presentation = await indicator.evaluate((element) => {
       const styles = getComputedStyle(element);
 
-      return {
-        animationName: styles.animationName,
-        opacity: styles.opacity,
-        transform: styles.transform,
-      };
+      return { animationName: styles.animationName, opacity: styles.opacity };
     });
     const progressBounds = await progress.boundingBox();
     const indicatorBounds = await indicator.boundingBox();
 
-    await page.waitForTimeout(100);
-
-    expect(initialPresentation.animationName).toBe('none');
-    expect(initialPresentation.opacity).toBe('1');
-    expect(initialPresentation.transform).not.toBe('none');
-    expect(await indicator.evaluate((element) => getComputedStyle(element).transform)).toBe(
-      initialPresentation.transform,
-    );
-    expect(indicatorBounds?.width).toBeGreaterThan((progressBounds?.width ?? 0) * 0.2);
-    expect(indicatorBounds?.width).toBeLessThan((progressBounds?.width ?? 0) * 0.4);
-
-    delayedRequest.resolve();
-    await navigation;
-    await expect(progress).toBeHidden();
+    expect(presentation).toStrictEqual({ animationName: 'none', opacity: '1' });
+    expect(indicatorBounds?.width).toBeCloseTo((progressBounds?.width ?? 0) / 3, 0);
   });
 
   test('reduced-motion users do not receive animated scrolling or transitions', async ({

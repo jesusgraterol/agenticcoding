@@ -1,10 +1,12 @@
 ---
-import { Download, ExternalLink } from '@lucide/astro';
-
-import CopyControl from '../copy-control/copy-control.astro';
+import { Download } from '@lucide/astro';
+import Button from 'jg-personal-astro-ui/button';
+import Card from 'jg-personal-astro-ui/card';
+import CopyButton from 'jg-personal-astro-ui/copy-button';
 
 interface Props {
-  copyLabel: string;
+  // what the copy button copies, completing its name, as in "Copy AGENTS.md"
+  copyContext: string;
   fileName: string;
   rawPath: string;
   sourceId: string;
@@ -12,56 +14,55 @@ interface Props {
   allowDownload?: boolean;
 }
 
-const { allowDownload = false, copyLabel, fileName, rawPath, sourceId, text } = Astro.props;
+const { allowDownload = false, copyContext, fileName, rawPath, sourceId, text } = Astro.props;
 ---
 
-<section class="overflow-hidden rounded-xl border border-border bg-surface">
-  <header
-    class="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-secondary/45 px-4 py-3 sm:px-5"
-  >
+{/* the resource as published: its file name, copying and the raw file, then its full text */}
+<Card
+  as="section"
+  class="grid gap-4"
+>
+  <header class="flex flex-wrap items-center justify-between gap-3">
     <div class="flex items-center gap-2 font-mono text-sm font-bold">
       <span
-        class="size-2.5 rounded-full bg-chart-3"
+        class="size-2.5 rounded-full bg-accent"
         aria-hidden="true"
       ></span>
       {fileName}
     </div>
     <div class="flex flex-wrap items-center gap-2">
-      <CopyControl
-        label={copyLabel}
-        sourceId={sourceId}
+      <CopyButton
+        context={copyContext}
+        size="md"
+        tone="outline"
+        url={rawPath}
       />
       {
         allowDownload && (
-          <a
-            class="action-secondary"
-            href={rawPath}
+          <Button
             download={fileName}
+            href={rawPath}
+            variant="outline"
           >
             <Download
               class="size-4"
               aria-hidden="true"
             />
             Download
-          </a>
+          </Button>
         )
       }
-      <a
-        class="action-secondary"
+      <Button
+        external
         href={rawPath}
-        target="_blank"
-        rel="noreferrer"
+        variant="outline"
       >
-        <ExternalLink
-          class="size-4"
-          aria-hidden="true"
-        />
         View raw
-      </a>
+      </Button>
     </div>
   </header>
   <pre
     id={sourceId}
-    class="max-h-[70vh] overflow-auto p-4 text-[0.8125rem] leading-6 whitespace-pre-wrap text-foreground sm:p-6 sm:text-sm"
+    class="max-h-[70vh] overflow-auto rounded-lg border border-border bg-code p-4 text-[0.8125rem] leading-6 whitespace-pre-wrap text-foreground sm:p-5 sm:text-sm"
     tabindex="0"><code>{text}</code></pre>
-</section>
+</Card>

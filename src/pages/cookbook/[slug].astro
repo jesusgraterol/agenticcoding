@@ -1,8 +1,11 @@
 ---
 import { render, type CollectionEntry } from 'astro:content';
-import { ArrowLeft, ArrowRight } from '@lucide/astro';
+import { ArrowLeft } from '@lucide/astro';
+import Button from 'jg-personal-astro-ui/button';
+import CopyButton from 'jg-personal-astro-ui/copy-button';
+import LinkCard from 'jg-personal-astro-ui/link-card';
+import Prose from 'jg-personal-astro-ui/prose';
 
-import CopyControl from '../../components/copy-control/copy-control.astro';
 import SessionTranscript from '../../components/session-transcript/session-transcript.astro';
 import ContentLayout from '../../layouts/content-layout.astro';
 import {
@@ -81,7 +84,7 @@ const hasBeenUpdated = recipe.data.updatedAt.getTime() !== recipe.data.published
   </div>
 
   <article class="py-12 sm:py-16">
-    <div class="prose-shell">
+    <div class="jg-container-prose">
       <p class="text-lg leading-8 text-balance">{recipe.data.situation}</p>
 
       <section
@@ -115,9 +118,11 @@ const hasBeenUpdated = recipe.data.updatedAt.getTime() !== recipe.data.published
           >
             Working prompt
           </h2>
-          <CopyControl
-            label="Copy prompt"
+          <CopyButton
+            context="prompt"
+            size="md"
             sourceId={promptSourceId}
+            tone="outline"
           />
         </header>
         <pre
@@ -130,9 +135,9 @@ const hasBeenUpdated = recipe.data.updatedAt.getTime() !== recipe.data.published
         </p>
       </section>
 
-      <div class="article-content">
+      <Prose>
         <Content />
-      </div>
+      </Prose>
 
       {
         relatedRecipes.length > 0 && (
@@ -148,32 +153,29 @@ const hasBeenUpdated = recipe.data.updatedAt.getTime() !== recipe.data.published
             </h2>
             <div class="mt-5 grid gap-3 sm:grid-cols-2">
               {relatedRecipes.map(({ data }) => (
-                <a
-                  class="group flex items-center justify-between gap-4 rounded-lg border border-border p-4 font-bold no-underline hover:bg-secondary"
+                <LinkCard
                   href={`/cookbook/${data.slug}/`}
+                  title={data.title}
                 >
-                  {data.title}
-                  <ArrowRight
-                    class="size-4 shrink-0 transition-transform group-hover:translate-x-1 motion-reduce:transform-none"
-                    aria-hidden="true"
-                  />
-                </a>
+                  {data.description}
+                </LinkCard>
               ))}
             </div>
           </aside>
         )
       }
 
-      <a
-        class="mt-12 inline-flex items-center gap-2 font-bold underline underline-offset-4"
+      <Button
+        class="mt-12"
         href="/cookbook/"
+        variant="link"
       >
         <ArrowLeft
           class="size-4"
           aria-hidden="true"
         />
         Back to the cookbook
-      </a>
+      </Button>
     </div>
   </article>
 </ContentLayout>

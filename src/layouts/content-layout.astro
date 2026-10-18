@@ -1,5 +1,5 @@
 ---
-import { ChevronRight } from '@lucide/astro';
+import PageHeader from 'jg-personal-astro-ui/page-header';
 
 import type {
   IAlternateDocument,
@@ -48,54 +48,14 @@ const {
   structuredDataType={structuredDataType}
   updatedAt={updatedAt}
 >
-  <header class="border-b border-border py-16 sm:py-20">
-    <div class="prose-shell text-center">
-      <nav aria-label="Breadcrumb">
-        <ol
-          class="flex flex-wrap items-center justify-center gap-1.5 font-mono text-xs font-bold text-muted"
-        >
-          {
-            breadcrumbs.map(({ name, path }, index) => {
-              const isCurrentPage = index === breadcrumbs.length - 1;
-
-              return (
-                <li class="flex min-w-0 items-center gap-1.5">
-                  {index > 0 && (
-                    <ChevronRight
-                      class="size-3.5 shrink-0"
-                      aria-hidden="true"
-                    />
-                  )}
-                  {isCurrentPage ? (
-                    <span
-                      class="truncate text-foreground"
-                      aria-current="page"
-                    >
-                      {name}
-                    </span>
-                  ) : (
-                    <a
-                      class="underline-offset-4 hover:text-foreground hover:underline"
-                      href={path}
-                    >
-                      {name}
-                    </a>
-                  )}
-                </li>
-              );
-            })
-          }
-        </ol>
-      </nav>
-      <p class="eyebrow mt-4">{eyebrow}</p>
-      <h1
-        class="mx-auto mt-4 max-w-4xl text-[clamp(2.75rem,6vw,4rem)] leading-[1.02] font-semibold tracking-[-0.045em] text-balance"
-      >
-        {title}
-      </h1>
-      <p class="lede mx-auto mt-6">{description}</p>
-      <slot name="metadata" />
-    </div>
-  </header>
+  <PageHeader
+    align="center"
+    breadcrumbs={breadcrumbs.map(({ name, path }) => ({ href: path, name }))}
+    eyebrow={eyebrow}
+    lede={description}
+    title={title}
+  >
+    <slot name="metadata" />
+  </PageHeader>
   <slot />
 </BaseLayout>

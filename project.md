@@ -502,7 +502,8 @@ Requirements:
 - "Agentic Coding" returns to `/`
 - "Skills" opens `https://jg-skills.jesusgraterol.dev/` and is identifiable as an external destination
 - "Source" opens the configured repository
-- the active destination is visually identifiable
+- the active destination is marked with `aria-current="page"` and is visually identifiable; the cookbook stays current on its recipes
+- the header is `jg-personal-astro-ui`'s `site-header`, with the package's Agentic Coding mark as the brand
 - the navigation is fully keyboard accessible
 - the mobile navigation works at 320px without horizontal overflow
 - the navigation remains usable with JavaScript disabled
@@ -1485,7 +1486,7 @@ No essential explanation may be hidden behind JavaScript-only rendering.
 
 ### 17.2 Copy controls
 
-Reusable copy controls are required for:
+The copy controls are `jg-personal-astro-ui`'s copy buttons, which copy through `jg-clipboard`. They are required for:
 
 - `AGENTS.md`
 - the refinement prompt
@@ -1498,11 +1499,11 @@ Copy behavior MUST:
 - copy the exact canonical text
 - expose a visible success state
 - announce success to assistive technology
-- expose a visible error state if clipboard writing fails
+- expose a visible error state if clipboard writing fails, with guidance for the browser's reason
 - avoid reading from the clipboard
-- reset its temporary status without creating distracting motion
+- reset its temporary status without creating distracting motion, keeping the button's box still while its label changes
 
-A raw-view or downloadable fallback must remain available.
+A raw-view or downloadable fallback must remain available. The resource pages' buttons copy the raw file itself, and their failure guidance links to it.
 
 ### 17.3 Theme
 
@@ -1511,21 +1512,17 @@ The site MUST support:
 - system preference by default
 - explicit light mode
 - explicit dark mode
-- persistence of the visitor's explicit preference in local storage
-- no flash that makes text unreadable
+- persistence of the visitor's explicit preference in local storage, under `agentic-coding-theme`
+- no flash that makes text unreadable, through the package's theme script in the page head
 - sufficient contrast in both modes
 
 Theme preference is the only required browser-persisted state.
 
 ### 17.4 Navigation experience
 
-The site SHOULD use Astro's client router to provide fast, SPA-like navigation and restrained view transitions.
+The site uses no client router. Pages load as ordinary documents, which crossfade through cross-document view transitions where the browser supports them, and the package's speculation rules prerender a page when the pointer rests on its link.
 
-Correctness must not depend on the client router. Standard links and statically generated pages remain authoritative.
-
-Client-side scripts must initialize correctly after client-routed navigation.
-
-Client-routed navigation MUST expose a lightweight progress indicator while the next page is being prepared. The indicator must provide immediate feedback without blocking interaction or shifting the page layout. It must clear after successful navigation, failed navigation, interruption, and browser history traversal.
+A navigation that runs longer than 150 ms MUST show the package's lightweight progress bar, without blocking interaction or shifting the page layout. The next page starts without it, and it must stay hidden after interruption and browser history traversal.
 
 ### 17.5 Motion
 
@@ -1593,7 +1590,7 @@ Avoid:
 
 ### 18.3 Design tokens
 
-The implementation MUST centralize semantic tokens for at least:
+The tokens come from `jg-personal-astro-ui`'s contract and theme, as `--jg-*` custom properties mapped into Tailwind's theme; `src/styles/global.css` only imports them. They cover at least:
 
 - page background
 - elevated surface
@@ -1608,9 +1605,10 @@ The implementation MUST centralize semantic tokens for at least:
 - code background
 - success
 - warning
-- error
+- danger
+- the always-dark inverse surface, its text, and its accent, for the panels that stay dark in both themes
 
-Tokens must support light and dark themes.
+Tokens must support light and dark themes. In dark mode the primary color inverts, so a panel meant to stay dark uses the inverse surface.
 
 Do not scatter one-off colors throughout components.
 
@@ -1635,7 +1633,7 @@ The implementation must define:
 - monospace code text
 - readable maximum prose width
 
-The exact font family is an implementation design decision unless the developer supplies a brand requirement.
+The package's theme supplies Ubuntu Sans and Ubuntu Sans Mono, bundled through installed packages, and its `display-title`, `section-title`, `lede`, and `eyebrow` scales.
 
 ### 18.5 Diagrams
 
@@ -1767,19 +1765,16 @@ Define strict schemas in `src/content.config.ts` using the APIs appropriate to t
 
 Content validation must fail the build when required metadata is missing or invalid.
 
-### 21.6 Astro client routing
+### 21.6 Navigation between pages
 
-The base layout SHOULD include Astro's current supported client router for SPA-like navigation.
+The site uses no client router. `jg-personal-astro-ui` provides the navigation behavior:
 
-Requirements:
-
-- pages remain real static pages
-- standard anchor navigation remains valid
-- page titles and route announcements remain correct
-- scripts account for client-routed page lifecycle
-- client-routed preparation exposes accessible progress and always clears its loading state
-- transitions are minimal
-- reduced-motion users receive no unnecessary animation
+- pages remain real static pages, loaded as ordinary documents
+- standard anchor navigation remains valid, and page titles stay correct
+- cross-document view transitions crossfade pages where the browser supports them
+- the package's speculation rules prerender a page when the pointer rests on its link
+- a slow navigation shows the package's accessible progress bar, which each new page starts without
+- reduced-motion users receive no unnecessary animation, and a still bar replaces the sweep
 
 ### 21.7 Tailwind CSS
 
@@ -1789,8 +1784,8 @@ Do not use the deprecated `@astrojs/tailwind` integration for a new Tailwind 4 p
 
 Use:
 
-- semantic CSS variables for design tokens
-- Tailwind utilities for layout and presentation
+- the `--jg-*` design tokens from `jg-personal-astro-ui`'s contract and theme
+- the package's components, and Tailwind utilities for the site's own layout and presentation
 - custom CSS only for global tokens, typography primitives, browser-specific behavior, or visuals Tailwind cannot express cleanly
 
 Do not create a large bespoke CSS framework.
@@ -1810,13 +1805,12 @@ Do not create a large bespoke CSS framework.
 │   ├── og/
 │   └── robots.txt
 ├── src/
-│   ├── components/
-│   │   ├── copy-control/
-│   │   ├── comparison/
-│   │   ├── navigation/
-│   │   ├── theme-control/
-│   │   ├── workflow-loop/
-│   │   └── shared/
+│   ├── components/          # the site's sections; header, footer, theme, and copy come from the package
+│   │   ├── coding-modes-comparison/
+│   │   ├── skill-pipeline/
+│   │   ├── skills-install/
+│   │   ├── workflow-guide/
+│   │   └── …
 │   ├── content/
 │   │   ├── cookbook/
 │   │   └── resources/
@@ -1837,7 +1831,7 @@ Do not create a large bespoke CSS framework.
 │   │   │   └── [slug].astro
 │   │   └── 404.astro
 │   ├── styles/
-│   │   └── global.css
+│   │   └── global.css       # imports the package's contract, theme, and prose styles
 │   ├── utilities/
 │   ├── content.config.ts
 │   └── site.config.ts
@@ -2038,8 +2032,6 @@ Add focused unit tests where they provide value, including:
 - canonical resource text normalization
 - resource endpoint output
 - content metadata validation owned by project utilities
-- theme preference parsing and resolution
-- copy-state logic if extracted into a reusable utility
 - any non-trivial workflow interaction logic
 - durable public foundation and refinement contracts, including skill-first dispatch, planning records, review evidence, and publication authority
 
@@ -2059,7 +2051,7 @@ Use browser-level tests for important user-visible flows:
 - copied resource text matches the canonical source
 - theme selection works and persists
 - mobile navigation is keyboard operable
-- the progress indicator behaves correctly during delayed, failed, interrupted, and browser history navigation
+- the progress indicator shows during a slow navigation, and stays hidden after interruption and browser history navigation
 - copy controls expose success state
 - the custom 404 page is generated and usable
 - the site has no horizontal page overflow at 320px in representative routes
@@ -2245,7 +2237,7 @@ The first production release is complete only when all of the following are true
 - the site works at 320px
 - light and dark modes are complete
 - keyboard navigation is complete
-- client-routed navigation provides clear loading feedback
+- a slow navigation provides clear loading feedback
 - reduced-motion behavior is complete
 - no required content is JavaScript-only
 - no page has unintended horizontal overflow

@@ -84,7 +84,8 @@ test.describe('skills bridge', () => {
       );
       await expect(link).toHaveAttribute('href', href);
       await expect(link).toHaveAttribute('target', '_blank');
-      await expect(link.locator('.lucide-arrow-up-right')).toHaveCount(1);
+      // the up-right arrow sits in the card's corner
+      await expect(card.locator('.lucide-arrow-up-right')).toHaveCount(1);
       await expect(card.locator('[data-skills-bridge-destination]')).toHaveText(destination);
     }
   });
@@ -94,7 +95,7 @@ test.describe('skills bridge', () => {
     await page.goto('/');
 
     const installCard = page.locator('[data-skills-bridge-card]').nth(1);
-    // the card's only button; its accessible name changes to "Copied" while it reports success
+    // the card's only button; its label changes to "Copied" while it reports success
     const copyControl = installCard.getByRole('button');
 
     await expect(installCard.locator('#skills-bridge-install-command')).toHaveText(
@@ -108,7 +109,7 @@ test.describe('skills bridge', () => {
     await copyControl.click();
 
     await expect(copyControl).toHaveAttribute('data-copy-state', 'success');
-    await expect(copyControl).toHaveAccessibleName('Copied');
+    await expect(copyControl).toHaveAccessibleName('Copied install command');
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
       'npx skills add jesusgraterol/jg-skills --skill "*" -y',
     );
@@ -127,7 +128,7 @@ test.describe('skills bridge', () => {
     const buttonBefore = await pageBoxOf(copyControl);
 
     await copyControl.click();
-    await expect(copyControl).toHaveAccessibleName('Copied');
+    await expect(copyControl).toHaveAccessibleName('Copied install command');
 
     expect(await pageBoxOf(installCard)).toStrictEqual(cardBefore);
     expect(await pageBoxOf(copyControl)).toStrictEqual(buttonBefore);

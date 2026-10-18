@@ -1,5 +1,7 @@
 ---
 import { ArrowRight, Braces, Gauge, ShieldCheck, Sparkles } from '@lucide/astro';
+import Button from 'jg-personal-astro-ui/button';
+import Section from 'jg-personal-astro-ui/section';
 
 import CodingAgentStrip from '../components/coding-agent-strip/coding-agent-strip.astro';
 import CodingModesComparison from '../components/coding-modes-comparison/coding-modes-comparison.astro';
@@ -46,7 +48,7 @@ const leverageItems = [
 >
   <section class="border-b border-border pt-14 pb-16 sm:pt-20 sm:pb-20">
     <div
-      class="page-shell grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start lg:gap-14"
+      class="jg-container grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start lg:gap-14"
     >
       <div class="lg:sticky lg:top-28">
         <p class="eyebrow">Professional software development after manual coding</p>
@@ -59,267 +61,173 @@ const leverageItems = [
           workflow. You decide how much to delegate, while the agent carries the evidence.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
-          <a
-            class="action-primary"
-            href="/start/"
-          >
+          <Button href="/start/">
             Start with the foundation
             <ArrowRight
               class="size-4"
               aria-hidden="true"
             />
-          </a>
-          <a
-            class="action-secondary"
+          </Button>
+          <Button
             href="/workflow/"
-            >See the workflow</a
+            variant="outline"
           >
+            See the workflow
+          </Button>
         </div>
       </div>
       <HeroSession />
     </div>
   </section>
 
-  <section
-    class="section-space border-b border-border"
-    aria-labelledby="operating-model-title"
+  <Section
+    id="operating-model"
+    align="center"
+    eyebrow="01 / The operating model"
+    lede="An agent may write most of the code and the work can still be deeply engineered. What matters is who controls the decisions, scope, evidence, and quality."
+    title="The difference is control, not line count."
   >
-    <div class="page-shell">
-      <div class="mx-auto max-w-3xl text-center">
-        <p class="eyebrow">01 / The operating model</p>
-        <h2
-          id="operating-model-title"
-          class="section-title mx-auto mt-4"
-        >
-          The difference is control, not line count.
-        </h2>
-        <p class="lede mx-auto mt-6 text-base sm:text-lg">
-          An agent may write most of the code and the work can still be deeply engineered. What
-          matters is who controls the decisions, scope, evidence, and quality.
-        </p>
-      </div>
-
-      <div class="mt-12 grid gap-6 border-y border-border py-7 lg:grid-cols-2 lg:items-center">
-        <h3 class="text-2xl leading-tight font-semibold tracking-tight sm:text-3xl">
-          AI made code generation cheap. Engineering did not become optional.
-        </h3>
-        <p class="text-base leading-7 text-muted">
-          Code can arrive in seconds. The real question is whether the process can consistently turn
-          that capability into software worth maintaining.
-        </p>
-      </div>
-
-      <CodingModesComparison />
-
-      <div
-        class="mt-12 grid gap-8 rounded-xl border border-border bg-secondary/45 p-6 sm:p-8 lg:grid-cols-[1.1fr_0.9fr]"
-      >
-        <div>
-          <p class="eyebrow">A working definition</p>
-          <p class="mt-4 text-2xl leading-tight font-semibold tracking-tight sm:text-3xl">
-            A collaborative discipline, not a shortcut.
-          </p>
-          <p class="mt-5 text-base leading-7 text-muted">
-            Agents work across the lifecycle. Developers keep intent, direction, and quality.
-          </p>
-        </div>
-        <dl class="grid gap-px overflow-hidden rounded-lg border border-border bg-border">
-          <div class="bg-background p-4">
-            <dt class="font-mono text-xs font-bold text-accent uppercase">Across the lifecycle</dt>
-            <dd class="mt-2 text-sm leading-6 text-muted">
-              Plan, challenge, implement, verify, and correct.
-            </dd>
-          </div>
-          <div class="bg-background p-4">
-            <dt class="font-mono text-xs font-bold text-accent uppercase">Under direction</dt>
-            <dd class="mt-2 text-sm leading-6 text-muted">
-              The developer owns goals and tradeoffs.
-            </dd>
-          </div>
-          <div class="bg-background p-4">
-            <dt class="font-mono text-xs font-bold text-accent uppercase">Closed by evidence</dt>
-            <dd class="mt-2 text-sm leading-6 text-muted">
-              Independent tests, agent review, and developer judgment earn confidence.
-            </dd>
-          </div>
-        </dl>
-      </div>
-    </div>
-  </section>
-
-  <section
-    class="section-space border-b border-border"
-    aria-labelledby="engineering-contract-title"
-  >
-    <div class="page-shell">
-      <div class="mx-auto max-w-3xl text-center">
-        <p class="eyebrow">02 / Engineer the contract</p>
-        <h2
-          id="engineering-contract-title"
-          class="section-title mx-auto mt-4"
-        >
-          Reliable delegation has layers.
-        </h2>
-        <p class="lede mx-auto mt-6 text-base sm:text-lg">
-          <code class="text-[0.9em] text-foreground">AGENTS.md</code> turns authority, evidence, ownership,
-          coherence, judgment, and publication into one contract every skill works within.
-        </p>
-      </div>
-      <EngineeringContract />
-    </div>
-  </section>
-
-  <section
-    class="section-space border-b border-border bg-secondary/35"
-    aria-labelledby="collaboration-title"
-  >
-    <div class="page-shell">
-      <div class="mx-auto max-w-3xl text-center">
-        <p class="eyebrow">03 / Run the workflow</p>
-        <h2
-          id="collaboration-title"
-          class="section-title mx-auto mt-4"
-        >
-          Plan together. Build in slices. Publish on your terms.
-        </h2>
-        <p class="lede mx-auto mt-6 text-base sm:text-lg">
-          Each step runs only when you invoke its skill. The agent plans, builds, and assembles the
-          evidence; you approve the plan, choose the outcome, and grant publication.
-        </p>
-      </div>
-      <SkillPipeline />
-    </div>
-  </section>
-
-  <section
-    class="section-space border-b border-border"
-    aria-labelledby="maturity-title"
-  >
-    <div class="page-shell">
-      <div class="mx-auto max-w-3xl text-center">
-        <p class="eyebrow">04 / Mature the project</p>
-        <h2
-          id="maturity-title"
-          class="section-title mx-auto mt-4"
-        >
-          Clear systems earn wider delegation.
-        </h2>
-        <p class="lede mx-auto mt-6 text-base sm:text-lg">
-          Demonstrate the path, codify what repeats, and delegate more as the evidence earns it, up
-          to autonomous runs with explicit limits.
-        </p>
-      </div>
-      <MaturitySystem />
-    </div>
-  </section>
-
-  <section
-    class="section-space border-b border-border bg-secondary/35"
-    aria-labelledby="authority-title"
-  >
-    <div class="page-shell">
-      <div class="mx-auto max-w-3xl text-center">
-        <p class="eyebrow">05 / Bound the authority</p>
-        <h2
-          id="authority-title"
-          class="section-title mx-auto mt-4"
-        >
-          Wide context. Narrow authority.
-        </h2>
-        <p class="lede mx-auto mt-6 text-base sm:text-lg">
-          Inspect enough surrounding code to understand the complete affected path. Change only what
-          the approved task requires, then use evidence to decide whether the result is acceptable.
-        </p>
-      </div>
-      <ContextAuthority />
-    </div>
-  </section>
-
-  <section
-    class="section-space border-b border-border"
-    aria-labelledby="leverage-title"
-  >
-    <div class="page-shell">
-      <div class="mx-auto max-w-3xl text-center">
-        <p class="eyebrow">06 / Use the leverage</p>
-        <h2
-          id="leverage-title"
-          class="section-title section-title-long mx-auto mt-4"
-        >
-          The first benefit is speed. The lasting benefit should be better software.
-        </h2>
-        <p class="lede mx-auto mt-6 text-base sm:text-lg">
-          Manual coding skills remain essential. Agentic Coding moves more developer attention from
-          typing and routine inspection toward judgment, system design, independent test oracles,
-          and correction.
-        </p>
-      </div>
-      <div
-        class="mt-12 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-4"
-      >
-        {
-          leverageItems.map(({ icon: Icon, text, title }) => (
-            <article class="bg-background p-6">
-              <Icon
-                class="size-5 text-accent"
-                aria-hidden="true"
-              />
-              <h3 class="mt-10 text-lg font-semibold tracking-tight">{title}</h3>
-              <p class="mt-3 text-sm leading-6 text-muted">{text}</p>
-            </article>
-          ))
-        }
-      </div>
-      <p class="mx-auto mt-10 max-w-3xl text-center text-xl leading-8 font-semibold">
-        The agent provides capability. The engineering process provides reliability.
+    <div class="mt-12 grid gap-6 border-y border-border py-7 lg:grid-cols-2 lg:items-center">
+      <h3 class="text-2xl leading-tight font-semibold tracking-tight sm:text-3xl">
+        AI made code generation cheap. Engineering did not become optional.
+      </h3>
+      <p class="text-base leading-7 text-muted">
+        Code can arrive in seconds. The real question is whether the process can consistently turn
+        that capability into software worth maintaining.
       </p>
     </div>
-  </section>
 
-  <section
-    class="section-space border-b border-border bg-secondary/35"
-    aria-labelledby="moldea-proof-title"
-  >
-    <div class="page-shell">
-      <div class="mx-auto max-w-3xl text-center">
-        <p class="eyebrow">07 / Applied in practice</p>
-        <h2
-          id="moldea-proof-title"
-          class="section-title mx-auto mt-4"
-        >
-          Built through real project work.
-        </h2>
-        <p class="lede mx-auto mt-6 text-base sm:text-lg">
-          Agentic Coding was shaped while building moldea, where project context, agent
-          instructions, deterministic validation, adversarial tests, agent evidence, and developer
-          judgment have to operate as one coherent system.
+    <CodingModesComparison />
+
+    <div
+      class="mt-12 grid gap-8 rounded-xl border border-border bg-secondary/45 p-6 sm:p-8 lg:grid-cols-[1.1fr_0.9fr]"
+    >
+      <div>
+        <p class="eyebrow">A working definition</p>
+        <p class="mt-4 text-2xl leading-tight font-semibold tracking-tight sm:text-3xl">
+          A collaborative discipline, not a shortcut.
+        </p>
+        <p class="mt-5 text-base leading-7 text-muted">
+          Agents work across the lifecycle. Developers keep intent, direction, and quality.
         </p>
       </div>
-      <MoldeaProof />
+      <dl class="grid gap-px overflow-hidden rounded-lg border border-border bg-border">
+        <div class="bg-background p-4">
+          <dt class="font-mono text-xs font-bold text-accent uppercase">Across the lifecycle</dt>
+          <dd class="mt-2 text-sm leading-6 text-muted">
+            Plan, challenge, implement, verify, and correct.
+          </dd>
+        </div>
+        <div class="bg-background p-4">
+          <dt class="font-mono text-xs font-bold text-accent uppercase">Under direction</dt>
+          <dd class="mt-2 text-sm leading-6 text-muted">The developer owns goals and tradeoffs.</dd>
+        </div>
+        <div class="bg-background p-4">
+          <dt class="font-mono text-xs font-bold text-accent uppercase">Closed by evidence</dt>
+          <dd class="mt-2 text-sm leading-6 text-muted">
+            Independent tests, agent review, and developer judgment earn confidence.
+          </dd>
+        </div>
+      </dl>
     </div>
-  </section>
+  </Section>
 
-  <section
-    class="section-space"
-    aria-labelledby="resources-title"
+  <Section
+    id="engineering-contract"
+    align="center"
+    eyebrow="02 / Engineer the contract"
+    title="Reliable delegation has layers."
   >
-    <div class="page-shell">
-      <div class="mx-auto max-w-3xl text-center">
-        <p class="eyebrow">08 / Put it into practice</p>
-        <h2
-          id="resources-title"
-          class="section-title mx-auto mt-4"
-        >
-          Give the work a stronger operating system.
-        </h2>
-        <p class="lede mx-auto mt-6 text-base sm:text-lg">
-          Set the standards, install the skills, refine what the repository already knows, and keep
-          techniques at hand for the harder moments.
-        </p>
-      </div>
-      <ResourceActions />
+    <p
+      slot="header-end"
+      class="lede mx-auto mt-5"
+    >
+      <code class="text-[0.9em] text-foreground">AGENTS.md</code> turns authority, evidence, ownership,
+      coherence, judgment, and publication into one contract every skill works within.
+    </p>
+    <EngineeringContract />
+  </Section>
+
+  <Section
+    id="collaboration"
+    align="center"
+    class="bg-secondary/35"
+    eyebrow="03 / Run the workflow"
+    lede="Each step runs only when you invoke its skill. The agent plans, builds, and assembles the evidence; you approve the plan, choose the outcome, and grant publication."
+    title="Plan together. Build in slices. Publish on your terms."
+  >
+    <SkillPipeline />
+  </Section>
+
+  <Section
+    id="maturity"
+    align="center"
+    eyebrow="04 / Mature the project"
+    lede="Demonstrate the path, codify what repeats, and delegate more as the evidence earns it, up to autonomous runs with explicit limits."
+    title="Clear systems earn wider delegation."
+  >
+    <MaturitySystem />
+  </Section>
+
+  <Section
+    id="authority"
+    align="center"
+    class="bg-secondary/35"
+    eyebrow="05 / Bound the authority"
+    lede="Inspect enough surrounding code to understand the complete affected path. Change only what the approved task requires, then use evidence to decide whether the result is acceptable."
+    title="Wide context. Narrow authority."
+  >
+    <ContextAuthority />
+  </Section>
+
+  <Section
+    id="leverage"
+    align="center"
+    eyebrow="06 / Use the leverage"
+    lede="Manual coding skills remain essential. Agentic Coding moves more developer attention from typing and routine inspection toward judgment, system design, independent test oracles, and correction."
+    title="The first benefit is speed. The lasting benefit should be better software."
+  >
+    <div
+      class="mt-12 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-4"
+    >
+      {
+        leverageItems.map(({ icon: Icon, text, title }) => (
+          <article class="bg-background p-6">
+            <Icon
+              class="size-5 text-accent"
+              aria-hidden="true"
+            />
+            <h3 class="mt-10 text-lg font-semibold tracking-tight">{title}</h3>
+            <p class="mt-3 text-sm leading-6 text-muted">{text}</p>
+          </article>
+        ))
+      }
     </div>
-  </section>
+    <p class="mx-auto mt-10 max-w-3xl text-center text-xl leading-8 font-semibold">
+      The agent provides capability. The engineering process provides reliability.
+    </p>
+  </Section>
+
+  <Section
+    id="moldea-proof"
+    align="center"
+    class="bg-secondary/35"
+    eyebrow="07 / Applied in practice"
+    lede="Agentic Coding was shaped while building moldea, where project context, agent instructions, deterministic validation, adversarial tests, agent evidence, and developer judgment have to operate as one coherent system."
+    title="Built through real project work."
+  >
+    <MoldeaProof />
+  </Section>
+
+  <Section
+    id="resources"
+    align="center"
+    eyebrow="08 / Put it into practice"
+    lede="Set the standards, install the skills, refine what the repository already knows, and keep techniques at hand for the harder moments."
+    title="Give the work a stronger operating system."
+  >
+    <ResourceActions />
+  </Section>
 
   <SkillsBridge />
 

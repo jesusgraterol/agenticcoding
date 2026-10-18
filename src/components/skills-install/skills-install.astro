@@ -1,0 +1,23 @@
+---
+import InstallCommand from 'jg-personal-astro-ui/install-command';
+
+import { SITE_CONFIG } from '../../site.config.ts';
+
+interface Props {
+  // id of the copied command element; unique within the page
+  id: string;
+}
+
+const { id } = Astro.props;
+---
+
+{/* the jg-skills install command, with the note on how its invocation was verified */}
+<div class="grid min-w-0 gap-3">
+  <InstallCommand
+    command={SITE_CONFIG.skills.installCommand}
+    context="install command"
+    id={id}
+    title={`Install ${SITE_CONFIG.skills.name} from your repository's root`}
+  />
+  <p class="text-sm leading-6 text-muted">{SITE_CONFIG.skills.verificationNote}</p>
+</div>

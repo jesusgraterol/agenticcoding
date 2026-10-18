@@ -1,5 +1,6 @@
 ---
-import { TriangleAlert } from '@lucide/astro';
+import Callout from 'jg-personal-astro-ui/callout';
+import TextLink from 'jg-personal-astro-ui/text-link';
 
 import CodingAgentStrip from '../components/coding-agent-strip/coding-agent-strip.astro';
 import ResourceDocument from '../components/resource-document/resource-document.astro';
@@ -52,7 +53,7 @@ const hasBeenUpdated = publishedAt.getTime() !== updatedAt.getTime();
   </div>
 
   <section class="py-12 sm:py-16">
-    <div class="prose-shell">
+    <div class="jg-container-prose">
       <div class="mb-10 grid gap-5 rounded-xl border border-border bg-secondary/35 p-5 sm:p-7">
         <p class="text-lg leading-8">
           Paste this prompt into the coding agent already working inside your repository. The agent
@@ -61,27 +62,24 @@ const hasBeenUpdated = publishedAt.getTime() !== updatedAt.getTime();
         </p>
         <p class="text-sm leading-6 text-muted">
           This is one canonical prompt, not a builder. Your repository and your conversation supply
-          the context. Repositories without useful instructions should begin with the <a
-            class="font-bold underline underline-offset-4"
+          the context. Repositories without useful instructions should begin with the <TextLink
+            class="text-foreground"
             href="/start/"
-            >ready-to-use foundation</a
+            >ready-to-use foundation</TextLink
           >.
         </p>
-        <aside
-          class="flex gap-3 rounded-lg border border-warning/50 bg-warning/10 p-4 text-sm leading-6"
+        <Callout
+          role="note"
+          variant="warning"
         >
-          <TriangleAlert
-            class="mt-0.5 size-5 shrink-0 text-warning"
-            aria-hidden="true"
-          />
           <p>
             <strong>Keep the approval boundary.</strong> Review the proposed changes before authorizing
             edits to repository instructions.
           </p>
-        </aside>
+        </Callout>
       </div>
       <ResourceDocument
-        copyLabel="Copy refinement prompt"
+        copyContext="refinement prompt"
         fileName={resourceConfig.fileName}
         rawPath={resourceConfig.rawPath}
         sourceId="refinement-prompt-source"

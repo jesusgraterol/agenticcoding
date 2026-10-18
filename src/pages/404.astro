@@ -1,5 +1,6 @@
 ---
 import { ArrowLeft } from '@lucide/astro';
+import Button from 'jg-personal-astro-ui/button';
 
 import BaseLayout from '../layouts/base-layout.astro';
 ---
@@ -10,16 +11,16 @@ import BaseLayout from '../layouts/base-layout.astro';
   title="Page not found | Agentic Coding"
   noIndex
 >
-  <section class="section-space">
-    <div class="prose-shell">
+  <section class="jg-section-space">
+    <div class="jg-container-prose">
       <p class="eyebrow">404 · Path not found</p>
       <h1 class="display-title mt-6">This path is outside the plan.</h1>
       <p class="lede mt-8">
         The link may be incomplete or out of date. Return to the homepage or open one of the
         practical resources from the navigation.
       </p>
-      <a
-        class="action-primary mt-9"
+      <Button
+        class="mt-9"
         href="/"
       >
         <ArrowLeft
@@ -27,7 +28,7 @@ import BaseLayout from '../layouts/base-layout.astro';
           aria-hidden="true"
         />
         Return home
-      </a>
+      </Button>
     </div>
   </section>
 </BaseLayout>

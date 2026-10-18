@@ -16,7 +16,7 @@ The landing page also identifies [`moldea`](https://github.com/moldea-ai), Git-n
 
 Evidence is agent-operated and developer-governed. The coding agent carries the verification workload through findings-first review, tests, checks, failure investigation, and reproducible reporting tied to an exact repository state. The developer builds the proving system, challenges whether the evidence is independent and sufficient, decides when risk warrants code inspection, and grants publication explicitly, either per change or for an autonomous run.
 
-The site is statically generated with Astro and Tailwind CSS. It uses the same Ubuntu Sans typography and core color palette as the Moldea projects while establishing a minimal technical product-documentation visual language. Client-routed navigation provides an accessible progress indicator while the next page is loading.
+The site is statically generated with Astro and Tailwind CSS. Its UI comes from [`jg-personal-astro-ui`](https://www.npmjs.com/package/jg-personal-astro-ui), the package Jesus Graterol's sites share: the theme and its tokens, the page head, header, footer, theme switch, sections, cards, buttons, badges, tables, the segmented control, copy buttons, code windows, and the Agentic Coding mark. Pages load as ordinary documents, which crossfade where the browser supports view transitions, and a slow page shows the package's progress bar.
 
 ## Local development
 
@@ -50,7 +50,7 @@ Astro serves the project at `http://localhost:4321` by default.
 | `npm run check`           | Run unit tests, typechecking, linting, formatting, the build, artifact integration tests, and browser tests. |
 | `npm test`                | Run all unit, integration, and end-to-end test categories.                                                   |
 | `npm run format`          | Format supported project files.                                                                              |
-| `npm run assets:generate` | Regenerate the committed open-graph image from its HTML template.                                            |
+| `npm run assets:generate` | Write `favicon.svg` from the package's mark and regenerate the open-graph image from its HTML template.      |
 
 ## Content and public routes
 
@@ -59,7 +59,7 @@ The two downloadable resources have one canonical Markdown source each:
 - `src/content/resources/agents-foundation.md` generates `/start/` and the raw `/AGENTS.md` response.
 - `src/content/resources/refinement-prompt.md` generates `/refine/` and the raw `/refine.txt` response.
 
-Rendered code blocks and copy controls use the same normalized text as the raw routes, preventing the displayed, copied, and downloaded versions from drifting apart. The root repository `AGENTS.md`, when present in a development environment, is a protected coding-instruction file and is not the public template source.
+Rendered code blocks use the same normalized text as the raw routes, and the copy buttons copy the raw routes themselves, preventing the displayed, copied, and downloaded versions from drifting apart. The root repository `AGENTS.md`, when present in a development environment, is a protected coding-instruction file and is not the public template source.
 
 The `/workflow/` page shows the `Plan -> Challenge -> Breakdown when useful -> Execute -> Review` sequence as nine steps, each run through a jg skill and anchored by the skill name, such as `/workflow/#jg-plan`. `WORKFLOW_STEPS` and `SUPPORTING_SKILLS` in `src/site.config.ts` hold each skill's one-line purpose and what it may change; keep them in sync with the jg-skills README whenever a skill is added, removed, renamed, or changes what it may change. The example transcripts live in `src/components/workflow-guide/constants.ts`.
 
@@ -83,21 +83,21 @@ Cookbook recipes live in `src/content/cookbook/`. To add one:
 ├── public/                  # static logos, agent marks, robots.txt, and generated OG image
 ├── scripts/                 # deterministic asset generation and build-artifact validation
 ├── src/
-│   ├── components/          # focused Astro presentation and interaction modules
+│   ├── components/          # the site's own sections and compositions of the package's components
 │   ├── content/
 │   │   ├── cookbook/        # recipe Markdown sources
 │   │   └── resources/       # canonical public instruction resources
 │   ├── layouts/             # shared metadata, breadcrumbs, navigation, and content shells
 │   ├── pages/               # static routes and raw text endpoints
-│   ├── styles/              # Tailwind entry point and branded semantic design tokens
-│   └── utilities/           # resource, recipe, LLM index, SEO, and theme behavior with focused tests
+│   ├── styles/              # Tailwind entry point, importing the package's contract, theme, and prose styles
+│   └── utilities/           # resource, recipe, LLM index, and SEO behavior with focused tests
 ├── vitest/                  # test-category discovery configuration
-├── astro.config.ts          # static site, sitemap, syntax highlighting, and Tailwind setup
+├── astro.config.ts          # static site, sitemap, the package's syntax theme and code windows, and Tailwind
 ├── playwright.config.ts     # production-preview browser verification
 └── package.json             # exact runtime, tooling, and command contracts
 ```
 
-The root layouts own canonical URLs, search and social metadata, structured data, visible breadcrumb hierarchy, article publication and update dates, theme bootstrap behavior, the skip link, global navigation, and the footer. Page modules own page-specific hierarchy and content. Content collections own validated prose and require publication dates that do not follow their update dates. Utilities own the small pieces of behavior that must remain identical across rendered and raw surfaces.
+The root layouts compose the package's page head, theme script, skip link, progress bar, header, and footer, and own the site's canonical URLs, structured data, breadcrumb hierarchy, and article publication and update dates. Page modules own page-specific hierarchy and content. Content collections own validated prose and require publication dates that do not follow their update dates. Utilities own the small pieces of behavior that must remain identical across rendered and raw surfaces.
 
 Each timestamped directory under `coding-agent-planning/` contains one authoritative implementation plan and, when useful, its milestone sequence. These planning artifacts are intentionally version-controlled in this repository and are not Astro source inputs.
 
@@ -105,21 +105,21 @@ The `/docs` directory is reserved for essential, durable project concepts and pr
 
 ## Branding and assets
 
-The semantic color tokens in `src/styles/global.css` derive from the Moldea base palette and include accessible light and dark modes. The site uses the variable Ubuntu Sans package locally rather than loading a remote webfont.
+The color tokens and the Ubuntu Sans typography come from `jg-personal-astro-ui`'s theme, with accessible light and dark modes; the fonts are served locally rather than loaded from a remote webfont.
 
-The Agentic Coding logo is a code-mark SVG with a wordmark variant. The homepage's jg-skills bridge also shows the `JG/` monogram that the jg-skills website uses. The paired Moldea lockups under `public/moldea/` are unmodified copies of the authoritative theme assets from the sibling Moldea app UI package. The open-graph image is committed at `public/og/agentic-coding.png` so normal builds remain deterministic. After changing its template, regenerate it with `npm run assets:generate` and commit both the template and PNG.
+The Agentic Coding mark comes from the package, which draws the header's mark and holds the SVG that `npm run assets:generate` writes to `public/favicon.svg` and draws into the open-graph image. `public/logo.svg` is the wordmark variant. The homepage's jg-skills bridge also shows the package's `jg/` mark, which the jg-skills website uses. The paired Moldea lockups under `public/moldea/` are unmodified copies of the authoritative theme assets from the sibling Moldea app UI package. The open-graph image is committed at `public/og/agentic-coding.png` so normal builds remain deterministic. After changing its template or updating the package, regenerate it with `npm run assets:generate` and commit the template, the favicon, and the PNG.
 
-Coding-agent marks are copied from the Moldea skill project. Their origin and use, and the `JG/` monogram's, are recorded in `docs/asset-attribution.md`.
+Coding-agent marks are copied from the Moldea skill project. Their origin and use, and the two package marks', are recorded in `docs/asset-attribution.md`.
 
 ## Verification
 
 The quality pipeline checks:
 
-- application-owned text normalization, reading-time, sorting, and theme preference behavior
+- application-owned text normalization, reading-time, and sorting behavior
 - TypeScript and Astro diagnostics
 - ESLint and Prettier conformance
 - production generation, sitemap output, internal links and their anchors, LLM discovery, SEO metadata, article dates, breadcrumb structured data, and raw resource fidelity
-- browser accessibility, navigation progress, copy controls, raw routes, the workflow mode toggle, theme persistence, reduced motion, keyboard navigation, and layouts down to 320 pixels
+- browser accessibility, navigation progress, copy buttons, raw routes, the workflow mode toggle, theme persistence, reduced motion, keyboard navigation, and layouts down to 320 pixels
 
 Run the complete pipeline before publishing:
 
