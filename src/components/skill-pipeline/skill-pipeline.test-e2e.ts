@@ -12,12 +12,14 @@ test.describe('skill pipeline', () => {
       '/workflow/#jg-brainstorm',
       '/workflow/#jg-plan',
       '/workflow/#jg-challenge-plan',
+      '/workflow/#jg-challenge-session',
       '/workflow/#jg-breakdown',
       '/workflow/#jg-execute',
       '/workflow/#jg-debug',
       '/workflow/#jg-pause',
       '/workflow/#jg-review',
       '/workflow/#jg-push',
+      '/workflow/#jg-review-session',
     ]);
   });
 
@@ -29,7 +31,7 @@ test.describe('skill pipeline', () => {
     const shipStage = page.locator('[data-pipeline-stage="ship"]');
     const supervisedNote = shipStage.getByText('You run these yourself when you are ready.');
     const autonomousNote = shipStage.getByText(
-      'jg-execute auto runs these after each milestone, within its stop conditions.',
+      'jg-execute auto runs jg-review and jg-push after each milestone, within its stop conditions.',
     );
     const executeLink = page.locator(
       '[data-pipeline-stage="build"] a[href="/workflow/#jg-execute"]',

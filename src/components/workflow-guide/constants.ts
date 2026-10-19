@@ -74,6 +74,35 @@ export const STEP_EXAMPLES: Record<Exclude<IWorkflowSkill, 'jg-execute'>, ITrans
       text: 'Keep the keys; they survive their creator.',
     },
   ],
+  'jg-challenge-session': [
+    {
+      invocation: 'jg-challenge-session org-api-keys',
+      speaker: 'developer',
+      text: 'From a fresh session in another coding agent.',
+    },
+    {
+      artifact: {
+        lines: [
+          { kind: 'heading', text: '## Challenges' },
+          {
+            kind: 'text',
+            text: '1. Any member can rotate an organization key; the plan limits only creation to admins.',
+          },
+          { kind: 'heading', text: '## Recommendation' },
+          { kind: 'text', text: 'Revision required before proceeding' },
+        ],
+        status: { label: 'Revision required', tone: 'warning' },
+        title: 'Challenge from another session',
+      },
+      speaker: 'agent',
+      text: "The plan's own challenge passed this. Paste this answer into the planning session with jg-feedback.",
+    },
+    {
+      invocation: 'jg-feedback',
+      speaker: 'developer',
+      text: 'Pasted into the planning session: only admins rotate keys.',
+    },
+  ],
   'jg-breakdown': [
     { invocation: 'jg-breakdown', speaker: 'developer' },
     {
@@ -185,6 +214,28 @@ export const STEP_EXAMPLES: Record<Exclude<IWorkflowSkill, 'jg-execute'>, ITrans
       text: "Committed only this task's files, signed off and signed.",
     },
   ],
+  'jg-review-session': [
+    { invocation: 'jg-review-session org-api-keys', speaker: 'developer' },
+    {
+      artifact: {
+        lines: [
+          { kind: 'heading', text: '## Issues' },
+          { kind: 'text', text: 'None' },
+          { kind: 'heading', text: '## Doubts' },
+          {
+            kind: 'text',
+            text: '1. "e2e passed" has no CI run for 7d03b18. Settle it with gh run list --commit 7d03b18.',
+          },
+          { kind: 'heading', text: '## Verdict' },
+          { kind: 'text', text: "Couldn't confirm everything" },
+        ],
+        status: { label: 'Doubt to settle', tone: 'warning' },
+        title: 'Review of the delivered milestones',
+      },
+      speaker: 'agent',
+      text: 'All three milestones match the plan; one claim still needs evidence.',
+    },
+  ],
 };
 
 // jg-execute builds one milestone and stops, so the developer reviews and publishes it
@@ -220,6 +271,8 @@ export const AUTONOMOUS_EXECUTE_EXAMPLE: ITranscriptMessage[] = [
         },
         { kind: 'heading', text: 'Milestone 3' },
         { kind: 'text', text: 'checks passed, review clean, pushed 7d03b18' },
+        { kind: 'heading', text: 'Whole plan' },
+        { kind: 'text', text: 'review of milestones 1–3: Plan implemented as agreed' },
         { kind: 'heading', text: 'Stopped' },
         { kind: 'text', text: 'All milestones done. Nothing left uncommitted.' },
       ],

@@ -117,7 +117,7 @@ export interface IWorkflowStep extends ISkillSummary {
 }
 
 /*
- * The nine workflow steps in order. Purposes and "may change" summaries follow the jg-skills
+ * The eleven workflow steps in order. Purposes and "may change" summaries follow the jg-skills
  * README; update them whenever jg-skills adds, removes, or renames a skill or changes what one
  * may change.
  */
@@ -146,6 +146,14 @@ export const WORKFLOW_STEPS = [
   },
   {
     marker: 'optional',
+    mayChange: 'Nothing.',
+    purpose:
+      'Reads another Claude Code or Codex session and challenges its direction, plan, and milestones.',
+    skill: 'jg-challenge-session',
+    stage: 'plan',
+  },
+  {
+    marker: 'optional',
     mayChange: 'Writes or removes milestones.md next to the plan.',
     purpose:
       'Splits a plan into ordered, reviewable milestones when it has real implementation boundaries.',
@@ -155,7 +163,7 @@ export const WORKFLOW_STEPS = [
   {
     marker: undefined,
     mayChange:
-      "Code, milestone status lines, and the overview table. In autonomous mode it also commits and pushes each milestone's files.",
+      "Code, milestone status lines, and the overview table. In autonomous mode it also commits and pushes each milestone's files and the fixes from its final review of the whole plan.",
     purpose: 'Builds an agreed task, a plan, or its milestones; supervised by default, or auto.',
     skill: 'jg-execute',
     stage: 'build',
@@ -180,7 +188,7 @@ export const WORKFLOW_STEPS = [
     marker: undefined,
     mayChange: "No files. With a target branch, it may refresh that branch's remote-tracking ref.",
     purpose:
-      "Reviews the task's changes and how they follow its plan, or the branch against a target.",
+      "Reviews the task's changes against its plan, a finished plan as a whole, or the branch against a target.",
     skill: 'jg-review',
     stage: 'ship',
   },
@@ -189,8 +197,15 @@ export const WORKFLOW_STEPS = [
     mayChange:
       "Stages and commits the task's files, or every change when there is no task, and pushes the current branch.",
     purpose:
-      "Commits the current task's files with a signed-off, signed commit and pushes the branch.",
+      "Commits the current task's files, signed when signing is set up, and pushes the branch.",
     skill: 'jg-push',
+    stage: 'ship',
+  },
+  {
+    marker: 'optional',
+    mayChange: 'Nothing.',
+    purpose: 'Reviews what another session built against its plan, milestones, and your decisions.',
+    skill: 'jg-review-session',
     stage: 'ship',
   },
 ] as const satisfies readonly IWorkflowStep[];

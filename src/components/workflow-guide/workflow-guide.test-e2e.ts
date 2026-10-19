@@ -4,12 +4,14 @@ const WORKFLOW_SKILLS = [
   'jg-brainstorm',
   'jg-plan',
   'jg-challenge-plan',
+  'jg-challenge-session',
   'jg-breakdown',
   'jg-execute',
   'jg-debug',
   'jg-pause',
   'jg-review',
   'jg-push',
+  'jg-review-session',
 ] as const;
 
 // skills that support the workflow without being one of its steps, in display order
@@ -27,7 +29,9 @@ test.describe('workflow guide', () => {
         step.getByRole('link', { name: 'Full instructions on jg-skills (opens in a new tab)' }),
       ).toHaveAttribute('href', `https://jg-skills.jesusgraterol.dev/skills/${skill}/`);
       await expect(
-        page.getByRole('navigation', { name: 'Workflow steps' }).getByRole('link', { name: skill }),
+        page
+          .getByRole('navigation', { name: 'Workflow steps' })
+          .getByRole('link', { name: skill, exact: true }),
       ).toHaveAttribute('href', `#${skill}`);
     }
 
