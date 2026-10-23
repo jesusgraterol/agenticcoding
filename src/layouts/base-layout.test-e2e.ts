@@ -293,6 +293,41 @@ test.describe('production website', () => {
     await expect(page.getByRole('heading', { name: 'Warning signs' })).toBeVisible();
   });
 
+  for (const colorScheme of ['light', 'dark'] as const) {
+    test(
+      colorScheme + ' preserves recipe metadata and related navigation at 320px',
+      async ({ page }) => {
+        await page.emulateMedia({ colorScheme, reducedMotion: 'reduce' });
+        await page.setViewportSize({ width: 320, height: 900 });
+        await page.goto('/cookbook/control-scope/');
+        await expect(
+          page.getByRole('heading', { level: 1, name: 'Control scope', exact: true }),
+        ).toBeVisible();
+        await expect(page.getByText('Published October 15, 2026')).toBeVisible();
+        await expect(page.getByText(/^\d+ min read$/u)).toBeVisible();
+        const related = page.getByRole('complementary', { name: 'Related recipes' });
+        await expect(related.getByRole('link')).toHaveCount(2);
+        await expect(related.getByRole('link', { name: /Orient to a codebase/u })).toHaveAttribute(
+          'href',
+          '/cookbook/orient-to-a-codebase/',
+        );
+        await expect(
+          related.getByRole('link', { name: /Recover from agent drift/u }),
+        ).toHaveAttribute('href', '/cookbook/recover-from-agent-drift/');
+        await page.evaluate(async () => {
+          await document.fonts.ready;
+        });
+        expect(
+          await page.evaluate(
+            () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+          ),
+        ).toBeLessThanOrEqual(0);
+        await page.getByRole('link', { name: 'Back to the cookbook', exact: true }).click();
+        await expect(page).toHaveURL('/cookbook/');
+      },
+    );
+  }
+
   test('content pages do not overflow at 320 pixels', async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 900 });
 

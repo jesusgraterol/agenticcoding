@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+test.use({ contextOptions: { reducedMotion: 'reduce' } });
+
 test.describe('skill pipeline', () => {
   test('links every workflow skill to its step on the workflow page', async ({ page }) => {
     await page.goto('/');
@@ -53,4 +55,35 @@ test.describe('skill pipeline', () => {
       page.getByText('In an autonomous run, the review gate settles each milestone'),
     ).toBeVisible();
   });
+});
+
+test.describe('pipeline without JavaScript', () => {
+  test.use({ javaScriptEnabled: false });
+  for (const colorScheme of ['light', 'dark'] as const) {
+    test(
+      colorScheme + ' preserves ordered skill links and both native modes at 320px',
+      async ({ page }) => {
+        await page.emulateMedia({ colorScheme });
+        await page.setViewportSize({ width: 320, height: 900 });
+        await page.goto('/');
+        const pipeline = page.locator('[data-pipeline-stage]');
+        for (const label of ['Plan skills', 'Build skills', 'Ship skills']) {
+          await expect(page.getByRole('list', { name: label, exact: true })).toBeVisible();
+        }
+        await page.getByRole('radio', { name: 'Supervised', exact: true }).focus();
+        await page.keyboard.press('ArrowRight');
+        await expect(page.getByRole('radio', { name: 'Autonomous', exact: true })).toBeChecked();
+        await expect(
+          pipeline.getByRole('link', { name: 'jg-execute auto', exact: true }),
+        ).toHaveAttribute('href', '/workflow/#jg-execute');
+        await page.keyboard.press('ArrowLeft');
+        await expect(pipeline.getByRole('link', { name: 'jg-execute', exact: true })).toBeVisible();
+        expect(
+          await page.evaluate(
+            () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+          ),
+        ).toBeLessThanOrEqual(0);
+      },
+    );
+  }
 });

@@ -64,11 +64,12 @@ const hasBeenUpdated = recipe.data.updatedAt.getTime() !== recipe.data.published
   publishedAt={recipe.data.publishedAt}
   structuredDataType="article"
   title={recipe.data.title}
+  titleVariant="document"
   updatedAt={recipe.data.updatedAt}
 >
   <div
     slot="metadata"
-    class="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-2 font-mono text-xs font-bold text-muted"
+    class="flex w-full flex-wrap justify-center gap-x-6 gap-y-2 font-mono text-xs font-bold text-muted"
   >
     <span>{calculateReadingTime(recipe.body ?? '')} min read</span>
     <span>
