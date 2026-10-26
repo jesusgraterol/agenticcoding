@@ -83,6 +83,9 @@ test.describe('production website', () => {
       const response = await page.goto(route);
 
       expect(response?.status()).toBe(200);
+      await expect(page.locator('[data-copy-button]:not([data-copy-display="icon"])')).toHaveCount(
+        0,
+      );
       await expect(page.locator('main h1')).toHaveCount(1);
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
         'href',
@@ -490,7 +493,7 @@ test.describe('production website', () => {
       await copyControl.click();
 
       await expect(copyControl).toHaveAttribute('data-copy-state', 'success');
-      await expect(copyControl).toContainText('Copied');
+      await expect(copyControl).toHaveAccessibleName(/^Copied /u);
       expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(sourceText);
     }
   });
@@ -513,7 +516,7 @@ test.describe('production website', () => {
     const wrapper = copyControl.locator('xpath=..');
 
     await expect(copyControl).toHaveAttribute('data-copy-state', 'error');
-    await expect(copyControl).toContainText('Copy failed');
+    await expect(copyControl).toHaveAccessibleName('Copy failed refinement prompt');
     await expect(wrapper.locator('[data-copy-status]')).toHaveText(guidance);
     await expect(wrapper.locator('[data-copy-hint] a')).toHaveAttribute('href', '/refine.txt');
   });
