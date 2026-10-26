@@ -1,5 +1,6 @@
 ---
 import Badge from 'jg-personal-astro-ui/badge';
+import FilePreview from 'jg-personal-astro-ui/file-preview';
 
 import type { IArtifact, IArtifactLine } from '../../content/index.ts';
 
@@ -30,11 +31,8 @@ const STATUS_DOTS = {
 const { artifact } = Astro.props;
 ---
 
-<figure class="min-w-0 overflow-hidden rounded-lg border border-border bg-code">
-  <figcaption
-    class="flex min-w-0 flex-wrap items-center justify-between gap-x-3 gap-y-1.5 border-b border-border px-3 py-2"
-  >
-    <span class="min-w-0 font-mono text-xs font-semibold wrap-anywhere">{artifact.title}</span>
+<FilePreview path={artifact.title}>
+  <Fragment slot="header-actions">
     {
       artifact.status && (
         <Badge
@@ -51,11 +49,11 @@ const { artifact } = Astro.props;
         </Badge>
       )
     }
-  </figcaption>
-  <code class="block py-2 text-xs leading-5">
+  </Fragment>
+  <code class="block text-xs leading-5">
     {
       artifact.lines.map(({ kind, text }) => (
-        <span class:list={['flex gap-1.5 px-2 sm:gap-2 sm:px-3', LINE_STYLES[kind].className]}>
+        <span class:list={['flex gap-1.5 sm:gap-2', LINE_STYLES[kind].className]}>
           <span
             class="w-2 shrink-0 text-muted select-none"
             aria-hidden="true"
@@ -70,4 +68,4 @@ const { artifact } = Astro.props;
       ))
     }
   </code>
-</figure>
+</FilePreview>

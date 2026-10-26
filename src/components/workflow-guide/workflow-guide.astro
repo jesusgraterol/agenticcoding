@@ -3,6 +3,8 @@ import { ChevronRight } from '@lucide/astro';
 import Badge from 'jg-personal-astro-ui/badge';
 import Card from 'jg-personal-astro-ui/card';
 import SegmentedControl from 'jg-personal-astro-ui/segmented-control';
+import Step from 'jg-personal-astro-ui/step';
+import Steps from 'jg-personal-astro-ui/steps';
 import TextLink from 'jg-personal-astro-ui/text-link';
 
 import {
@@ -123,140 +125,145 @@ const buildSkillUrl = (skill: string): string =>
           </h2>
           <p class="text-sm text-muted">{summary}</p>
         </div>
-        <div class="mt-10 grid gap-14">
+        <Steps
+          class="mt-10"
+          label={label + ' workflow steps'}
+        >
           {steps.map((step) => (
-            <article
-              id={step.skill}
-              class="grid scroll-mt-24 gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-12"
-              aria-labelledby={`${step.skill}-title`}
-            >
-              <div>
-                <div class="flex flex-wrap items-center gap-2">
-                  <h3
-                    id={`${step.skill}-title`}
-                    class="font-mono text-xl font-bold text-accent"
+            <Step title={step.skill}>
+              <div
+                slot="title"
+                id={step.skill}
+                class="flex scroll-mt-24 flex-wrap items-center gap-2"
+              >
+                <h3
+                  id={`${step.skill}-title`}
+                  class="font-mono text-xl font-bold text-accent"
+                >
+                  {step.skill}
+                </h3>
+                {step.marker && (
+                  <Badge
+                    mono={false}
+                    variant="outline"
                   >
-                    {step.skill}
-                  </h3>
-                  {step.marker && (
-                    <Badge
-                      mono={false}
-                      variant="outline"
-                    >
-                      {WORKFLOW_STEP_MARKER_LABELS[step.marker]}
-                    </Badge>
-                  )}
-                </div>
-                <p class="mt-3 leading-7">{step.purpose}</p>
-                <dl class="mt-4">
-                  <dt class="font-mono text-xs font-bold text-muted uppercase">May change</dt>
-                  <dd class="mt-1 text-sm leading-6">{step.mayChange}</dd>
-                </dl>
-                {step.skill === 'jg-review' && (
-                  <div class="mt-5">
-                    <p class="text-sm font-semibold">Then you choose the outcome:</p>
-                    <dl class="mt-3 grid gap-2">
-                      {REVIEW_OUTCOMES.map(({ label: outcome, text }) => (
-                        <div class="grid gap-0.5 border-l-2 border-accent pl-3">
-                          <dt class="text-sm font-bold">{outcome}</dt>
-                          <dd class="text-sm leading-6 text-muted">{text}</dd>
-                        </div>
-                      ))}
-                    </dl>
-                    <p class="mt-3 text-sm leading-6 text-muted">
-                      For a branch, run{' '}
-                      <code class="text-accent">jg-review &lt;target-branch&gt;</code>.
-                    </p>
-                  </div>
+                    {WORKFLOW_STEP_MARKER_LABELS[step.marker]}
+                  </Badge>
                 )}
-                {step.skill === 'jg-push' && (
-                  <p class="mt-5 border-l-2 border-accent pl-3 text-sm leading-6">
-                    Publication always needs its own grant: <code class="text-accent">jg-push</code>{' '}
-                    for one change, or <code class="text-accent">jg-execute auto</code> for a whole
-                    run.
-                  </p>
-                )}
-                <p class="mt-5 text-sm">
-                  <TextLink
-                    href={buildSkillUrl(step.skill)}
-                    external
-                  >
-                    Full instructions on {SITE_CONFIG.skills.name}
-                  </TextLink>
-                </p>
               </div>
-              <div class="min-w-0">
-                {step.skill === 'jg-execute' ? (
-                  <div class="group/execute grid gap-5">
-                    <SegmentedControl
-                      legend="How jg-execute runs"
-                      legendHidden
-                      name="execute-mode"
-                      options={(['supervised', 'autonomous'] as const).map((mode) => ({
-                        label: EXECUTE_MODES[mode].label,
-                        value: mode,
-                      }))}
-                    />
-                    <div
-                      class="grid gap-4 group-has-[[data-segment=autonomous]:checked]/execute:hidden"
-                      data-execute-panel="supervised"
-                    >
-                      <p class="text-sm leading-6 text-muted">{EXECUTE_MODES.supervised.text}</p>
-                      <SessionTranscript
-                        label="Example: jg-execute in supervised mode"
-                        messages={SUPERVISED_EXECUTE_EXAMPLE}
-                      />
-                    </div>
-                    <div
-                      class="hidden gap-5 group-has-[[data-segment=autonomous]:checked]/execute:grid"
-                      data-execute-panel="autonomous"
-                    >
-                      <p class="text-sm leading-6 text-muted">{EXECUTE_MODES.autonomous.text}</p>
-                      <ol
-                        class="flex flex-wrap items-center gap-1.5"
-                        aria-label="What an autonomous run repeats for each milestone"
-                      >
-                        {AUTONOMOUS_CYCLE.map((cycleStep, index) => (
-                          <li class="inline-flex items-center gap-1.5">
-                            {index > 0 && (
-                              <ChevronRight
-                                class="size-3.5 text-muted"
-                                aria-hidden="true"
-                              />
-                            )}
-                            <span class="rounded-md border border-border bg-surface px-2 py-1 font-mono text-xs font-semibold">
-                              {cycleStep}
-                            </span>
-                          </li>
+              <div class="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-12">
+                <div>
+                  <p class="mt-3 leading-7">{step.purpose}</p>
+                  <dl class="mt-4">
+                    <dt class="font-mono text-xs font-bold text-muted uppercase">May change</dt>
+                    <dd class="mt-1 text-sm leading-6">{step.mayChange}</dd>
+                  </dl>
+                  {step.skill === 'jg-review' && (
+                    <div class="mt-5">
+                      <p class="text-sm font-semibold">Then you choose the outcome:</p>
+                      <dl class="mt-3 grid gap-2">
+                        {REVIEW_OUTCOMES.map(({ label: outcome, text }) => (
+                          <div class="grid gap-0.5 border-l-2 border-accent pl-3">
+                            <dt class="text-sm font-bold">{outcome}</dt>
+                            <dd class="text-sm leading-6 text-muted">{text}</dd>
+                          </div>
                         ))}
-                      </ol>
-                      <SessionTranscript
-                        label="Example: jg-execute in autonomous mode"
-                        messages={AUTONOMOUS_EXECUTE_EXAMPLE}
+                      </dl>
+                      <p class="mt-3 text-sm leading-6 text-muted">
+                        For a branch, run{' '}
+                        <code class="text-accent">jg-review &lt;target-branch&gt;</code>.
+                      </p>
+                    </div>
+                  )}
+                  {step.skill === 'jg-push' && (
+                    <p class="mt-5 border-l-2 border-accent pl-3 text-sm leading-6">
+                      Publication always needs its own grant:{' '}
+                      <code class="text-accent">jg-push</code> for one change, or{' '}
+                      <code class="text-accent">jg-execute auto</code> for a whole run.
+                    </p>
+                  )}
+                  <p class="mt-5 text-sm">
+                    <TextLink
+                      href={buildSkillUrl(step.skill)}
+                      external
+                    >
+                      Full instructions on {SITE_CONFIG.skills.name}
+                    </TextLink>
+                  </p>
+                </div>
+                <div class="min-w-0">
+                  {step.skill === 'jg-execute' ? (
+                    <div class="group/execute grid gap-5">
+                      <SegmentedControl
+                        legend="How jg-execute runs"
+                        legendHidden
+                        name="execute-mode"
+                        options={(['supervised', 'autonomous'] as const).map((mode) => ({
+                          label: EXECUTE_MODES[mode].label,
+                          value: mode,
+                        }))}
                       />
-                      <div class="rounded-lg border border-border p-4">
-                        <p class="text-sm font-semibold">It stops and hands control back on</p>
-                        <ul class="mt-2 grid list-disc gap-1 pl-5 text-sm leading-6 text-muted">
-                          {AUTONOMOUS_STOP_CONDITIONS.map((condition) => (
-                            <li>{condition}</li>
+                      <div
+                        class="grid gap-4 group-has-[[data-segment=autonomous]:checked]/execute:hidden"
+                        data-execute-panel="supervised"
+                      >
+                        <p class="text-sm leading-6 text-muted">{EXECUTE_MODES.supervised.text}</p>
+                        <SessionTranscript
+                          label="Example: jg-execute in supervised mode"
+                          messages={SUPERVISED_EXECUTE_EXAMPLE}
+                        />
+                      </div>
+                      <div
+                        class="hidden gap-5 group-has-[[data-segment=autonomous]:checked]/execute:grid"
+                        data-execute-panel="autonomous"
+                      >
+                        <p class="text-sm leading-6 text-muted">{EXECUTE_MODES.autonomous.text}</p>
+                        <ol
+                          class="flex flex-wrap items-center gap-1.5"
+                          aria-label="What an autonomous run repeats for each milestone"
+                        >
+                          {AUTONOMOUS_CYCLE.map((cycleStep, index) => (
+                            <li class="inline-flex items-center gap-1.5">
+                              {index > 0 && (
+                                <ChevronRight
+                                  class="size-3.5 text-muted"
+                                  aria-hidden="true"
+                                />
+                              )}
+                              <span class="rounded-md border border-border bg-surface px-2 py-1 font-mono text-xs font-semibold">
+                                {cycleStep}
+                              </span>
+                            </li>
                           ))}
-                        </ul>
-                        <p class="mt-3 text-sm leading-6">
-                          It never weakens a test, check, or finding to keep going.
-                        </p>
+                        </ol>
+                        <SessionTranscript
+                          label="Example: jg-execute in autonomous mode"
+                          messages={AUTONOMOUS_EXECUTE_EXAMPLE}
+                        />
+                        <div class="rounded-lg border border-border p-4">
+                          <p class="text-sm font-semibold">It stops and hands control back on</p>
+                          <ul class="mt-2 grid list-disc gap-1 pl-5 text-sm leading-6 text-muted">
+                            {AUTONOMOUS_STOP_CONDITIONS.map((condition) => (
+                              <li>{condition}</li>
+                            ))}
+                          </ul>
+                          <p class="mt-3 text-sm leading-6">
+                            It never weakens a test, check, or finding to keep going.
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ) : (
-                  <SessionTranscript
-                    label={`Example: ${step.skill}`}
-                    messages={STEP_EXAMPLES[step.skill]}
-                  />
-                )}
+                  ) : (
+                    <SessionTranscript
+                      label={`Example: ${step.skill}`}
+                      messages={STEP_EXAMPLES[step.skill]}
+                    />
+                  )}
+                </div>
               </div>
-            </article>
+            </Step>
           ))}
-        </div>
+        </Steps>
       </section>
     ))
   }

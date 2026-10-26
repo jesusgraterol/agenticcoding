@@ -16,7 +16,7 @@ The landing page also identifies [`moldea`](https://github.com/moldea-ai), Git-n
 
 Evidence is agent-operated and developer-governed. The coding agent carries the verification workload through findings-first review, tests, checks, failure investigation, and reproducible reporting tied to an exact repository state. The developer builds the proving system, challenges whether the evidence is independent and sufficient, decides when risk warrants code inspection, and grants publication explicitly, either per change or for an autonomous run.
 
-The site is statically generated with Astro and Tailwind CSS. Its UI comes from [`jg-personal-astro-ui`](https://www.npmjs.com/package/jg-personal-astro-ui), the package Jesus Graterol's sites share: the theme and its tokens, the page head, header, footer, theme switch, sections, cards, buttons, badges, tables, the segmented control, copy buttons, code windows, and the Agentic Coding mark. Pages load as ordinary documents, which crossfade where the browser supports view transitions, and a slow page shows the package's progress bar.
+The site is statically generated with Astro and Tailwind CSS. Its UI comes from [`jg-personal-astro-ui`](https://www.npmjs.com/package/jg-personal-astro-ui), the package Jesus Graterol's sites share: the theme and its tokens, the page head, header, footer, theme switch, sections, cards, buttons, badges, tables, the segmented control, copy buttons, code windows, conversations, file previews, steps, and the Agentic Coding mark. Pages load as ordinary documents, which crossfade where the browser supports view transitions, and a slow page shows the package's progress bar.
 
 ## Local development
 
@@ -63,7 +63,7 @@ Rendered code blocks use the same normalized text as the raw routes, and the cop
 
 The `/workflow/` page shows the `Plan -> Challenge -> Breakdown when useful -> Execute -> Review` sequence as eleven steps, each run through a jg skill and anchored by the skill name, such as `/workflow/#jg-plan`. `WORKFLOW_STEPS` and `SUPPORTING_SKILLS` in `src/site.config.ts` hold each skill's one-line purpose and what it may change; keep them in sync with the jg-skills README whenever a skill is added, removed, renamed, or changes what it may change. The example transcripts live in `src/components/workflow-guide/constants.ts`.
 
-The root `/llms.txt` endpoint is generated from the site configuration and published cookbook collection. It gives coding agents a concise project summary, direct links to the raw instruction resources, the workflow page, the jg-skills index, the complete ordered recipe index, and optional project context. Every public HTML page identifies the index through `rel="describedby"`; `/start/` and `/refine/` also identify their canonical raw documents through `rel="alternate"`.
+The root `/llms.txt` endpoint uses the directly declared `jg-site` package to generate its index from the site configuration and published cookbook collection. It gives coding agents a concise project summary, direct links to the raw instruction resources, the workflow page, the jg-skills index, the complete ordered recipe index, and optional project context. Every public HTML page identifies the index through `rel="describedby"`; `/start/` and `/refine/` also identify their canonical raw documents through `rel="alternate"`.
 
 Cookbook recipes live in `src/content/cookbook/`. To add one:
 

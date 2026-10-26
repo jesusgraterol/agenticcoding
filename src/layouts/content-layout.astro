@@ -19,6 +19,7 @@ interface Props {
   publishedAt?: Date | undefined;
   structuredDataType: Exclude<IStructuredDataType, 'website'>;
   title: string;
+  titleVariant?: 'page' | 'document' | undefined;
   updatedAt?: Date | undefined;
 }
 
@@ -32,6 +33,7 @@ const {
   publishedAt,
   structuredDataType,
   title,
+  titleVariant,
   updatedAt,
 } = Astro.props;
 ---
@@ -54,8 +56,11 @@ const {
     eyebrow={eyebrow}
     lede={description}
     title={title}
+    titleVariant={titleVariant}
   >
-    <slot name="metadata" />
+    <Fragment slot="metadata">
+      <slot name="metadata" />
+    </Fragment>
   </PageHeader>
   <slot />
 </BaseLayout>

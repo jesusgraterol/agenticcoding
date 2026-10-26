@@ -2,6 +2,8 @@
 import { ArrowRight } from '@lucide/astro';
 import Button from 'jg-personal-astro-ui/button';
 import SegmentedControl from 'jg-personal-astro-ui/segmented-control';
+import Step from 'jg-personal-astro-ui/step';
+import Steps from 'jg-personal-astro-ui/steps';
 
 import {
   REVIEW_OUTCOMES,
@@ -56,10 +58,14 @@ const stages = (Object.keys(WORKFLOW_STAGES) as IWorkflowStage[]).map((stage, in
             <h3 class="text-xl font-semibold tracking-tight">{label}</h3>
           </div>
           <p class="mt-2 text-sm leading-6 text-muted">{summary}</p>
-          <ul class="mt-5 grid gap-2">
+          <Steps
+            class="mt-5"
+            label={label + ' skills'}
+          >
             {steps.map((step) => (
-              <li>
+              <Step title={step.skill}>
                 <a
+                  slot="title"
                   class="group flex items-center justify-between gap-3 rounded-lg border border-border bg-surface px-3 py-2.5 no-underline transition-colors hover:border-border-strong hover:bg-secondary motion-reduce:transition-none"
                   href={`/workflow/#${step.skill}`}
                 >
@@ -87,9 +93,9 @@ const stages = (Object.keys(WORKFLOW_STAGES) as IWorkflowStage[]).map((stage, in
                     aria-hidden="true"
                   />
                 </a>
-              </li>
+              </Step>
             ))}
-          </ul>
+          </Steps>
           {stage === 'ship' && (
             <p class="mt-4 text-sm leading-6 font-semibold">
               <span class="group-has-[[data-segment=autonomous]:checked]/pipeline:hidden">

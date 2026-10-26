@@ -110,6 +110,10 @@ test.describe('skills bridge', () => {
 
     await expect(copyControl).toHaveAttribute('data-copy-state', 'success');
     await expect(copyControl).toHaveAccessibleName('Copied install command');
+    const status = installCard.getByRole('status');
+    await expect(status).toHaveAttribute('aria-live', 'polite');
+    await expect(status).toHaveAttribute('aria-atomic', 'true');
+    await expect(status).toHaveText('Copied to the clipboard.');
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
       'npx skills add jesusgraterol/jg-skills --skill "*" -y',
     );

@@ -1,8 +1,8 @@
 ---
 import { Download } from '@lucide/astro';
 import Button from 'jg-personal-astro-ui/button';
-import Card from 'jg-personal-astro-ui/card';
 import CopyButton from 'jg-personal-astro-ui/copy-button';
+import FilePreview from 'jg-personal-astro-ui/file-preview';
 
 interface Props {
   // what the copy button copies, completing its name, as in "Copy AGENTS.md"
@@ -18,51 +18,46 @@ const { allowDownload = false, copyContext, fileName, rawPath, sourceId, text } 
 ---
 
 {/* the resource as published: its file name, copying and the raw file, then its full text */}
-<Card
-  as="section"
-  class="grid gap-4"
->
-  <header class="flex flex-wrap items-center justify-between gap-3">
-    <div class="flex items-center gap-2 font-mono text-sm font-bold">
-      <span
-        class="size-2.5 rounded-full bg-accent"
-        aria-hidden="true"
-      ></span>
-      {fileName}
-    </div>
-    <div class="flex flex-wrap items-center gap-2">
-      <CopyButton
-        context={copyContext}
-        size="md"
-        tone="outline"
-        url={rawPath}
-      />
-      {
-        allowDownload && (
-          <Button
-            download={fileName}
-            href={rawPath}
-            variant="outline"
-          >
-            <Download
-              class="size-4"
-              aria-hidden="true"
-            />
-            Download
-          </Button>
-        )
-      }
-      <Button
-        external
-        href={rawPath}
-        variant="outline"
-      >
-        View raw
-      </Button>
-    </div>
-  </header>
+<FilePreview path={fileName}>
+  <div
+    slot="header-actions"
+    class="flex flex-wrap items-center gap-2"
+  >
+    <CopyButton
+      display="icon"
+      context={copyContext}
+      size="md"
+      tone="outline"
+      url={rawPath}
+    />
+    {
+      allowDownload && (
+        <Button
+          download={fileName}
+          href={rawPath}
+          variant="outline"
+        >
+          <Download
+            class="size-4"
+            aria-hidden="true"
+          />
+          Download
+        </Button>
+      )
+    }
+    <Button
+      external
+      href={rawPath}
+      variant="outline"
+    >
+      View raw
+    </Button>
+  </div>
+  {/* literal text retains the canonical final newline that syntax highlighting removes */}
   <pre
     id={sourceId}
-    class="max-h-[70vh] overflow-auto rounded-lg border border-border bg-code p-4 text-[0.8125rem] leading-6 whitespace-pre-wrap text-foreground sm:p-5 sm:text-sm"
+    aria-label={fileName + ' source'}
+    role="region"
+    class="max-h-[70vh] overflow-auto font-mono text-sm leading-6 wrap-anywhere whitespace-pre-wrap text-foreground"
     tabindex="0"><code>{text}</code></pre>
-</Card>
+</FilePreview>

@@ -83,6 +83,9 @@ test.describe('production website', () => {
       const response = await page.goto(route);
 
       expect(response?.status()).toBe(200);
+      await expect(page.locator('[data-copy-button]:not([data-copy-display="icon"])')).toHaveCount(
+        0,
+      );
       await expect(page.locator('main h1')).toHaveCount(1);
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
         'href',
@@ -293,6 +296,41 @@ test.describe('production website', () => {
     await expect(page.getByRole('heading', { name: 'Warning signs' })).toBeVisible();
   });
 
+  for (const colorScheme of ['light', 'dark'] as const) {
+    test(
+      colorScheme + ' preserves recipe metadata and related navigation at 320px',
+      async ({ page }) => {
+        await page.emulateMedia({ colorScheme, reducedMotion: 'reduce' });
+        await page.setViewportSize({ width: 320, height: 900 });
+        await page.goto('/cookbook/control-scope/');
+        await expect(
+          page.getByRole('heading', { level: 1, name: 'Control scope', exact: true }),
+        ).toBeVisible();
+        await expect(page.getByText('Published October 15, 2026')).toBeVisible();
+        await expect(page.getByText(/^\d+ min read$/u)).toBeVisible();
+        const related = page.getByRole('complementary', { name: 'Related recipes' });
+        await expect(related.getByRole('link')).toHaveCount(2);
+        await expect(related.getByRole('link', { name: /Orient to a codebase/u })).toHaveAttribute(
+          'href',
+          '/cookbook/orient-to-a-codebase/',
+        );
+        await expect(
+          related.getByRole('link', { name: /Recover from agent drift/u }),
+        ).toHaveAttribute('href', '/cookbook/recover-from-agent-drift/');
+        await page.evaluate(async () => {
+          await document.fonts.ready;
+        });
+        expect(
+          await page.evaluate(
+            () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+          ),
+        ).toBeLessThanOrEqual(0);
+        await page.getByRole('link', { name: 'Back to the cookbook', exact: true }).click();
+        await expect(page).toHaveURL('/cookbook/');
+      },
+    );
+  }
+
   test('content pages do not overflow at 320 pixels', async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 900 });
 
@@ -455,7 +493,7 @@ test.describe('production website', () => {
       await copyControl.click();
 
       await expect(copyControl).toHaveAttribute('data-copy-state', 'success');
-      await expect(copyControl).toContainText('Copied');
+      await expect(copyControl).toHaveAccessibleName(/^Copied /u);
       expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(sourceText);
     }
   });
@@ -478,7 +516,7 @@ test.describe('production website', () => {
     const wrapper = copyControl.locator('xpath=..');
 
     await expect(copyControl).toHaveAttribute('data-copy-state', 'error');
-    await expect(copyControl).toContainText('Copy failed');
+    await expect(copyControl).toHaveAccessibleName('Copy failed refinement prompt');
     await expect(wrapper.locator('[data-copy-status]')).toHaveText(guidance);
     await expect(wrapper.locator('[data-copy-hint] a')).toHaveAttribute('href', '/refine.txt');
   });
