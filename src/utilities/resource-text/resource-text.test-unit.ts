@@ -17,7 +17,7 @@ const getEntryMock = vi.hoisted(() =>
 
 vi.mock('astro:content', () => ({ getEntry: getEntryMock }));
 
-describe('loadResource', () => {
+describe('loadResource', { tags: ['full'] }, () => {
   afterEach(() => {
     vi.clearAllMocks();
   });

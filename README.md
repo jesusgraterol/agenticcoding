@@ -25,11 +25,10 @@ The site is statically generated with Astro and Tailwind CSS. Its UI comes from 
 - Node.js `24.15` or newer within Node 24
 - npm `11.12` or newer within npm 11
 
-Install dependencies and the Chromium browser used by the end-to-end suite:
+Install dependencies:
 
 ```bash
 npm ci
-npx playwright install chromium
 ```
 
 Start the local development server:
@@ -42,15 +41,17 @@ Astro serves the project at `http://localhost:4321` by default.
 
 ### Commands
 
-| Command                   | Purpose                                                                                                      |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `npm run dev`             | Start the Astro development server.                                                                          |
-| `npm run build`           | Generate and validate the production site in `dist/`.                                                        |
-| `npm run preview`         | Serve the current production build locally.                                                                  |
-| `npm run check`           | Run unit tests, typechecking, linting, formatting, the build, artifact integration tests, and browser tests. |
-| `npm test`                | Run all unit, integration, and end-to-end test categories.                                                   |
-| `npm run format`          | Format supported project files.                                                                              |
-| `npm run assets:generate` | Write `favicon.svg` from the package's mark and regenerate the open-graph image from its HTML template.      |
+| Command                   | Purpose                                                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `npm run dev`             | Start the Astro development server.                                                                     |
+| `npm run build`           | Generate and validate the production site in `dist/`.                                                   |
+| `npm run preview`         | Serve the current production build locally.                                                             |
+| `npm run check`           | Run essential artifact tests, typechecking, linting, formatting, and one validated build.               |
+| `npm test`                | Build once and run essential artifact tests.                                                            |
+| `npm run check:full`      | Run all tests, typechecking, linting, formatting, and one validated build.                              |
+| `npm run test:full`       | Run complete unit, integration, and browser coverage with one build.                                    |
+| `npm run format`          | Format supported project files.                                                                         |
+| `npm run assets:generate` | Write `favicon.svg` from the package's mark and regenerate the open-graph image from its HTML template. |
 
 ## Content and public routes
 
@@ -71,7 +72,7 @@ Cookbook recipes live in `src/content/cookbook/`. To add one:
 2. Provide the frontmatter required by `src/content.config.ts`, including a unique slug and order, a one-to-three-sentence `situation`, an `example` transcript of at least two messages, and the copyable `prompt`.
 3. Write the body as `## What good looks like`, `## If the result drifts`, and `## Warning signs`, keeping it at or below about 440 words.
 4. Add reciprocal `relatedSlugs` where the relationship is useful.
-5. Run `npm run check` to validate the content, generated route, internal links, metadata, and browser behavior.
+5. Run `npm run check` to validate the content, generated route, internal links, and metadata. Run complete focused tests for affected behavior; browser coverage remains available through the full and focused commands.
 
 ## Project blueprint
 
@@ -103,6 +104,8 @@ Each timestamped directory under `coding-agent-planning/` contains one authorita
 
 The `/docs` directory is reserved for essential, durable project concepts and processes. Documents there must remain concise and quickly scannable by humans and agents. API and HTTP endpoint documentation, if the project ever needs it, belongs in its established location outside `/docs`.
 
+[Testing](docs/testing.md) owns essential/full membership, commands, and focused verification.
+
 ## Branding and assets
 
 The color tokens and the Ubuntu Sans typography come from `jg-personal-astro-ui`'s theme, with accessible light and dark modes; the fonts are served locally rather than loaded from a remote webfont.
@@ -113,19 +116,27 @@ Coding-agent marks are copied from the Moldea skill project. Their origin and us
 
 ## Verification
 
-The quality pipeline checks:
+The essential pipeline checks:
 
-- application-owned text normalization, reading-time, and sorting behavior
 - TypeScript and Astro diagnostics
 - ESLint and Prettier conformance
 - production generation, sitemap output, internal links and their anchors, LLM discovery, SEO metadata, article dates, breadcrumb structured data, and raw resource fidelity
-- browser accessibility, navigation progress, copy buttons, raw routes, the workflow mode toggle, theme persistence, reduced motion, keyboard navigation, and layouts down to 320 pixels
+- exact canonical resource delivery and rejection of test files in production output
 
-Run the complete pipeline before publishing:
+Run essential verification with the same command CI uses:
 
 ```bash
 npm run check
 ```
+
+Full retains all unit and artifact-validator scenarios plus browser accessibility, navigation progress, copy buttons, raw routes, workflow modes, themes, reduced motion, keyboard navigation, and layouts down to 320 pixels. Full runs locally only when explicitly requested:
+
+```bash
+npx playwright install chromium
+npm run check:full
+```
+
+Granular and focused commands remain complete by default. Essential verification needs no browser installation.
 
 ## Deployment
 

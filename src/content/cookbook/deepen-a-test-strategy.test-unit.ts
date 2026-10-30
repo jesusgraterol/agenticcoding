@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 
 import { beforeAll, describe, expect, test } from 'vitest';
 
-describe('deepen-a-test-strategy recipe contract', () => {
+describe('deepen-a-test-strategy recipe contract', { tags: ['full'] }, () => {
   let recipe: string;
 
   beforeAll(async () => {

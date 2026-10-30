@@ -6,7 +6,6 @@ import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'nod
 
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 
-import { normalizeResourceText } from '../src/utilities/resource-text/utilities.ts';
 import { verifyBuild } from './verify-build.ts';
 
 const repositoryRoot = resolve(import.meta.dirname, '..');
@@ -115,6 +114,33 @@ const extractMarkdownBody = (sourceText: string): string => {
   return sourceText.slice(frontmatterEnd + 5).replace(/^\n/, '');
 };
 
+/** Checks the validator's exact failure contract against an isolated corrupted artifact. */
+const expectBuildFailure = async (
+  _caseName: string,
+  expectedMessage: string,
+  mutation: IBuildMutation,
+  expectsSyntaxErrorCause: boolean,
+): Promise<void> => {
+  const buildDirectory = await createBuildFixture();
+  await mutation(buildDirectory);
+
+  let failure: unknown;
+
+  try {
+    await verifyBuild(buildDirectory);
+  } catch (error) {
+    failure = error;
+  }
+
+  expect(failure).toBeInstanceOf(Error);
+  assert.ok(failure instanceof Error);
+  expect(failure.message).toBe(expectedMessage);
+
+  if (expectsSyntaxErrorCause) {
+    expect(failure.cause).toBeInstanceOf(SyntaxError);
+  }
+};
+
 describe('static build artifact', () => {
   beforeAll(async () => {
     temporaryRoot = await mkdtemp(join(tmpdir(), TEMPORARY_ROOT_PREFIX));
@@ -128,9 +154,13 @@ describe('static build artifact', () => {
     await rm(temporaryRoot, { force: true, recursive: true });
   });
 
-  test('contains required routes, metadata, valid links, and no test files', async () => {
-    await expect(verifyBuild()).resolves.toBeUndefined();
-  });
+  test(
+    'contains required routes, metadata, valid links, and no test files',
+    { tags: ['full'] },
+    async () => {
+      await expect(verifyBuild()).resolves.toBeUndefined();
+    },
+  );
 
   test.each([
     [
@@ -173,17 +203,6 @@ describe('static build artifact', () => {
           'index.html',
           STRUCTURED_DATA_PATTERN,
           '<script type="application/ld+json">{"@graph":[null]}</script>',
-        ),
-      false,
-    ],
-    [
-      'emitted test file',
-      'Production build contains a test file: emitted.test-unit.ts',
-      async (buildDirectory) =>
-        writeFile(
-          resolveBuildFile(buildDirectory, 'emitted.test-unit.ts'),
-          '// disposable emitted test fixture\n',
-          'utf8',
         ),
       false,
     ],
@@ -328,29 +347,21 @@ describe('static build artifact', () => {
         ),
       false,
     ],
-  ] satisfies IBuildFailureCase[])(
-    'verifyBuild(%s) -> %s',
-    async (_caseName, expectedMessage, mutation, expectsSyntaxErrorCause) => {
-      const buildDirectory = await createBuildFixture();
-      await mutation(buildDirectory);
+  ] satisfies IBuildFailureCase[])('verifyBuild(%s) -> %s', { tags: ['full'] }, expectBuildFailure);
 
-      let failure: unknown;
-
-      try {
-        await verifyBuild(buildDirectory);
-      } catch (error) {
-        failure = error;
-      }
-
-      expect(failure).toBeInstanceOf(Error);
-      assert.ok(failure instanceof Error);
-      expect(failure.message).toBe(expectedMessage);
-
-      if (expectsSyntaxErrorCause) {
-        expect(failure.cause).toBeInstanceOf(SyntaxError);
-      }
-    },
-  );
+  test.each([
+    [
+      'emitted test file',
+      'Production build contains a test file: emitted.test-unit.ts',
+      async (buildDirectory) =>
+        writeFile(
+          resolveBuildFile(buildDirectory, 'emitted.test-unit.ts'),
+          '// disposable emitted test fixture\n',
+          'utf8',
+        ),
+      false,
+    ],
+  ] satisfies IBuildFailureCase[])('verifyBuild(%s) -> %s', expectBuildFailure);
 
   test.each([
     ['src/content/resources/agents-foundation.md', 'dist/AGENTS.md'],
@@ -361,10 +372,10 @@ describe('static build artifact', () => {
       readFile(resolve(repositoryRoot, artifactPath), 'utf8'),
     ]);
 
-    expect(artifactText).toBe(normalizeResourceText(extractMarkdownBody(sourceText)));
+    expect(artifactText).toBe(extractMarkdownBody(sourceText));
   });
 
-  test('publishes every required cookbook recipe', async () => {
+  test('publishes every required cookbook recipe', { tags: ['full'] }, async () => {
     const sitemap = await readFile(resolve(repositoryRoot, 'dist/sitemap-0.xml'), 'utf8');
     const expectedSlugs = [
       'orient-to-a-codebase',
@@ -382,28 +393,32 @@ describe('static build artifact', () => {
     expect(sitemap).toContain('<loc>https://agenticcoding.jesusgraterol.dev/workflow/</loc>');
   });
 
-  test('publishes an LLM index synchronized with every cookbook recipe', async () => {
-    const llmsText = await readFile(resolve(repositoryRoot, 'dist/llms.txt'), 'utf8');
-    const expectedSlugs = [
-      'orient-to-a-codebase',
-      'control-scope',
-      'synchronize-documentation',
-      'recover-from-agent-drift',
-      'deepen-a-test-strategy',
-      'refine-coding-instructions',
-    ];
+  test(
+    'publishes an LLM index synchronized with every cookbook recipe',
+    { tags: ['full'] },
+    async () => {
+      const llmsText = await readFile(resolve(repositoryRoot, 'dist/llms.txt'), 'utf8');
+      const expectedSlugs = [
+        'orient-to-a-codebase',
+        'control-scope',
+        'synchronize-documentation',
+        'recover-from-agent-drift',
+        'deepen-a-test-strategy',
+        'refine-coding-instructions',
+      ];
 
-    expect(llmsText).toContain(
-      '[AGENTS.md foundation](https://agenticcoding.jesusgraterol.dev/AGENTS.md)',
-    );
-    expect(llmsText).toContain(
-      '[Instruction refinement prompt](https://agenticcoding.jesusgraterol.dev/refine.txt)',
-    );
+      expect(llmsText).toContain(
+        '[AGENTS.md foundation](https://agenticcoding.jesusgraterol.dev/AGENTS.md)',
+      );
+      expect(llmsText).toContain(
+        '[Instruction refinement prompt](https://agenticcoding.jesusgraterol.dev/refine.txt)',
+      );
 
-    expect(llmsText).toContain('[Workflow](https://agenticcoding.jesusgraterol.dev/workflow/)');
+      expect(llmsText).toContain('[Workflow](https://agenticcoding.jesusgraterol.dev/workflow/)');
 
-    for (const slug of expectedSlugs) {
-      expect(llmsText).toContain(`/cookbook/${slug}/`);
-    }
-  });
+      for (const slug of expectedSlugs) {
+        expect(llmsText).toContain(`/cookbook/${slug}/`);
+      }
+    },
+  );
 });
