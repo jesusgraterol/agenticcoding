@@ -41,3 +41,27 @@ npm run test:e2e:artifact -- src/layouts/base-layout.test-e2e.ts --repeat-each=3
 ```
 
 Run changed integration files three times with retries off; Vitest 4.1.10 needs three separate invocations. Playwright uses `--repeat-each=3 --retries=0`. Tests remain co-located with their owning implementation, category discovery stays separate, and test discovery excludes archive/backup directories. Tests must not enter production output; the build validator and its essential rejection scenario enforce that boundary.
+
+## Verification surfaces
+
+The essential pipeline checks:
+
+- TypeScript and Astro diagnostics
+- ESLint and Prettier conformance
+- production generation, sitemap output, internal links and their anchors, LLM discovery, SEO metadata, article dates, breadcrumb structured data, and raw resource fidelity
+- exact canonical resource delivery and rejection of test files in production output
+
+Run essential verification with the same command CI uses:
+
+```bash
+npm run check
+```
+
+Full retains all unit and artifact-validator scenarios plus browser accessibility, navigation progress, copy buttons, raw routes, workflow modes, themes, reduced motion, keyboard navigation, and layouts down to 320 pixels. Full runs locally only when explicitly requested:
+
+```bash
+npx playwright install chromium
+npm run check:full
+```
+
+Granular and focused commands remain complete by default. Essential verification needs no browser installation.
