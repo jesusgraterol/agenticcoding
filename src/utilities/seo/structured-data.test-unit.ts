@@ -3,7 +3,7 @@ import { describe, expect, test } from 'vitest';
 
 import { buildStructuredData } from './structured-data.ts';
 
-describe('buildStructuredData', () => {
+describe('buildStructuredData', { tags: ['full'] }, () => {
   test('describes the canonical website without fabricated page fields', () => {
     expect(
       buildStructuredData({

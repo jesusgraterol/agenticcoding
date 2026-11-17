@@ -3,7 +3,7 @@ import { describe, expect, test } from 'vitest';
 
 import { calculateReadingTime } from './utilities.ts';
 
-describe('calculateReadingTime', () => {
+describe('calculateReadingTime', { tags: ['full'] }, () => {
   test.each([
     ['', 1],
     ['one concise recipe', 1],

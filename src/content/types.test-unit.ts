@@ -20,7 +20,7 @@ const BASE_ENTRY = {
   title: 'Orient to a codebase',
 };
 
-describe('CookbookEntrySchema', () => {
+describe('CookbookEntrySchema', { tags: ['full'] }, () => {
   test.each([
     ['2026-08-19', '2026-08-19'],
     ['2026-08-19', '2026-08-24'],
@@ -50,7 +50,7 @@ describe('CookbookEntrySchema', () => {
   });
 });
 
-describe('TranscriptMessageSchema', () => {
+describe('TranscriptMessageSchema', { tags: ['full'] }, () => {
   test.each([
     ['an invocation', { invocation: 'jg-plan' }],
     ['text', { text: 'Plan saved. Approve it to start.' }],

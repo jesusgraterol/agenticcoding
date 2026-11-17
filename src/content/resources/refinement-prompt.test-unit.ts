@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 
 import { beforeAll, describe, expect, test } from 'vitest';
 
-describe('refinement prompt governance contract', () => {
+describe('refinement prompt governance contract', { tags: ['full'] }, () => {
   let prompt: string;
 
   beforeAll(async () => {

@@ -3,7 +3,7 @@ import { describe, expect, test } from 'vitest';
 
 import { normalizeResourceText } from './utilities.ts';
 
-describe('normalizeResourceText', () => {
+describe('normalizeResourceText', { tags: ['full'] }, () => {
   test.each([
     ['# Title', '# Title\n'],
     ['# Title\n\n', '# Title\n'],

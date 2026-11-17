@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 
 import { beforeAll, describe, expect, test } from 'vitest';
 
-describe('Agentic Coding foundation contract', () => {
+describe('Agentic Coding foundation contract', { tags: ['full'] }, () => {
   let foundation: string;
 
   beforeAll(async () => {
