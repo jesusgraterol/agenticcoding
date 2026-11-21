@@ -1,9 +1,11 @@
 import { access, readFile, readdir } from 'node:fs/promises';
-import { extname, join, relative, resolve } from 'node:path';
+import { join, relative, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { verifyStaticSite } from 'jg-site-checks';
 
 import { SITE_CONFIG } from '../src/site.config.ts';
 
+const EXCLUDED_DIRECTORIES = new Set(['_archive', '_archives', '_backup', '_backups']);
 const repositoryRoot = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const DEFAULT_BUILD_DIRECTORY = resolve(repositoryRoot, 'dist');
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/u;
@@ -11,10 +13,6 @@ const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/u;
 const VERIFY_BUILD_ERROR_MESSAGES = {
   ArticleStructuredDataIncomplete: 'Article structured data is incomplete',
   BreadcrumbHierarchyIncomplete: 'Breadcrumb hierarchy is incomplete',
-  BrokenInternalAnchor: 'Broken internal anchor',
-  BrokenInternalLink: 'Broken internal link',
-  BrokenInternalLlmsTextLink: 'Broken internal llms.txt link',
-  CanonicalUrlMissingFromSitemap: 'Canonical URL is missing from the sitemap',
   InvalidStructuredData: 'Invalid structured data',
   InvalidStructuredDataGraph: 'Structured data graph is invalid',
   InvalidLlmsTextStructure: 'llms.txt does not follow the required project index structure.',
@@ -65,6 +63,9 @@ const listBuildFiles = async (
   const entries = await readdir(directoryPath, { withFileTypes: true });
   const files = await Promise.all(
     entries.map(async (entry) => {
+      if (EXCLUDED_DIRECTORIES.has(entry.name)) {
+        throw new Error('Production build contains an excluded path.');
+      }
       const entryPath = join(directoryPath, entry.name);
 
       return entry.isDirectory()
@@ -75,29 +76,6 @@ const listBuildFiles = async (
 
   return files.flat().toSorted();
 };
-
-/** Resolves one root-relative site URL to its expected static artifact path. */
-const resolveInternalArtifact = (href: string): string => {
-  const path = href.split(/[?#]/u, 1)[0] ?? '/';
-
-  if (path === '/') return 'index.html';
-  if (extname(path)) return path.slice(1);
-
-  return `${path.replace(/^\//u, '').replace(/\/$/u, '')}/index.html`;
-};
-
-/** Splits an internal link into its path and fragment; a same-page link has an empty path. */
-const splitInternalLink = (href: string): { fragment: string; path: string } => {
-  const fragmentIndex = href.indexOf('#');
-
-  return fragmentIndex < 0
-    ? { fragment: '', path: href }
-    : { fragment: href.slice(fragmentIndex + 1), path: href.slice(0, fragmentIndex) };
-};
-
-/** Checks whether generated HTML declares an element with the given id. */
-const hasElementId = (html: string, id: string): boolean =>
-  new RegExp(`\\sid="${escapeRegularExpression(id)}"`, 'u').test(html);
 
 /** Resolves a generated HTML artifact to its canonical public URL. */
 const resolveCanonicalUrl = (htmlPath: string): string => {
@@ -176,15 +154,14 @@ const extractStructuredDataEntities = (
  * - Missing required metadata
  * - Missing or duplicate page description
  * - Missing or duplicate page title
- * - Canonical URL is missing from the sitemap
  * - Structured data does not match the canonical page
  * - Article structured data is incomplete
  * - Breadcrumb hierarchy is incomplete
- * - Broken internal link
- * - Broken internal anchor
  * - The custom 404 page must remain excluded from search indexes.
  * - llms.txt does not follow the required project index structure.
- * - Broken internal llms.txt link
+ * - Production build contains an excluded path.
+ * - INVALID_SITE_BUILD_OPTIONS: The site build verification options are invalid.
+ * - SITE_BUILD_INVALID: The static site build failed verification.
  */
 export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Promise<void> => {
   const buildFiles = await listBuildFiles(buildDirectory);
@@ -205,63 +182,12 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
 
   const htmlFiles = buildFiles.filter((filePath) => filePath.endsWith('.html'));
   const publicHtmlFiles = htmlFiles.filter((filePath) => filePath !== '404.html');
-  const htmlByPath = new Map<string, string>();
   const descriptions = new Set<string>();
   const titles = new Set<string>();
-  const sitemapFiles = buildFiles.filter((filePath) => /^sitemap-\d+\.xml$/u.test(filePath));
   const llmsTextUrl = new URL('/llms.txt', SITE_CONFIG.url).toString();
   const openGraphImageUrl = new URL(SITE_CONFIG.openGraph.image, SITE_CONFIG.url).toString();
-  const sitemap = (
-    await Promise.all(
-      sitemapFiles.map(async (sitemapPath) =>
-        readFile(resolve(buildDirectory, sitemapPath), 'utf8'),
-      ),
-    )
-  ).join('\n');
-
-  /** Reads one generated HTML artifact once, reusing it for later anchor checks. */
-  const readBuildHtml = async (htmlPath: string): Promise<string> => {
-    const cachedHtml = htmlByPath.get(htmlPath);
-
-    if (cachedHtml !== undefined) return cachedHtml;
-
-    const html = await readFile(resolve(buildDirectory, htmlPath), 'utf8');
-
-    htmlByPath.set(htmlPath, html);
-
-    return html;
-  };
-
-  /**
-   * Verifies that an internal link resolves to a generated artifact and, when it names a
-   * fragment, to an element with that id.
-   * @throws
-   * - Broken internal link
-   * - Broken internal anchor
-   */
-  const verifyInternalLink = async (href: string, htmlPath: string): Promise<void> => {
-    const { fragment, path } = splitInternalLink(href);
-    const artifactPath = path === '' ? htmlPath : resolveInternalArtifact(path);
-
-    if (!buildFiles.includes(artifactPath)) {
-      throw new Error(
-        `${VERIFY_BUILD_ERROR_MESSAGES.BrokenInternalLink} in ${htmlPath}: ${href} -> ${artifactPath}`,
-      );
-    }
-
-    if (
-      fragment !== '' &&
-      artifactPath.endsWith('.html') &&
-      !hasElementId(await readBuildHtml(artifactPath), fragment)
-    ) {
-      throw new Error(
-        `${VERIFY_BUILD_ERROR_MESSAGES.BrokenInternalAnchor} in ${htmlPath}: ${href}`,
-      );
-    }
-  };
-
   for (const htmlPath of publicHtmlFiles) {
-    const html = await readBuildHtml(htmlPath);
+    const html = await readFile(resolve(buildDirectory, htmlPath), 'utf8');
     const canonicalUrl = resolveCanonicalUrl(htmlPath);
     const expectedStructuredDataType =
       htmlPath === 'index.html'
@@ -279,7 +205,6 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
         'u',
       ),
       /<meta name="robots" content="index, follow, max-image-preview:large"/u,
-      new RegExp(`<link rel="canonical" href="${escapeRegularExpression(canonicalUrl)}"`, 'u'),
       new RegExp(`<link rel="describedby" href="${escapeRegularExpression(llmsTextUrl)}"`, 'u'),
       new RegExp(
         `<meta property="og:locale" content="${escapeRegularExpression(SITE_CONFIG.openGraph.locale)}"`,
@@ -331,12 +256,6 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
 
     descriptions.add(description);
     titles.add(title);
-
-    if (!sitemap.includes(`<loc>${canonicalUrl}</loc>`)) {
-      throw new Error(
-        `${VERIFY_BUILD_ERROR_MESSAGES.CanonicalUrlMissingFromSitemap}: ${canonicalUrl}`,
-      );
-    }
 
     const structuredData = parseStructuredData(html, htmlPath);
     const structuredDataEntities = extractStructuredDataEntities(structuredData, htmlPath);
@@ -405,15 +324,6 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
         );
       }
     }
-
-    // root-relative and same-page links; external and protocol-relative links are out of scope
-    const internalLinks = [...html.matchAll(/href="((?:\/(?!\/)|#)[^"]*)"/gu)].map(
-      (match) => match[1] ?? '/',
-    );
-
-    for (const href of internalLinks) {
-      await verifyInternalLink(href, htmlPath);
-    }
   }
 
   const notFoundHtml = await readFile(resolve(buildDirectory, '404.html'), 'utf8');
@@ -432,25 +342,18 @@ export const verifyBuild = async (buildDirectory = DEFAULT_BUILD_DIRECTORY): Pro
     throw new Error(VERIFY_BUILD_ERROR_MESSAGES.InvalidLlmsTextStructure);
   }
 
-  const llmsLinks = [...llmsText.matchAll(/\[[^\]]+\]\((https:\/\/[^)]+)\)/gu)].map(
-    (match) => match[1],
-  );
-
-  for (const link of llmsLinks) {
-    if (!link) continue;
-
-    const url = new URL(link);
-
-    if (url.origin !== new URL(SITE_CONFIG.url).origin) continue;
-
-    const artifactPath = resolveInternalArtifact(url.pathname);
-
-    if (!buildFiles.includes(artifactPath)) {
-      throw new Error(
-        `${VERIFY_BUILD_ERROR_MESSAGES.BrokenInternalLlmsTextLink}: ${link} -> ${artifactPath}`,
-      );
-    }
-  }
+  await verifyStaticSite({
+    artifactRoot: buildDirectory,
+    origin: SITE_CONFIG.url,
+    pages: [
+      ...publicHtmlFiles.map((file) => {
+        const canonicalUrl = resolveCanonicalUrl(file);
+        return { path: new URL(canonicalUrl).pathname, canonicalUrl, indexable: true };
+      }),
+      { path: '/404.html', canonicalUrl: null, indexable: false },
+    ],
+    discovery: { sitemap: '/sitemap-index.xml', robots: '/robots.txt', llms: '/llms.txt' },
+  });
 };
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

@@ -51,6 +51,8 @@ The essential pipeline checks:
 - production generation, sitemap output, internal links and their anchors, LLM discovery, SEO metadata, article dates, breadcrumb structured data, and raw resource fidelity
 - exact canonical resource delivery and rejection of test files in production output
 
+`verifyBuild` uses `jg-site-checks` for canonical URLs, indexability, links and discovery files. Shared verifier errors expose `SITE_BUILD_INVALID` (The static site build failed verification.) or `INVALID_SITE_BUILD_OPTIONS` (The site build verification options are invalid.). The site also checks its cookbook metadata and structured data, required public files, and the structure of `llms.txt`.
+
 Run essential verification with the same command CI uses:
 
 ```bash

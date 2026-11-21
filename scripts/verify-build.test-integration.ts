@@ -244,12 +244,12 @@ describe('static build artifact', () => {
     ],
     [
       'missing sitemap canonical',
-      'Canonical URL is missing from the sitemap: https://agenticcoding.jesusgraterol.dev/start/',
+      'The static site build failed verification.: The sitemap omits an indexable page: https://agenticcoding.jesusgraterol.dev/start/',
       async (buildDirectory) =>
         replaceBuildFileText(
           buildDirectory,
           'sitemap-0.xml',
-          '<loc>https://agenticcoding.jesusgraterol.dev/start/</loc>',
+          /<url><loc>https:\/\/agenticcoding\.jesusgraterol\.dev\/start\/<\/loc>[^<]*(?:<lastmod>[^<]*<\/lastmod>)?<\/url>/u,
           '',
         ),
       false,
@@ -292,7 +292,7 @@ describe('static build artifact', () => {
     ],
     [
       'broken page link',
-      'Broken internal link in index.html: /missing-route/ -> missing-route/index.html',
+      'The static site build failed verification.: Broken local link in /: /missing-route/',
       async (buildDirectory) =>
         replaceBuildFileText(
           buildDirectory,
@@ -304,14 +304,14 @@ describe('static build artifact', () => {
     ],
     [
       'broken page anchor',
-      'Broken internal anchor in workflow/index.html: #build-stage',
+      'The static site build failed verification.: Broken local fragment in /workflow/: /workflow/#build-stage',
       async (buildDirectory) =>
         replaceBuildFileText(buildDirectory, 'workflow/index.html', 'id="build-stage"', ''),
       false,
     ],
     [
       'broken cross-page anchor',
-      'Broken internal anchor in cookbook/index.html: /workflow/#jg-plan',
+      'The static site build failed verification.: Broken local fragment in /cookbook/: /workflow/#jg-plan',
       async (buildDirectory) =>
         replaceBuildFileText(buildDirectory, 'workflow/index.html', 'id="jg-plan"', ''),
       false,
@@ -337,7 +337,7 @@ describe('static build artifact', () => {
     ],
     [
       'broken llms.txt link',
-      'Broken internal llms.txt link: https://agenticcoding.jesusgraterol.dev/missing-route/ -> missing-route/index.html',
+      'The static site build failed verification.: Broken local link in /llms.txt: /missing-route/',
       async (buildDirectory) =>
         replaceBuildFileText(
           buildDirectory,
